@@ -53,7 +53,7 @@ define([
 			infoGraphic: "plugins/natural_coastal_protection/coastalprotection.jpg",
             resizable: true,
             width: 425,
-            height: 650,
+            height: 720,
 
             initialize: function(frameworkParameters, currentRegion) {
                 declare.safeMixin(this, frameworkParameters);
@@ -81,7 +81,7 @@ define([
 
                 this.mapClassBreaks = {
                     people: [
-                        [-10000,      0,  [0, 0, 0, 0], ""],
+                        [-10000,      0,  [120, 120, 120, 1], "0"],
                         [    1,     500,  [254,217,118, 1], "1 - 500"],
                         [  501,    2500,  [254,178,76, 1], "501 - 2,500"],
                         [ 2501,    5000,  [253,141,60, 1], "2501 - 5,000"],
@@ -90,7 +90,7 @@ define([
                         [50001,10000000, [177,0,38, 1], "> 50,000"]
                     ],
                     capital: [
-                        [-10000,      0,  [0, 0, 0, 0], ""],
+                        [-10000,      0,  [120, 120, 120, 1], "0"],
                         [    1,      75,  [68, 101, 137, 1], "1 - 75"],
                         [  75,      250,  [70, 178, 157, 1], "76 - 250"],
                         [ 250,      750,  [149, 210, 49, 1], "251 - 750"],
@@ -98,7 +98,7 @@ define([
                         [1000,   100000,  [246, 202, 150, 1], "> 1,001"]
                     ],
                     area: [
-                        [-10000,      0,  [0, 0, 0, 0], ""],
+                        [-10000,      0,  [120, 120, 120, 1], "0"],
                         [    1,      5,  [252,197,192, 1], "1 - 5"],
                         [  5,      20,  [250,159,181, 1], "6 - 20"],
                         [ 20,      50,  [247,104,161, 1], "21 - 50"],
@@ -150,8 +150,8 @@ define([
                 layerDrawingOptions[0] = layerDrawingOption;
 
                 //this.coastalProtectionLayer.setLayerDrawingOptions(layerDrawingOptions);
-                this.map.addLayer(this.coralReefLayer);
                 this.map.addLayer(this.coastalProtectionLayer);
+                this.map.addLayer(this.coralReefLayer);
 
                 this.changePeriod();
                 this.changeScenario();
@@ -169,9 +169,9 @@ define([
             changePeriod: function() {
                 this.period = this.$el.find("input[name=storm" + this.app.paneNumber + "]:checked").val();
                 //http://stackoverflow.com/a/2901298
-                this.$el.find(".stat.people .number").html(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_PF"]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                this.$el.find(".stat.capital .number").html("$" + Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_BCF"] / 1000000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "M");
-                this.$el.find(".stat.area .number").html(Math.round(this.data[this.region]["E2E1_DIFF_" + this.period + "_AF"]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "km<sup>2</sup>");
+                this.$el.find(".stat.people .number .variable").html(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_PF"]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                this.$el.find(".stat.capital .number .variable").html(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_BCF"] / 1000000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                this.$el.find(".stat.area .number .variable").html(Math.round(this.data[this.region]["E2E1_DIFF_" + this.period + "_AF"]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
 
                 this.changeScenario();
             },
@@ -184,7 +184,7 @@ define([
                 } else {
                     this.$el.find(".download-summary").show();
                 }
-                this.$el.find(".download-summary .country").html(this.region);
+                //this.$el.find(".download-summary .country").html(this.region);
                 this.changePeriod();
                 var layerDefs = [];
                 var regionExtent = this.data[this.region].EXTENT;
@@ -316,7 +316,8 @@ define([
                 this.chart.valueline = d3.svg.line()
                     .x(function(d) { return self.chart.x(d.x); })
                     .y(function(d) { return self.chart.y(d.y); });
-                var $chartContainer = this.$el.find(".chartContainer")
+                
+                var $chartContainer = this.$el.find(".chartContainer");
 
                 this.chart.svg = d3.selectAll($chartContainer.toArray())
                     .append("svg")
@@ -328,7 +329,7 @@ define([
                 this.chart.svg.append("rect")
                     .attr("width", this.chart.position.width)
                     .attr("height", this.chart.position.height - 20)
-                    .attr("fill", "#f6f6f6");
+                    .attr("fill", "#fff");
 
                 this.chart.svg.append("g")
                     .attr("opacity", 0)
@@ -355,7 +356,7 @@ define([
                     .attr("y", 0 - this.chart.position.margin.left + 20)
                     .attr("x", 0 - (this.chart.position.height / 2))
                     .attr("text-anchor", "middle")
-                    .text("People");
+                    .text("People at Risk (No.)");
 
                 this.chart.svg.append("g")
                     .attr("class", "yaxis")
@@ -480,11 +481,11 @@ define([
 
                 var text = "";
                 if (this.variable === "BCF") {
-                    text = "Built Capital ($M)";
+                    text = "Built Capital at Risk (M)";
                 } else if (this.variable === "PF") {
-                    text = "People";
+                    text = "People at Risk (No.)";
                 } else if (this.variable === "AF") {
-                    text = "Area (sq km)";
+                    text = "Area at Risk (sq km)";
                 }
 
                 this.chart.svg.select(".yaxis-label")

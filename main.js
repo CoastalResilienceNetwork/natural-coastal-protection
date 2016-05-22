@@ -21,7 +21,7 @@ require({
 
 define([
     "dojo/_base/declare",
-    'd3',
+    "d3",
     "framework/PluginBase",
     "plugins/layer_selector/main",
     "esri/layers/ArcGISDynamicMapServiceLayer",
@@ -32,7 +32,8 @@ define([
     "esri/Color",
     "dojo/text!./template.html",
     "dojo/text!./layers.json",
-    "dojo/text!./data.json"],
+    "dojo/text!./data.json",
+    "dojo/text!./extent-bookmarks.json"],
     function (declare,
               d3,
               PluginBase,
@@ -45,7 +46,8 @@ define([
               Color,
               templates,
               layerSourcesJson,
-              Data
+              Data,
+              ExtentBookmarks
               ) {
         return declare(PluginBase, {
             toolbarName: "Natural Coastal Protection",
@@ -53,11 +55,12 @@ define([
 			infoGraphic: "plugins/natural_coastal_protection/coastalprotection.jpg",
             resizable: true,
             width: 425,
-            height: 720,
+            height: 740,
 
             initialize: function(frameworkParameters, currentRegion) {
                 declare.safeMixin(this, frameworkParameters);
                 this.data = $.parseJSON(Data);
+                this.extents = $.parseJSON(ExtentBookmarks);
                 this.pluginTmpl = _.template(this.getTemplateById('plugin'));
 
                 this.$el = $(this.container);
@@ -99,11 +102,11 @@ define([
                     ],
                     area: [
                         [-10000,      0,  [120, 120, 120, 1], "0"],
-                        [    1,      5,  [252,197,192, 1], "1 - 5"],
-                        [  5,      20,  [250,159,181, 1], "6 - 20"],
-                        [ 20,      50,  [247,104,161, 1], "21 - 50"],
-                        [ 50,     100,  [221,52,151, 1], "51 - 100"],
-                        [100,   100000,  [174,1,126, 1], "> 100"]
+                        [    1,      5,  [230,97,1, 1], "1 - 5"],
+                        [  5,      20,  [253,184,99, 1], "6 - 20"],
+                        [ 20,      50,  [216,218,235, 1], "21 - 50"],
+                        [ 50,     100,  [178,171,210, 1], "51 - 100"],
+                        [100,   100000,  [94,60,153, 1], "> 100"]
                     ],
                 };
 
@@ -187,7 +190,7 @@ define([
                 //this.$el.find(".download-summary .country").html(this.region);
                 this.changePeriod();
                 var layerDefs = [];
-                var regionExtent = this.data[this.region].EXTENT;
+                var regionExtent = this.extents[this.region].EXTENT;
 
                 var extent;
 
@@ -260,9 +263,20 @@ define([
 
             },
 
+            showGraphTooltip: function(d, self) {
+                self.$el.find(".ncp-tooltip").html(parseInt(d.y).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")).css({width: "auto"}).show();
+            },
+
+            moveGraphTooltip: function(d, el, self) {
+                var offset = this.$el.offset();
+                var x = d3.event.pageX - offset.left;
+                var y = d3.event.pageY - offset.top;
+                this.$el.find(".ncp-tooltip").css({left: x + 5, top: y});
+            },
+
             showTooltip: function(e) {
                 var text = $(e.currentTarget).data("tooltip");
-                this.$el.find(".ncp-tooltip").html(text).show();
+                this.$el.find(".ncp-tooltip").html(text).css({width: "240"}).show();
             },
 
             hideTooltip: function() {
@@ -327,9 +341,10 @@ define([
                         .attr("transform", "translate(" + this.chart.position.margin.left + "," + this.chart.position.margin.right + ")");
 
                 this.chart.svg.append("rect")
+                    .attr("class", "chart-area")
                     .attr("width", this.chart.position.width)
                     .attr("height", this.chart.position.height - 20)
-                    .attr("fill", "#fff");
+                    .attr("fill", "#f6f6f6");
 
                 this.chart.svg.append("g")
                     .attr("opacity", 0)
@@ -362,6 +377,35 @@ define([
                     .attr("class", "yaxis")
                     .call(this.chart.yAxis);
 
+                // Add chart legend
+                this.chart.legend = this.chart.svg.append("g")
+                    .attr("class", "legend")
+                    .attr("opacity", 0);
+
+                    this.chart.legend.append("rect")
+                        .attr("width", "25")
+                        .attr("height", "15")
+                        .attr("x", "5")
+                        .attr("fill", "#30928D");
+
+                    this.chart.legend.append("text")
+                        .text("present")
+                        .attr("x", "32")
+                        .attr("y", "11");
+                    
+                    this.chart.legend.append("rect")
+                        .attr("width", "25")
+                        .attr("height", "15")
+                        .attr("x", "5")
+                        .attr("y", "18")
+                        .attr("fill", "#923034");
+
+                    this.chart.legend.append("text")
+                        .text("1m loss")
+                        .attr("x", "32")
+                        .attr("y", "29");
+
+                // Initialize chart data 
                 this.addChartPoints();
 
 
@@ -429,7 +473,16 @@ define([
                     .attr("opacity", 0)
                     .attr("cx", function(d) { return self.chart.x(d.x); })
                     .attr("cy", function(d) { return self.chart.y(d.y); })
-                    .attr("r", 3.5);
+                    .attr("r", 3.5)
+                    .on("mouseover", function(e) {
+                        self.showGraphTooltip(e, self);
+                    })
+                    .on("mousemove", function(d) {
+                        self.moveGraphTooltip(d, this, self);
+                    })
+                    .on("mouseout", function() {
+                        self.hideTooltip(self);
+                    });
 
                 this.chart.svg
                     .append("path")
@@ -446,13 +499,23 @@ define([
                     .attr("opacity", 0)
                     .attr("cx", function(d) { return self.chart.x(d.x); })
                     .attr("cy", function(d) { return self.chart.y(d.y); })
-                    .attr("r", 3.5);
+                    .attr("r", 3.5)
+                    .on("mouseover", function(e) {
+                        self.showGraphTooltip(e, self);
+                    })
+                    .on("mousemove", function(d) {
+                        self.moveGraphTooltip(d, this, self);
+                    })
+                    .on("mouseout", function() {
+                        self.hideTooltip(self);
+                    });
 
                 // Bar chart
                 var bardata = [
                     {x: "present", y: 0},
                     {x: "1m loss", y: 0}
                 ];
+
                 this.chart.svg.selectAll(".bar")
                     .data(bardata)
                     .enter().append("rect")
@@ -460,7 +523,16 @@ define([
                     .attr("class", "bar")
                     .attr("x", function(d) { return self.chart.barx(d.x); })
                     .attr("width", 30)
-                    .attr("y", function(d) { return self.chart.y(d.y); });
+                    .attr("y", function(d) { return self.chart.y(d.y); })
+                    .on("mouseover", function(e) {
+                        self.showGraphTooltip(e, self);
+                    })
+                    .on("mousemove", function(d) {
+                        self.moveGraphTooltip(d, this, self);
+                    })
+                    .on("mouseout", function() {
+                        self.hideTooltip(self);
+                    });
 
                 this.updateChart();
 
@@ -554,6 +626,22 @@ define([
                     this.chart.y.domain([0, bary1m]);
                 } else {
                     this.chart.y.domain([0, d3.max(this.chart.data.scenario.y)]);
+                    if (this.period === "25RP") {
+                        this.chart.svg.selectAll(".xaxis .tick").classed("current", false).each(function(d, i) {
+                            if ( d === 25 ) {
+                                d3.select(this)
+                                    .classed("current", true);
+                            }
+                        });
+                    }
+                    if (this.period === "100RP") {
+                        this.chart.svg.selectAll(".xaxis .tick").classed("current", false).each(function(d, i) {
+                            if ( d === 100 ) {
+                                d3.select(this)
+                                    .classed("current", true);
+                            }
+                        });
+                    }
                 }
 
                 this.chart.svg.select(".yaxis")
@@ -572,6 +660,10 @@ define([
                     .transition().duration(1200).ease("sin-in-out")
                     .attr("opacity", annual ? 0 : 1);
 
+                this.chart.legend
+                    .transition().delay(750).duration(1200).ease("sin-in-out")
+                    .attr("opacity", annual ? 0 : 1);
+
                 this.chart.svg.select(".line.current")
                     .transition().duration(1200).ease("sin-in-out")
                     .attr("opacity", annual ? 0 : 1)
@@ -588,7 +680,20 @@ define([
                     .transition().duration(1200).ease("sin-in-out")
                     .attr("opacity", annual ? 0 : 1)
                     .attr("cx", function(d) { return self.chart.x(d.x); })
-                    .attr("cy", function(d) { return self.chart.y(d.y); });
+                    .attr("cy", function(d) { return self.chart.y(d.y); })
+                     .attr("r", function(d) {
+                        var period;
+                        if (self.period === "25RP") {
+                            period = 25;
+                        } else if (self.period === "100RP") {
+                            period = 100;
+                        }
+                        if (d.x === period) {
+                           return 5;
+                        } else {
+                            return 3.5;
+                        }
+                    });
 
                 this.chart.svg.select(".line.scenario")
                     .transition().duration(1200).ease("sin-in-out")
@@ -606,7 +711,20 @@ define([
                     .transition().duration(1200).ease("sin-in-out")
                     .attr("opacity", annual ? 0 : 1)
                     .attr("cx", function(d) { return self.chart.x(d.x); })
-                    .attr("cy", function(d) { return self.chart.y(d.y); });
+                    .attr("cy", function(d) { return self.chart.y(d.y); })
+                    .attr("r", function(d) {
+                        var period;
+                        if (self.period === "25RP") {
+                            period = 25;
+                        } else if (self.period === "100RP") {
+                            period = 100;
+                        }
+                        if (d.x === period) {
+                           return 5;
+                        } else {
+                            return 3.5;
+                        }
+                    });
 
                 this.chart.svg.selectAll(".bar")
                     .data(bardata)
@@ -639,11 +757,13 @@ define([
                     .html().trim();
             },
 
-            deactivate: function () {
+            hibernate: function () {
                 // Cleanup
-                this.coralReefLayer.hide();
-                this.coastalProtectionLayer.hide();
-            }
+                if (this.coralReefLayer) {
+                    this.coralReefLayer.hide();
+                    this.coastalProtectionLayer.hide();
+                }
+            },
 
         });
     }

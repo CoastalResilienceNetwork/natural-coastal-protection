@@ -56,6 +56,8 @@ define([
             resizable: true,
             width: 425,
             height: 740,
+            showServiceLayersInLegend: false,
+            allowIdentifyWhenActive: false,
 
             initialize: function(frameworkParameters, currentRegion) {
                 declare.safeMixin(this, frameworkParameters);
@@ -84,34 +86,33 @@ define([
 
                 this.mapClassBreaks = {
                     people: [
-                        [-10000,      0,  [120, 120, 120, 1], "0"],
-                        [    1,     500,  [254,217,118, 1], "1 - 500"],
-                        [  501,    2500,  [254,178,76, 1], "501 - 2,500"],
-                        [ 2501,    5000,  [253,141,60, 1], "2501 - 5,000"],
-                        [ 5001,   10000,  [252,78,42, 1], "5001 - 10,000"],
-                        [10001,   50000,  [227,26,28, 1], "10,001 - 50,000"],
-                        [50001,10000000, [177,0,38, 1], "> 50,000"]
+                        [-99999,      0,  [120, 120, 120, 1], "0"],
+                        [    1,     500,  [26,152,80, 1], "1 - 500"],
+                        [  501,    2500,  [145,207,96, 1], "501 - 2,500"],
+                        [ 2501,    5000,  [217,239,139, 1], "2501 - 5,000"],
+                        [ 5001,   10000,  [254,224,139, 1], "5001 - 10,000"],
+                        [10001,   50000,  [252,141,89, 1], "10,001 - 50,000"],
+                        [50001,20000000, [215,48,39, 1], "> 50,000"]
                     ],
                     capital: [
-                        [-10000,      0,  [120, 120, 120, 1], "0"],
-                        [    1,      75,  [68, 101, 137, 1], "1 - 75"],
-                        [  75,      250,  [70, 178, 157, 1], "76 - 250"],
-                        [ 250,      750,  [149, 210, 49, 1], "251 - 750"],
-                        [ 750,     1000,  [230, 230, 0, 1] , "751 - 1,000"],
-                        [1000,   100000,  [246, 202, 150, 1], "> 1,001"]
+                        [-99999,      0,  [120, 120, 120, 1], "0"],
+                        [    0,      75000,  [26,150,65, 1], "1 - 75"],
+                        [  75000,      250000,  [166,217,106, 1], "76 - 250"],
+                        [ 250000,      750000,  [253,174,97, 1], "251 - 750"],
+                        [ 750000,     1000000,  [215,48,39, 1] , "751 - 1,000"],
+                        [1000000,   9000000000,  [165,0,38, 1], "> 1,001"]
                     ],
                     area: [
-                        [-10000,      0,  [120, 120, 120, 1], "0"],
-                        [    1,      5,  [230,97,1, 1], "1 - 5"],
-                        [  5,      20,  [253,184,99, 1], "6 - 20"],
-                        [ 20,      50,  [216,218,235, 1], "21 - 50"],
-                        [ 50,     100,  [178,171,210, 1], "51 - 100"],
-                        [100,   100000,  [94,60,153, 1], "> 100"]
+                        [-99999,      0,  [120, 120, 120, 1], "0"],
+                        [    1,      5,  [26,150,65, 1], "1 - 5"],
+                        [  5,      20,  [166,217,106, 1], "6 - 20"],
+                        [ 20,      50,  [253,174,97, 1], "21 - 50"],
+                        [ 50,     100,  [215,48,39, 1], "51 - 100"],
+                        [100,   100000,  [165,0,38, 1], "> 100"]
                     ],
                 };
 
-                console.log(this.legendContainer);
-                $(this.legendContainer).html("I WILL CONQUER THIS");
+                this.activeCountries = "COUNTRY_ID = 58 OR COUNTRY_ID = 66 OR COUNTRY_ID = 106 OR COUNTRY_ID = 113 OR COUNTRY_ID = 136 OR COUNTRY_ID = 145 OR COUNTRY_ID = 177 OR COUNTRY_ID = 223";
 
             },
 
@@ -149,18 +150,20 @@ define([
 
                 this.coastalProtectionLayer = new ArcGISDynamicMapServiceLayer("http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer", {});
                 this.coastalProtectionLayer.setVisibleLayers([0]);
-                //layerDefs[0] = "SHORE_ID <> 0";
-                //this.coastalProtectionLayer.setLayerDefinitions(layerDefs);
+                layerDefs[0] = this.activeCountries;
+                this.coastalProtectionLayer.setLayerDefinitions(layerDefs);
 
-                layerDrawingOption.renderer = renderer;
-                layerDrawingOptions[0] = layerDrawingOption;
+                //layerDrawingOption.renderer = renderer;
+                //layerDrawingOptions[0] = layerDrawingOption;
 
-                //this.coastalProtectionLayer.setLayerDrawingOptions(layerDrawingOptions);
+                this.coastalProtectionLayer.setLayerDrawingOptions(layerDrawingOptions);
                 this.map.addLayer(this.coastalProtectionLayer);
                 this.map.addLayer(this.coralReefLayer);
 
                 this.changePeriod();
                 this.changeScenario();
+
+                
 
             },
 
@@ -170,16 +173,21 @@ define([
                 } else {
                     this.coralReefLayer.setVisibility();
                 }
+                this.updateLegend();
             },
 
             changePeriod: function() {
                 this.period = this.$el.find("input[name=storm" + this.app.paneNumber + "]:checked").val();
                 //http://stackoverflow.com/a/2901298
-                this.$el.find(".stat.people .number .variable").html(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_PF"]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                this.$el.find(".stat.capital .number .variable").html(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_BCF"] / 1000000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                this.$el.find(".stat.area .number .variable").html(Math.round(this.data[this.region]["E2E1_DIFF_" + this.period + "_AF"]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                this.$el.find(".stat.people .number .variable").html(this.numberWithCommas(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_PF"])));
+                this.$el.find(".stat.capital .number .variable").html(this.numberWithCommas(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_BCF"] / 1000000)));
+                this.$el.find(".stat.area .number .variable").html(this.numberWithCommas(Math.round(this.data[this.region]["E2E1_DIFF_" + this.period + "_AF"])));
 
                 this.changeScenario();
+            },
+
+            numberWithCommas: function (number) {
+                return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             },
 
             changeRegion: function() {
@@ -205,7 +213,7 @@ define([
                 }
 
                 if (this.region === "Global") {
-                    //layerDefs[0] = "SHORE_ID <> 0";
+                    layerDefs[0] = this.activeCountries;
                 } else {
                     layerDefs[0] = "COUNTRY='" + this.region +"'";
                 }
@@ -252,6 +260,8 @@ define([
                 this.coastalProtectionLayer.refresh();
 
                 this.updateChart();
+                this.updateLegend();
+                
             },
 
             render: function() {
@@ -264,6 +274,39 @@ define([
 
                 $(this.container).empty().append($el);
 
+            },
+
+            updateLegend: function () {
+                var html = "";
+
+                if (this.coralReefLayer.visible) {
+                    html += "<span style='background: rgb(29,29,114)' class='legend-item coastal-reef'></span>Coral Reef Habitats<br><br>";
+                }
+
+                if (this.coastalProtectionLayer.visible) {
+                    if (this.layer === "people") {
+                        html += "People at Risk (No.)<br>";
+                    } else if (this.layer === "capital") {
+                        html += "Built Capital at Risk (M)<br>";
+                    } else if (this.layer === "area") {
+                        html += "Area at Risk (sq km)<br>";
+                    }
+
+                    _.each(this.mapClassBreaks[this.layer], function (classbreak) {
+                        html += "<span style='background: rgb(";
+                        html += classbreak[2][0] + ",";
+                        html += classbreak[2][1] + ",";
+                        html += classbreak[2][2];
+                        html += ")' class='legend-item coastal-protection'></span>";
+                        html += classbreak[3] + "<br>";
+                    }, this);
+
+                    
+                }
+
+                $(this.legendContainer).show().html(html);
+
+                return html;
             },
 
             showGraphTooltip: function(d, self) {
@@ -747,7 +790,7 @@ define([
                     renderer.addBreak({
                         minValue: classBreak[0], 
                         maxValue: classBreak[1], 
-                        symbol: SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color(classBreak[2]), 4),
+                        symbol: SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color(classBreak[2]), 2),
                         label: classBreak[3]
                     });
                 });
@@ -766,6 +809,7 @@ define([
                     this.coralReefLayer.hide();
                     this.coastalProtectionLayer.hide();
                 }
+                $(this.legendContainer).hide().html();
             },
 
         });

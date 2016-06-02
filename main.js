@@ -110,6 +110,9 @@ define([
                     ],
                 };
 
+                console.log(this.legendContainer);
+                $(this.legendContainer).html("I WILL CONQUER THIS");
+
             },
 
             bindEvents: function() {
@@ -146,8 +149,8 @@ define([
 
                 this.coastalProtectionLayer = new ArcGISDynamicMapServiceLayer("http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer", {});
                 this.coastalProtectionLayer.setVisibleLayers([0]);
-                layerDefs[0] = "SHORE_ID <> 0";
-                this.coastalProtectionLayer.setLayerDefinitions(layerDefs);
+                //layerDefs[0] = "SHORE_ID <> 0";
+                //this.coastalProtectionLayer.setLayerDefinitions(layerDefs);
 
                 layerDrawingOption.renderer = renderer;
                 layerDrawingOptions[0] = layerDrawingOption;
@@ -202,9 +205,9 @@ define([
                 }
 
                 if (this.region === "Global") {
-                    layerDefs[0] = "SHORE_ID <> 0";
+                    //layerDefs[0] = "SHORE_ID <> 0";
                 } else {
-                    layerDefs[0] = "SHORE_ID <> 0 AND COUNTRY='" + this.region +"'";
+                    layerDefs[0] = "COUNTRY='" + this.region +"'";
                 }
                 this.coastalProtectionLayer.setLayerDefinitions(layerDefs);
                 this.map.setExtent(extent);

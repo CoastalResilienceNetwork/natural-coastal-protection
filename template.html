@@ -423,7 +423,7 @@
 		    		<select class="region-select">
 		    			<optgroup label="Select Region">
 		    			<% _.each(regions, function(val, key) { %>
-		    				<option <% if (key === "Global") { %> selected <% } %>> <%= key %></option>
+		    				<option value="<%= key %>" <% if (key === "Global") { %> selected <% } %>> <%= key %></option>
 		    			<% }); %>
 		    			</optgroup>
 		    		</select>

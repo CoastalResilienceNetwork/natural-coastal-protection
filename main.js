@@ -33,8 +33,8 @@ define([
     "dojo/text!./template.html",
     "dojo/text!./layers.json",
     "dojo/text!./data.json",
-    "dojo/text!./extent-bookmarks.json"],
-    function (declare,
+    "dojo/text!./extent-bookmarks.json"
+    ], function (declare,
               d3,
               PluginBase,
               LayerSelectorPlugin,
@@ -61,6 +61,7 @@ define([
 
             initialize: function(frameworkParameters, currentRegion) {
                 declare.safeMixin(this, frameworkParameters);
+                this.loaded = false;
                 this.data = $.parseJSON(Data);
                 this.extents = $.parseJSON(ExtentBookmarks);
                 this.pluginTmpl = _.template(this.getTemplateById('plugin'));
@@ -112,8 +113,7 @@ define([
                     ],
                 };
 
-                this.activeCountries = "COUNTRY_ID = 58 OR COUNTRY_ID = 66 OR COUNTRY_ID = 106 OR COUNTRY_ID = 113 OR COUNTRY_ID = 136 OR COUNTRY_ID = 145 OR COUNTRY_ID = 177 OR COUNTRY_ID = 223";
-
+                //this.activeCountries = "COUNTRY_ID = 58 OR COUNTRY_ID = 66 OR COUNTRY_ID = 106 OR COUNTRY_ID = 113 OR COUNTRY_ID = 136 OR COUNTRY_ID = 145 OR COUNTRY_ID = 177 OR COUNTRY_ID = 223";
             },
 
             bindEvents: function() {
@@ -133,15 +133,13 @@ define([
                 return layerSourcesJson;
             },
 
-            activate: function() {
-                var self = this;
+            firstLoad: function() {
+                this.loaded = true;
+
                 var layerDefs = [];
                 var layerDrawingOptions = [];
                 var layerDrawingOption = new LayerDrawingOptions();
                 var renderer = this.createRenderer(this.mapClassBreaks.people, "E2E1_DIF_ANN_PF");
-                
-                this.render();
-                this.renderChart();
 
                 this.coralReefLayer = new ArcGISDynamicMapServiceLayer("http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer", {
                     visible: false,
@@ -150,20 +148,44 @@ define([
 
                 this.coastalProtectionLayer = new ArcGISDynamicMapServiceLayer("http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer", {});
                 this.coastalProtectionLayer.setVisibleLayers([0]);
-                layerDefs[0] = this.activeCountries;
-                this.coastalProtectionLayer.setLayerDefinitions(layerDefs);
-
-                //layerDrawingOption.renderer = renderer;
-                //layerDrawingOptions[0] = layerDrawingOption;
+                //layerDefs[0] = this.activeCountries;
+                //this.coastalProtectionLayer.setLayerDefinitions(layerDefs);
 
                 this.coastalProtectionLayer.setLayerDrawingOptions(layerDrawingOptions);
                 this.map.addLayer(this.coastalProtectionLayer);
                 this.map.addLayer(this.coralReefLayer);
 
+                
+
+            },
+
+            activate: function() {
+                var self = this;
+                
+                this.render();
+                this.renderChart();
+
+                if (!this.loaded) {
+                    this.firstLoad();
+                }
+
+                // Restore storm period radios
+                this.$el.find("input[value=" + this.period + "]").prop('checked', true);
+
+                // restore state of people, capital, area selector
+                this.$el.find(".stat.active").removeClass("active");
+                this.$el.find("." + this.layer + ".stat").addClass("active");
+
+                // Restore state of region select
+                this.$el.find(".region-select").val(this.region);
+
+                // Restore state of coral reef checkbox
+                if (this.coralReefLayer.visible) {
+                    this.$el.find(".coral-select-container input").prop("checked", true);
+                }
+
                 this.changePeriod();
                 this.changeScenario();
-
-                
 
             },
 
@@ -213,7 +235,7 @@ define([
                 }
 
                 if (this.region === "Global") {
-                    layerDefs[0] = this.activeCountries;
+                    layerDefs[0] = ""; //this.activeCountries;
                 } else {
                     layerDefs[0] = "COUNTRY='" + this.region +"'";
                 }
@@ -285,11 +307,11 @@ define([
 
                 if (this.coastalProtectionLayer.visible) {
                     if (this.layer === "people") {
-                        html += "People at Risk (No.)<br>";
+                        html += "People Protected (No.)<br>";
                     } else if (this.layer === "capital") {
-                        html += "Built Capital at Risk (M)<br>";
+                        html += "Built Capital Protected (M)<br>";
                     } else if (this.layer === "area") {
-                        html += "Area at Risk (sq km)<br>";
+                        html += "Area Protected (sq km)<br>";
                     }
 
                     _.each(this.mapClassBreaks[this.layer], function (classbreak) {
@@ -811,6 +833,9 @@ define([
                 }
                 $(this.legendContainer).hide().html();
             },
+
+            deactivate: function () {
+            }
 
         });
     }

@@ -236,11 +236,9 @@ define([
 
                 // Show/hide the download country summary button
                 if (this.region === "Global") {
-                    // this.$el.find(".js-getSnapshot").hide();
-                    this.$el.find(".country-summary").hide();
+                    this.$el.find(".js-getSnapshot").hide();
                 } else {
-                    // this.$el.find(".js-getSnapshot").show();
-                    this.$el.find(".country-summary").show();
+                    this.$el.find(".js-getSnapshot").show();
                 }
 
                 this.changePeriod();
@@ -262,7 +260,7 @@ define([
                 if (this.region === "Global") {
                     layerDefs[0] = ""; //this.activeCountries;
                 } else if (this.region === "US/Puerto Rico") {
-                    layerDefs[0] = "COUNTRY='United States'";
+                    layerDefs[0] = "COUNTRY='United States & Puerto Rico'";
                 } else {
                     layerDefs[0] = "COUNTRY='" + this.region + "'";
                 }

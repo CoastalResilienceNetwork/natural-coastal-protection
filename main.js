@@ -33,7 +33,7 @@ define([
     "dojo/text!./template.html",
     "dojo/text!./layers.json",
     "dojo/text!./data.json",
-    "dojo/text!./extent-bookmarks.json"
+    "dojo/text!./country-config.json"
     ], function (declare,
               d3,
               PluginBase,
@@ -47,7 +47,7 @@ define([
               templates,
               layerSourcesJson,
               Data,
-              ExtentBookmarks
+              CountryConfig
               ) {
         return declare(PluginBase, {
             toolbarName: "Natural Coastal Protection",
@@ -62,7 +62,7 @@ define([
             initialize: function(frameworkParameters, currentRegion) {
                 declare.safeMixin(this, frameworkParameters);
                 this.data = $.parseJSON(Data);
-                this.extents = $.parseJSON(ExtentBookmarks);
+                this.countryConfig = $.parseJSON(CountryConfig);
                 this.pluginTmpl = _.template(this.getTemplateById('plugin'));
 
                 this.$el = $(this.container);
@@ -244,7 +244,7 @@ define([
                 this.changePeriod();
 
                 var layerDefs = [];
-                var regionExtent = this.extents[this.region].EXTENT;
+                var regionExtent = this.countryConfig[this.region].EXTENT;
 
                 var extent;
 
@@ -878,31 +878,10 @@ define([
                 return renderer;
             },
 
-            // Make an ajax request to the print service with all the needed data
+            // Download the pdf report for the current region
             printReport: function() {
-                var reportData = {
-                    region: this.region,
-                    chart: {
-                        current: this.chart.data.current.y,
-                        future: this.chart.data.scenario.y
-                    },
-                    annual: {
-                        people_present: this.data[this.region].E1_ANN_PF,
-                        people_future: this.data[this.region].E2_ANN_PF,
-                        area_present: this.data[this.region].E1_ANN_AF,
-                        area_future: this.data[this.region].E2_ANN_AF,
-                        capital_present: this.data[this.region].E1_ANN_BCF,
-                        capital_future: this.data[this.region].E2_ANN_BCF
-                    }
-                };
-
-                $.ajax({
-                    type: "POST",
-                    url: "",
-                    dataType: "json",
-                    contentType: "application/json",
-                    data: JSON.stringify(reportData),
-                });
+                window.open(this.countryConfig[this.region].SNAPSHOT, '_blank'); 
+                return false;
             },
 
             // Get the requested template from the template file based on id.

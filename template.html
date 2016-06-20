@@ -195,7 +195,7 @@
 
 	}
 
-	.summary-button {
+	.download-summary {
 		display: block;
 		margin-top: 12px;
 	    margin-left: 1px;
@@ -213,7 +213,7 @@
 	    font-size: 16px;
     }
 
-    .summary-button:active {
+    .download-summary:active {
     	color: #fff;
 		-webkit-transform: scale(0.9) translateY(4px);
 		-moz-transform: scale(0.9) translateY(4px);
@@ -228,7 +228,7 @@
 		outline: none;
 	}
 
-	.summary-button:hover {
+	.download-summary:hover {
 		color: #fff;
 		background: darken(#226491, 5%);
 		-webkit-transition: all 0.05s ease;
@@ -428,8 +428,8 @@
 		    			</optgroup>
 		    		</select>
 		    	</div>
-                <a class="country-summary summary-button" href="https://s3.amazonaws.com/spatialdev/projects/TNC/NCP_CountrySnapshot_Philippines.pdf" target="_blank" style="display: none">Download Country Summary <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
-                <a class="download-summary summary-button" href="https://www.wavespartnership.org/sites/waves/files/kc/Technical%20Rept%20WAVES%20Coastal%202-11-16%20web.pdf" target="_blank">Download Waves Report <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+				<a class="download-summary js-getSnapshot" target="_blank" style="display: none">Download Country Summary <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+				<a class="download-summary" href="https://www.wavespartnership.org/sites/waves/files/kc/Technical%20Rept%20WAVES%20Coastal%202-11-16%20web.pdf" target="_blank">Download Waves Report <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
 	    	</div>
 
 	    	<div class="storm-buttons-container">

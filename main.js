@@ -332,7 +332,7 @@ define([
                     if (this.layer === "people") {
                         html += "People Protected (No.)<br>";
                     } else if (this.layer === "capital") {
-                        html += "Built Capital Protected (M)<br>";
+                        html += "Built Capital Protected ($Millions)<br>";
                     } else if (this.layer === "area") {
                         html += "Area Protected (sq km)<br>";
                     }
@@ -397,7 +397,7 @@ define([
 
                 // The x-axis for the bar chart is also ordinal with two values
                 this.chart.barx = d3.scale.ordinal()
-                    .domain(["present", "1m loss"])
+                    .domain(["Present", "Reef Loss"])
                     .rangeRoundBands([0, this.chart.position.width], 0.15);
 
                 this.chart.y = d3.scale.linear()
@@ -493,7 +493,7 @@ define([
                         .attr("fill", "#30928D");
 
                     this.chart.legend.append("text")
-                        .text("present")
+                        .text("Present")
                         .attr("x", "32")
                         .attr("y", "11");
                     
@@ -505,7 +505,7 @@ define([
                         .attr("fill", "#923034");
 
                     this.chart.legend.append("text")
-                        .text("1m loss")
+                        .text("Reef Loss")
                         .attr("x", "32")
                         .attr("y", "29");
 
@@ -521,13 +521,13 @@ define([
                 this.chart.data = {};
                 this.chart.data.current = {};
                 this.chart.data.current.x = [0,10,25,50,100];
-                this.chart.data.current.barx = ["present", "1m loss"];
+                this.chart.data.current.barx = ["Present", "Reef Loss"];
                 this.chart.data.current.y = [0,0,0,0,0];
                 this.chart.data.current.xy = [];
 
                 this.chart.data.scenario = {};
                 this.chart.data.scenario.x = [0,10,25,50,100];
-                this.chart.data.scenario.barx = ["present", "1m loss"];
+                this.chart.data.scenario.barx = ["Present", "Reem Loss"];
                 this.chart.data.scenario.y = [0,0,0,0,0];
                 this.chart.data.scenario.xy = [];
 
@@ -624,8 +624,8 @@ define([
 
                 // Bar chart
                 var bardata = [
-                    {x: "present", y: 0},
-                    {x: "1m loss", y: 0}
+                    {x: "Present", y: 0},
+                    {x: "Reef Loss", y: 0}
                 ];
 
                 this.chart.svg.selectAll(".bar")
@@ -668,7 +668,7 @@ define([
                 // Update the  y-axis label to match the current variable selected
                 var text = "";
                 if (this.variable === "BCF") {
-                    text = "Built Capital at Risk (M)";
+                    text = "Built Capital at Risk ($Millions)";
                 } else if (this.variable === "PF") {
                     text = "People at Risk (No.)";
                 } else if (this.variable === "AF") {
@@ -736,8 +736,8 @@ define([
                 }
 
                 var bardata = [
-                    {x: "present", y: bary},
-                    {x: "1m loss", y: bary1m}
+                    {x: "Present", y: bary},
+                    {x: "Reef Loss", y: bary1m}
                 ];
 
                 if(this.period === "ANN") {

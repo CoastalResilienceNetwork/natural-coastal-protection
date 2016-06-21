@@ -29,7 +29,7 @@
 	.storm-buttons-container label {
 	  position: relative;
 	  display: block;
-	  width: 80px;
+	  width: 163px;
 	  padding-top: 1px;
 	  padding-left: 30px;
 	  color: #333333;
@@ -390,7 +390,7 @@
 		fill: #923034;
 	}
 
-	.bar.present {
+	.bar.Present {
 		fill: #30928D;
 	}
 
@@ -412,13 +412,12 @@
 	<div class="ncp-plugin">
 	    <div class="title">Flood Protection Provided by Coral Reefs</div>
 	    <div class="main-message">
-	    	This analysis combines ecology, engineering, and economics to 
-	    	estimate the global role of coral reefs in flood protection.
+	    	Estimates of the benefits provided by reefs in flood protection annually and from catastrophic storms
 	    </div>
 	    <div class="controls-container clearfix">
 
 	    	<div class="region-select-container">
-	    		<span class="control-title">Region:</span><br>
+	    		<span class="control-title">Country:</span><br>
 	    		<div class="styled-select">
 		    		<select class="region-select">
 		    			<optgroup label="Select Region">
@@ -451,21 +450,21 @@
 
 	    		<div class="radio-control radio-padding">
 					<span class="control-title">
-						Storm Return Period
+						Benefits from Catastrophic Storms
 						<i data-tooltip="30 years of historical data on regional sea level and wave conditions were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events." class="fa fa-info-circle info-period info-tooltip"></i>
 					</span>
 		    		<div class="check-group">
 						<label>
 							<input type="radio" name="storm<%=pane%>" value="25RP" />
 							<div class="radio-select"></div>
-							25 yrs
+							1 in 25-year storm
 						</label>
 		    		</div>
 		    		<div class="check-group">
 		    			<label>
 							<input type="radio" name="storm<%=pane%>" value="100RP" />
 							<div class="radio-select"></div>
-							100 yrs
+							1 in 100-year storm
 						</label>
 		    		</div>
 		    	</div>
@@ -476,7 +475,7 @@
 		    </div>
 
 	    </div>
-	    <div class="stats-description">These values represent the predicted losses avoided to people, built capital, and land by keeping coral reefs intact.</div>
+	    <div class="stats-description">The people and property protected by coral reefs (values represent predicted losses avoided by keeping reefs intact)</div>
 	    <div class="stats-container">
 
 	    	<div class="stat people active" data-layer="people">

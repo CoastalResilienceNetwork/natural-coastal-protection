@@ -87,32 +87,31 @@ define([
                 this.chart.position.height = 235  - this.chart.position.margin.top - this.chart.position.margin.bottom;
 
                 // Default class breaks and color ramps
-                var opacity = 0.7;
                 this.mapClassBreaks = {
                     people: [
-                        [-99999,      0,  [120, 120, 120, opacity], "0", 1.5],
-                        [    1,     500,  [26,152,80, opacity], "1 - 500", 3],
-                        [  501,    2500,  [145,207,96, opacity], "501 - 2,500", 3],
-                        [ 2501,    5000,  [217,239,139, opacity], "2501 - 5,000", 3],
-                        [ 5001,   10000,  [254,224,139, opacity], "5001 - 10,000", 3],
-                        [10001,   50000,  [252,141,89, opacity], "10,001 - 50,000", 3],
-                        [50001,20000000, [215,48,39, opacity], "> 50,000", 3]
+                        [-99999,      0,  [120, 120, 120, 1], "0", 1.5],
+                        [    1,     500,  [26,152,80, 1], "1 - 500", 3],
+                        [  501,    2500,  [145,207,96, 1], "501 - 2,500", 3],
+                        [ 2501,    5000,  [217,239,139, 1], "2501 - 5,000", 3],
+                        [ 5001,   10000,  [254,224,139, 1], "5001 - 10,000", 3],
+                        [10001,   50000,  [252,141,89, 1], "10,001 - 50,000", 3],
+                        [50001,20000000, [215,48,39, 1], "> 50,000", 3]
                     ],
                     capital: [
-                        [-99999,      0,  [120, 120, 120, opacity], "0", 1],
-                        [    0,      75000,  [26,150,65, opacity], "1 - 75", 3],
-                        [  75000,      250000,  [166,217,106, opacity], "76 - 250", 3],
-                        [ 250000,      750000,  [253,174,97, opacity], "251 - 750", 3],
-                        [ 750000,     1000000,  [215,48,39, opacity] , "751 - 1,000", 3],
-                        [1000000,   9000000000,  [165,0,38, opacity], "> 1,001", 3]
+                        [-99999,      0,  [120, 120, 120, 1], "0", 1],
+                        [    0,      75000,  [26,150,65, 1], "1 - 75", 3],
+                        [  75000,      250000,  [166,217,106, 1], "76 - 250", 3],
+                        [ 250000,      750000,  [253,174,97, 1], "251 - 750", 3],
+                        [ 750000,     1000000,  [215,48,39, 1] , "751 - 1,000", 3],
+                        [1000000,   9000000000,  [165,0,38, 1], "> 1,001", 3]
                     ],
                     area: [
-                        [-99999,      0,  [120, 120, 120, opacity], "0", 1],
-                        [    1,      5,  [26,150,65, opacity], "1 - 5", 3],
-                        [  5,      20,  [166,217,106, opacity], "6 - 20", 3],
-                        [ 20,      50,  [253,174,97, opacity], "21 - 50", 3],
-                        [ 50,     100,  [215,48,39, opacity], "51 - 100", 3],
-                        [100,   100000,  [165,0,38, opacity], "> 100", 3]
+                        [-99999,      0,  [120, 120, 120, 1], "0", 1],
+                        [    1,      5,  [26,150,65, 1], "1 - 5", 3],
+                        [  5,      20,  [166,217,106, 1], "6 - 20", 3],
+                        [ 20,      50,  [253,174,97, 1], "21 - 50", 3],
+                        [ 50,     100,  [215,48,39, 1], "51 - 100", 3],
+                        [100,   100000,  [165,0,38, 1], "> 100", 3]
                     ],
                 };
 
@@ -218,8 +217,6 @@ define([
             changePeriod: function() {
                 this.period = this.$el.find("input[name=storm" + this.app.paneNumber + "]:checked").val();
                 //http://stackoverflow.com/a/2901298
-                console.log("E2E1_DIF_" + this.period + "_AF");
-                console.log(this.data[this.region]["E2E1_DIF_" + this.period + "_AF"]);
                 this.$el.find(".stat.people .number .variable").html(this.numberWithCommas(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_PF"])));
                 this.$el.find(".stat.capital .number .variable").html(this.numberWithCommas(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_BCF"] / 1000000)));
                 this.$el.find(".stat.area .number .variable").html(this.numberWithCommas(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_AF"])));

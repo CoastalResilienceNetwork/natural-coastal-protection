@@ -85,7 +85,7 @@ define([
                 this.chart.position.height = 235  - this.chart.position.margin.top - this.chart.position.margin.bottom;
 
                 // Default class breaks and color ramps
-                var opacity = 0.7;
+                var opacity = 1;
                 this.mapClassBreaks = {
                     people: [
                         [-99999,      0,  [120, 120, 120, opacity], "0", 1.5],
@@ -150,6 +150,7 @@ define([
 
                 this.coralReefLayer = new ArcGISDynamicMapServiceLayer("http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer", {
                     visible: false,
+                    opacity: 0.5
                 });
                 this.coralReefLayer.setVisibleLayers([1]);
 

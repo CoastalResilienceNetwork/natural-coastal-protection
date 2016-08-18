@@ -217,8 +217,6 @@ define([
             changePeriod: function() {
                 this.period = this.$el.find("input[name=storm" + this.app.paneNumber + "]:checked").val();
                 //http://stackoverflow.com/a/2901298
-                console.log("E2E1_DIF_" + this.period + "_AF");
-                console.log(this.data[this.region]["E2E1_DIF_" + this.period + "_AF"]);
                 this.$el.find(".stat.people .number .variable").html(this.numberWithCommas(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_PF"])));
                 this.$el.find(".stat.capital .number .variable").html(this.numberWithCommas(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_BCF"] / 1000000)));
                 this.$el.find(".stat.area .number .variable").html(this.numberWithCommas(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_AF"])));

@@ -4,7 +4,7 @@
 
 <style>
 
-	.ncp-plugin {
+	.mar-plugin {
 		-moz-user-select: none;
 		-webkit-user-select: none;
 		-ms-user-select: none;
@@ -13,12 +13,12 @@
 
 	/* Checkboxes */
 
-	input[type=radio]{
+	.mar-plugin input[type=radio]{
 	  position: absolute;
 	  visibility: hidden;
 	}
 
-	.check-group {
+	.mar-plugin .check-group {
 		position: relative;
 		display: block;
 	    width: 38px;
@@ -26,10 +26,10 @@
 	    text-align: left;
 	}
 	
-	.storm-buttons-container label {
+	.mar-plugin .storm-buttons-container .expected-benefit label {
 	  position: relative;
 	  display: block;
-	  width: 80px;
+	  width: 240px;
 	  padding-top: 1px;
 	  padding-left: 30px;
 	  color: #333333;
@@ -40,23 +40,23 @@
 	  z-index: 100;
 	}
 
-	.storm-buttons-container .radio-padding {
+	.mar-plugin .storm-buttons-container .radio-padding {
 		margin-top: 10px;
 	}
 
-	.storm-buttons-container .check-group.annual {
+	.mar-plugin .storm-buttons-container .check-group.annual {
 		margin-top: 6px;
 	}
 
-	.storm-buttons-container .check-group.annual label {
+	.mar-plugin .storm-buttons-container .check-group.annual label {
 		width: 140px;
 	}
 
-	.check-group:hover label {
+	.mar-plugin .check-group:hover label {
 		color: #306692;
 	}
 
-	.radio-select{
+	.mar-plugin .radio-select{
 	  position: absolute;
 	  display: block;
 	  top: 2px;
@@ -65,16 +65,17 @@
 	  border-radius: 100%;
 	  height: 12px;
 	  width: 12px;
+	  background-color: #fff;
 	  z-index: 5;
 	  transition: border .25s linear;
 	  -webkit-transition: border .25s linear;
 	}
 
-	.storm-buttons-container .annual .radio-select {
+	.mar-plugin .storm-buttons-container .annual .radio-select {
 		top: -2px;
 	}
 
-	.radio-select::before {
+	.mar-plugin .radio-select::before {
 	  display: block;
 	  position: absolute;
 	  left: 1px;
@@ -88,71 +89,91 @@
 	  -webkit-transition: background 0.25s linear;
 	}
 
-	input[type=radio]:checked ~ .radio-select::before{
+	.mar-plugin input[type=radio]:checked ~ .radio-select::before{
 	  background:#306692;
 	}
 
-	input[type=radio]:checked ~ .check {
+	.mar-plugin input[type=radio]:checked ~ .check {
 	  border: 1px solid #306692;
 	}
 
-	input[type=radio]:checked ~ label{
+	.mar-plugin input[type=radio]:checked ~ label{
 	  color: #306692;
+	}
+
+	.mar-plugin .slider-select {
+		height: 45px;
+	}
+
+	.mar-plugin .slider-select:before {
+		content: "";
+	    border-bottom: 4px solid #306692;
+	    width: 200px;
+	    height: 0px;
+	    position: absolute;
+	    margin-top: 6px;
+	}
+
+
+	.mar-plugin .catastrophic-select .check-group {
+		display: inline-block;
+		float: left;
+		text-align: center;
 	}
 
 	/* End Checkboxes */
 
-	.clearfix {
+	.mar-plugin .clearfix {
 		overflow: auto;
   		zoom: 1;
 	}
 
-	.title {
+	.mar-plugin .title {
 	    margin: 6px 3px;
 		font-weight: bold;
 	    font-size: 22px;
 	    text-align: center;
 	}
 
-	.main-message {
+	.mar-plugin .main-message {
 		margin: 4px;
 		font-size: 16px;
 	}
 
-	.controls-container {
+	.mar-plugin .controls-container {
 		padding: 10px 8px;
 		background-color: #f3f4f3;
 	}
 
-	.storm-buttons-container {
+	.mar-plugin .storm-buttons-container {
 		float: left;
-		width: 175px;
+		width: 210px;
 	}
 
-	.storm-buttons-container .control-title,
-	.region-select-container .control-title {
+	.mar-plugin .storm-buttons-container .control-title,
+	.mar-plugin .region-select-container .control-title {
     	display: inline-block;
 		margin-bottom: 6px;
     	font-weight: bold;
 	}
 
-	.region-select-container {
+	.mar-plugin .region-select-container {
 		float: right;
 		width: 155px;
 	}
 
-	.info-tooltip {
+	.mar-plugin .info-tooltip {
 		color: #226491;
 		font-size: 16px;
 		vertical-align: middle;
 	}
 
-	.stat .info-tooltip {
+	.mar-plugin .stat .info-tooltip {
 		padding-left: 10px;
 		margin-top: -4px;
 	}
 
-	.styled-select {
+	.mar-plugin .styled-select {
 		position: relative;
 		width: 150px;
 		height: 36px;
@@ -163,7 +184,7 @@
 		cursor: pointer;
 	}
 
-	.styled-select::after {
+	.mar-plugin .styled-select::after {
 		display: block;
 		position: absolute;
 		right: 5px;
@@ -174,7 +195,7 @@
 		pointer-events: none;
 	}
 
-	.styled-select select {
+	.mar-plugin .styled-select select {
 		background: transparent;
 		width: 168px;
 		padding: 5px;
@@ -190,12 +211,12 @@
 		cursor: pointer;
 	}
 
-	.styled-select select optgroup,
-	.styled-select select option {
+	.mar-plugin .styled-select select optgroup,
+	.mar-plugin .styled-select select option {
 
 	}
 
-	.download-summary {
+	.mar-plugin .download-summary {
 		display: block;
 		margin-top: 12px;
 	    margin-left: 1px;
@@ -213,7 +234,7 @@
 	    font-size: 16px;
     }
 
-    .download-summary:active {
+    .mar-plugin .download-summary:active {
     	color: #fff;
 		-webkit-transform: scale(0.9) translateY(4px);
 		-moz-transform: scale(0.9) translateY(4px);
@@ -223,12 +244,12 @@
 		background: darken(#226491, 5%);
     }
 
-	.a:visited {
+	.mar-plugin .a:visited {
 		color: #fff !important;
 		outline: none;
 	}
 
-	.download-summary:hover {
+	.mar-plugin .download-summary:hover {
 		color: #fff;
 		background: darken(#226491, 5%);
 		-webkit-transition: all 0.05s ease;
@@ -237,27 +258,27 @@
 		-o-transition: all 0.05s ease;
 		transition: all 0.05s ease;
 	}
-    .stats-description {
+    .mar-plugin .stats-description {
     	padding: 8px;
 		font-size: 16px;
     }
 
-	.stats-container {
+	.mar-plugin .stats-container {
 		width: 100%;
 		display: table;
 	}
 
-	.stat {
+	.mar-plugin .stat {
 		display: table-row;
 		height: 50px;
 	}
 
-	.stat.active .description,
-	.stat.active .number {
+	.mar-plugin .stat.active .description,
+	.mar-plugin .stat.active .number {
 		color: #226491;
 	}
 
-	.stat .number {
+	.mar-plugin .stat .number {
 		display: table-cell;
     	width: 50%;
 		cursor: pointer;
@@ -269,12 +290,12 @@
 	    transition: color 0.35s linear;
 	}
 
-	.stat:hover .description,
-	.stat:hover .number {
+	.mar-plugin .stat:hover .description,
+	.mar-plugin .stat:hover .number {
 		color: #226491;
 	}
 
-	.stat .description {
+	.mar-plugin .stat .description {
 		cursor: pointer;
 	    display: table-cell;
     	width: 50%;
@@ -286,16 +307,20 @@
 	    transition: color 0.35s linear;
 	}
 
-	.coral-select-container {
+	.mar-plugin .stat .sub-description {
+		font-size: 12px;
+	}
+
+	.mar-plugin .coral-select-container {
 		float: left;
 	    width: 175px;
 	    text-align: left;
-	    margin-top: 20px;
+	    margin-top: 10px;
 		font-size: 16px;
 	    clear: left;
 	}
 
-	.coral-select-container input[type=checkbox] {
+	.mar-plugin .coral-select-container input[type=checkbox] {
 	  /* Double-sized Checkboxes */
 	    margin-top: 1px;
 		-ms-transform: scale(1.2);
@@ -305,12 +330,12 @@
 		padding: 10px;
 	}
 
-	.coral-select-container span {
+	.mar-plugin .coral-select-container span {
 		margin-left: 8px;
 		font-weight: 600;
 	}
 
-	.ncp-tooltip {
+	.mar-plugin .ncp-tooltip {
 		position: absolute;
 		display: none;
 		color: #333;
@@ -324,58 +349,58 @@
 
 	/* Chart SVG Styles */
 
-	.chartContainer {
+	.mar-plugin .chartContainer {
 		background: #f3f4f3;
 		text-align: center;
 	}
 
-	path {
+	.mar-plugin path {
 		stroke: #333;
 		stroke-width: 2px;
 		fill: none;
 	}
 
-	.tick line {
+	.mar-plugin .tick line {
 		stroke: #333;
 	}
 
-	.tick.current {
+	.mar-plugin .tick.current {
 		font-weight: bold;
 	}
 
-	.points-current circle {
+	.mar-plugin .points-current circle {
 		fill: #333;
 	}
 
-	path.scenario {
+	.mar-plugin path.scenario {
 		stroke: #333;
 	}
 
-	.points-scenario circle {
+	.mar-plugin .points-scenario circle {
 		fill: #333;
 	}
 
-	.area-current {
-	    fill: #923034;
-	    stroke-width: 0;
-	}
-
-	.area-scenario {
+	.mar-plugin .area-current {
 	    fill: #30928D;
 	    stroke-width: 0;
 	}
 
-	.area.scenario {
+	.mar-plugin .area-scenario {
 	    fill: #923034;
 	    stroke-width: 0;
 	}
 
-	.xaxis-label,
-	.yaxis-label {
+	.mar-plugin .area.scenario {
+	    fill: #923034;
+	    stroke-width: 0;
+	}
+
+	.mar-plugin .xaxis-label,
+	.mar-plugin .yaxis-label {
 		font-size: 16px;
 	}
-	.xaxis path,
-	.yaxis path {
+	.mar-plugin .xaxis path,
+	.mar-plugin .yaxis path {
 		fill: none;
 		stroke: #ccc;
 		stroke-width: 1px;
@@ -386,27 +411,33 @@
 		border: none;
 	}
 
-	.bar {
+	.mar-plugin .bar {
 		fill: #923034;
 	}
 
-	.bar.present {
+	.mar-plugin .bar.Present {
 		fill: #30928D;
 	}
 
-	.world-bank-report {
+	.mar-plugin .world-bank-report {
 		text-align: right;
 		margin-top: -6px;
 		margin-right: 8px;
 	}
 
+	.custom-legend .legend-item {
+		width: 15px;
+	    height: 10px;
+	    display: inline-block;
+	    margin-right: 5px;
+	}
+
 </style>
 
-	<div class="ncp-plugin">
+	<div class="mar-plugin">
 	    <div class="title">Flood Protection Provided by Coral Reefs</div>
 	    <div class="main-message">
-	    	This analysis combines ecology, engineering, and economics to 
-	    	estimate the global role of coral reefs in flood protection.
+	    	Estimates of the benefits provided by reefs in flood protection annually and from catastrophic storms
 	    </div>
 	    <div class="controls-container clearfix">
 
@@ -416,51 +447,75 @@
 		    		<select class="region-select">
 		    			<optgroup label="Select Region">
 		    			<% _.each(regions, function(val, key) { %>
-		    				<option <% if (key === "Global") { %> selected <% } %>> <%= key %></option>
+		    				<option value="<%= key %>" <% if (key === "Global") { %> selected <% } %>> <%= key %></option>
 		    			<% }); %>
 		    			</optgroup>
+		    			<option>Draw Custom Region</option>
 		    		</select>
 		    	</div>
-				<a class="download-summary" href="https://s3.amazonaws.com/spatialdev/projects/TNC/NCP_CountrySnapshot_Philippines.pdf" target="_blank" style="display: none">Download Country Summary <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
-				<a class="download-summary" href="https://www.wavespartnership.org/sites/waves/files/kc/Technical%20Rept%20WAVES%20Coastal%202-11-16%20web.pdf" target="_blank">Download Waves Report <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+				<a class="download-summary js-getSnapshot" target="_blank" style="display: none">Download Regional Summary <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+				<a class="download-summary" href="https://www.wavespartnership.org/sites/waves/files/kc/Technical%20Rept%20WAVES%20Coastal%202-11-16%20web.pdf" target="_blank">Download Report <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
 	    	</div>
 
 	    	<div class="storm-buttons-container">
-
-		    	<div class="radio-control">
-					<span class="control-title">
-						Annual Expected Benefit
-						<i data-tooltip="Annual expected benefits from reefs for flood protection  represents the predicted flooding avoided to land, people, and infrastructure by keeping coral reefs intact. It is an annualized benefit of the role of reefs in flood reduction that considers local factors such as reef condition, asset distribution, and storm frequency." class="fa fa-info-circle info-annual info-tooltip"></i>
-					</span>
-		    		<div class="check-group annual">
-						
-						<label>
-							<input  type="radio" name="storm<%=pane%>" value="ANN" checked="checked" />
-							<div class="radio-select"></div>
-							&nbsp;
-						</label>
+		    	<div class="expected-benefit">
+			    	<div class="radio-control">
+						<span class="control-title">
+							Annual Expected Benefit
+							<i data-tooltip="Annual expected benefits from reefs for flood protection  represents the predicted flooding avoided to land, people, and infrastructure by keeping coral reefs intact. It is an annualized benefit of the role of reefs in flood reduction that considers local factors such as reef condition, asset distribution, and storm frequency." class="fa fa-info-circle info-annual info-tooltip"></i>
+						</span>
+			    		<div class="check-group annual">
+							<label>
+								<input  type="radio" name="storm<%=pane%>" value="ANN" checked="checked" />
+								<div class="radio-select"></div>
+								&nbsp;
+							</label>
+			    		</div>
 		    		</div>
-	    		</div>
+		    	</div>
 
-	    		<div class="radio-control radio-padding">
+	    		<div class="radio-control radio-padding catastrophic-select">
 					<span class="control-title">
-						Storm Return Period
+						Benefits from Catastrophic Storms
 						<i data-tooltip="30 years of historical data on regional sea level and wave conditions were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events." class="fa fa-info-circle info-period info-tooltip"></i>
 					</span>
-		    		<div class="check-group">
-						<label>
-							<input type="radio" name="storm<%=pane%>" value="25RP" />
-							<div class="radio-select"></div>
-							25 yrs
-						</label>
-		    		</div>
-		    		<div class="check-group">
-		    			<label>
-							<input type="radio" name="storm<%=pane%>" value="100RP" />
-							<div class="radio-select"></div>
-							100 yrs
-						</label>
-		    		</div>
+					<div class="slider-select">
+						<div class="check-group">
+							<label>
+								<input  type="radio" name="climate-scenario" value="present" checked="checked" />
+								<div class="radio-select"></div>
+								<br>Present
+							</label>
+			    		</div>
+			    		<div class="check-group">
+							<label>
+								<input type="radio" name="climate-scenario" value="low-2030">
+								<div class="radio-select"></div>
+								<br>Low 2030
+							</label>
+			    		</div>
+			    		<div class="check-group">
+							<label>
+								<input type="radio" name="climate-scenario" value="high-2030">
+								<div class="radio-select"></div>
+								<br>High 2030
+							</label>
+			    		</div>
+			    		<div class="check-group">
+							<label>
+								<input type="radio" name="climate-scenario" value="low-2050">
+								<div class="radio-select"></div>
+								<br>Low 2050
+							</label>
+			    		</div>
+			    		<div class="check-group">
+							<label>
+								<input type="radio" name="climate-scenario" value="high-2050">
+								<div class="radio-select"></div>
+								<br>High 2050
+							</label>
+			    		</div>
+					</div>
 		    	</div>
 	    	</div>
 
@@ -469,7 +524,7 @@
 		    </div>
 
 	    </div>
-	    <div class="stats-description">These values represent the predicted losses avoided to people, built capital, and land by keeping coral reefs intact.</div>
+	    <div class="stats-description">The people and property protected by coral reefs (values represent predicted losses avoided by keeping reefs intact)</div>
 	    <div class="stats-container">
 
 	    	<div class="stat people active" data-layer="people">
@@ -480,7 +535,7 @@
 
 	    	<div class="stat capital" data-layer="capital">
 	    		<span class="number">$<span class="variable"><%= global.E2E1_DIF_ANN_BCF %></span>M</span>
-	    		<span class="description"> Built Capital Protected
+	    		<span class="description">Built Capital Protected<br><span class="sub-description">(residential, industrial, and services)</span>
 	    			<i data-tooltip="This value represents the difference of flooding impacts on built capital when coral reefs are present and 
 					when there is 1 meter of reef loss. This value is aggregated
 					to the country scale from 90m resolution data." class="fa fa-info-circle info-capital info-tooltip"></i></span>
@@ -488,8 +543,8 @@
 	    	</div>
 
 	    	<div class="stat area" data-layer="area">
-	    		<span class="number"><span class="variable"><%= global.E2E1_DIFF_ANN_AF %></span>km<sup>2</sup></span>
-	    		<span class="description">Area Protected
+	    		<span class="number">$<span class="variable"><%= global.E2E1_DIFF_ANN_AF %></span></span>
+	    		<span class="description">Hotels Protected
 	    			<i data-tooltip="This value represents the difference of flooding impacts on land area when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data. " class="fa fa-info-circle info-area info-tooltip"></i></span>
 
 	    	</div>

@@ -1,0 +1,45 @@
+{
+	"Global" : {
+		"EXTENT" : [-180,-82,180,85]
+	},
+	"Cuba" : {
+		"EXTENT" : [-88.154297,15.686510,-69.884033,25.433353],
+		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Cuba.pdf"
+	},
+	"Dominican Republic" : {
+		"EXTENT" : [-76.464844,16.346497,-67.329712,21.279137],
+		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Dominican_Republic.pdf"
+	},
+	"Indonesia" : {
+		"EXTENT" : [79.804688,-19.518375,152.885742,21.289374],
+		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Indonesia.pdf"
+	},
+	"Jamaica" : {
+		"EXTENT" : [-79.843140,16.843976,-75.275574,19.321511],
+		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Jamaica.pdf"
+	},
+	"Malaysia" : {
+		"EXTENT" : [84.177246,-4.083453,120.717773,16.530898],
+		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Malaysia.pdf"
+	},
+	"Mexico" : {
+		"EXTENT" : [-123.068848,12.404389,-86.528320,31.615966],
+		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Mexico.pdf"
+	},
+	"Philippines" : {
+		"EXTENT" : [97.075195,1.691649,133.615723,21.983801],
+		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Philippines.pdf"
+	},
+	"Saudi Arabia" : {
+		"EXTENT" : [365.493164,3.206333,438.574219,40.913513],
+		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Saudi_Arabia.pdf"
+	},
+	"Taiwan" : {
+		"EXTENT" : [114.598389,20.899871,123.733521,25.686088],
+		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Taiwan.pdf"
+	},
+	"US/Puerto Rico" : {
+		"EXTENT" : [-142.075195,19.932041,-68.994141,52.589701],
+		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/US_Puerto_Rico.pdf"
+	}
+}

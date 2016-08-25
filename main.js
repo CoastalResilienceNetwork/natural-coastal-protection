@@ -33,8 +33,8 @@ define([
     "dojo/text!./template.html",
     "dojo/text!./layers.json",
     "dojo/text!./data.json",
-    "dojo/text!./extent-bookmarks.json"],
-    function (declare,
+    "dojo/text!./country-config.json"
+    ], function (declare,
               d3,
               PluginBase,
               LayerSelectorPlugin,
@@ -47,23 +47,27 @@ define([
               templates,
               layerSourcesJson,
               Data,
-              ExtentBookmarks
+              CountryConfig
               ) {
         return declare(PluginBase, {
-            toolbarName: "Natural Coastal Protection",
+            toolbarName: "MAR",
             fullName: "Configure and control layers to be overlayed on the base map.",
 			infoGraphic: "plugins/natural_coastal_protection/coastalprotection.jpg",
             resizable: true,
             width: 425,
             height: 740,
+            showServiceLayersInLegend: false, // Disable the default legend item which doesn't pick up our custom class breaks
+            allowIdentifyWhenActive: false,
 
             initialize: function(frameworkParameters, currentRegion) {
                 declare.safeMixin(this, frameworkParameters);
                 this.data = $.parseJSON(Data);
-                this.extents = $.parseJSON(ExtentBookmarks);
+                this.countryConfig = $.parseJSON(CountryConfig);
                 this.pluginTmpl = _.template(this.getTemplateById('plugin'));
 
                 this.$el = $(this.container);
+
+                // Default Settings
                 this.region = "Global";
                 this.period = "ANN";
                 this.layer = "people";
@@ -82,38 +86,44 @@ define([
                 this.chart.position.width = (this.width - 10)- this.chart.position.margin.left - this.chart.position.margin.right;
                 this.chart.position.height = 235  - this.chart.position.margin.top - this.chart.position.margin.bottom;
 
+                // Default class breaks and color ramps
+                var opacity = 0.7;
                 this.mapClassBreaks = {
                     people: [
-                        [-10000,      0,  [120, 120, 120, 1], "0"],
-                        [    1,     500,  [254,217,118, 1], "1 - 500"],
-                        [  501,    2500,  [254,178,76, 1], "501 - 2,500"],
-                        [ 2501,    5000,  [253,141,60, 1], "2501 - 5,000"],
-                        [ 5001,   10000,  [252,78,42, 1], "5001 - 10,000"],
-                        [10001,   50000,  [227,26,28, 1], "10,001 - 50,000"],
-                        [50001,10000000, [177,0,38, 1], "> 50,000"]
+                        [-99999,      0,  [120, 120, 120, opacity], "0", 1.5],
+                        [    1,     500,  [26,152,80, opacity], "1 - 500", 3],
+                        [  501,    2500,  [145,207,96, opacity], "501 - 2,500", 3],
+                        [ 2501,    5000,  [217,239,139, opacity], "2501 - 5,000", 3],
+                        [ 5001,   10000,  [254,224,139, opacity], "5001 - 10,000", 3],
+                        [10001,   50000,  [252,141,89, opacity], "10,001 - 50,000", 3],
+                        [50001,20000000, [215,48,39, opacity], "> 50,000", 3]
                     ],
                     capital: [
-                        [-10000,      0,  [120, 120, 120, 1], "0"],
-                        [    1,      75,  [68, 101, 137, 1], "1 - 75"],
-                        [  75,      250,  [70, 178, 157, 1], "76 - 250"],
-                        [ 250,      750,  [149, 210, 49, 1], "251 - 750"],
-                        [ 750,     1000,  [230, 230, 0, 1] , "751 - 1,000"],
-                        [1000,   100000,  [246, 202, 150, 1], "> 1,001"]
+                        [-99999,      0,  [120, 120, 120, opacity], "0", 1],
+                        [    0,      75000,  [26,150,65, opacity], "1 - 75", 3],
+                        [  75000,      250000,  [166,217,106, opacity], "76 - 250", 3],
+                        [ 250000,      750000,  [253,174,97, opacity], "251 - 750", 3],
+                        [ 750000,     1000000,  [215,48,39, opacity] , "751 - 1,000", 3],
+                        [1000000,   9000000000,  [165,0,38, opacity], "> 1,001", 3]
                     ],
                     area: [
-                        [-10000,      0,  [120, 120, 120, 1], "0"],
-                        [    1,      5,  [230,97,1, 1], "1 - 5"],
-                        [  5,      20,  [253,184,99, 1], "6 - 20"],
-                        [ 20,      50,  [216,218,235, 1], "21 - 50"],
-                        [ 50,     100,  [178,171,210, 1], "51 - 100"],
-                        [100,   100000,  [94,60,153, 1], "> 100"]
+                        [-99999,      0,  [120, 120, 120, opacity], "0", 1],
+                        [    1,      5,  [26,150,65, opacity], "1 - 5", 3],
+                        [  5,      20,  [166,217,106, opacity], "6 - 20", 3],
+                        [ 20,      50,  [253,174,97, opacity], "21 - 50", 3],
+                        [ 50,     100,  [215,48,39, opacity], "51 - 100", 3],
+                        [100,   100000,  [165,0,38, opacity], "> 100", 3]
                     ],
                 };
 
+                //this.activeCountries = "COUNTRY_ID = 58 OR COUNTRY_ID = 66 OR COUNTRY_ID = 106 OR COUNTRY_ID = 113 OR COUNTRY_ID = 136 OR COUNTRY_ID = 145 OR COUNTRY_ID = 177 OR COUNTRY_ID = 223";
             },
 
             bindEvents: function() {
                 var self = this;
+
+                // Set event listeners.  We bind "this" where needed so the event handler can access the full
+                // scope of the plugin
                 this.$el.on("change", "input[name=storm" + this.app.paneNumber + "]", $.proxy(this.changePeriod, this));
                 this.$el.on("change", ".region-select", $.proxy(this.changeRegion, this));
                 this.$el.on("click", ".stat", function(e) {self.changeScenarioClick(e);});
@@ -123,21 +133,22 @@ define([
                 this.$el.on("mouseleave", ".info-tooltip", $.proxy(this.hideTooltip, this));
                 this.$el.on("mousemove", ".info-tooltip", function(e) {self.moveTooltip(e);});
 
+                this.$el.on("click", ".js-getSnapshot", $.proxy(this.printReport, this));
+
             },
 
             getLayersJson: function() {
                 return layerSourcesJson;
             },
 
-            activate: function() {
-                var self = this;
+            // This function loads the first time the plugin is opened, or after the plugin has been closed (not minimized).
+            // It sets up the layers with their default settings
+
+            firstLoad: function() {
                 var layerDefs = [];
                 var layerDrawingOptions = [];
                 var layerDrawingOption = new LayerDrawingOptions();
                 var renderer = this.createRenderer(this.mapClassBreaks.people, "E2E1_DIF_ANN_PF");
-                
-                this.render();
-                this.renderChart();
 
                 this.coralReefLayer = new ArcGISDynamicMapServiceLayer("http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer", {
                     visible: false,
@@ -146,54 +157,101 @@ define([
 
                 this.coastalProtectionLayer = new ArcGISDynamicMapServiceLayer("http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer", {});
                 this.coastalProtectionLayer.setVisibleLayers([0]);
-                layerDefs[0] = "SHORE_ID <> 0";
-                this.coastalProtectionLayer.setLayerDefinitions(layerDefs);
+                //layerDefs[0] = this.activeCountries;
+                //this.coastalProtectionLayer.setLayerDefinitions(layerDefs);
 
-                layerDrawingOption.renderer = renderer;
-                layerDrawingOptions[0] = layerDrawingOption;
-
-                //this.coastalProtectionLayer.setLayerDrawingOptions(layerDrawingOptions);
+                this.coastalProtectionLayer.setLayerDrawingOptions(layerDrawingOptions);
                 this.map.addLayer(this.coastalProtectionLayer);
                 this.map.addLayer(this.coralReefLayer);
+
+            },
+
+            // This function runs everytime the plugin is open.  If the plugin was previously minimized, it restores the plugin
+            // to it's previous state
+            activate: function() {
+                var self = this;
+                
+                this.render();
+                this.renderChart();
+
+                // If the plugin hasn't been opened, or if it was closed (not-minimized) run the firstLoad function and reset the
+                // default variables
+                if (!this.coastalProtectionLayer || !this.coastalProtectionLayer.visible) {
+                    this.firstLoad();
+                    this.region = "Global";
+                    this.period = "ANN";
+                    this.layer = "people";
+                    this.variable = "PF";
+                }
+
+                // Restore storm period radios
+                this.$el.find("input[value=" + this.period + "]").prop('checked', true);
+
+                // restore state of people, capital, area selector
+                this.$el.find(".stat.active").removeClass("active");
+                this.$el.find("." + this.layer + ".stat").addClass("active");
+
+                // Restore state of region select
+                this.$el.find(".region-select").val(this.region);
+
+                // Restore state of coral reef checkbox
+                if (this.coralReefLayer.visible) {
+                    this.$el.find(".coral-select-container input").prop("checked", true);
+                }
 
                 this.changePeriod();
                 this.changeScenario();
 
             },
 
+            // Turn the coral reef layer on and off
             toggleCoral: function() {
                 if ($(".coral-select-container input").is(":checked")) {
                     this.coralReefLayer.setVisibility(true);
                 } else {
                     this.coralReefLayer.setVisibility();
                 }
+                this.updateLegend();
             },
 
+            // Change the storm return period and update the facts to match
             changePeriod: function() {
                 this.period = this.$el.find("input[name=storm" + this.app.paneNumber + "]:checked").val();
                 //http://stackoverflow.com/a/2901298
-                this.$el.find(".stat.people .number .variable").html(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_PF"]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                this.$el.find(".stat.capital .number .variable").html(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_BCF"] / 1000000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                this.$el.find(".stat.area .number .variable").html(Math.round(this.data[this.region]["E2E1_DIFF_" + this.period + "_AF"]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                console.log("E2E1_DIF_" + this.period + "_AF");
+                console.log(this.data[this.region]["E2E1_DIF_" + this.period + "_AF"]);
+                this.$el.find(".stat.people .number .variable").html(this.numberWithCommas(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_PF"])));
+                this.$el.find(".stat.capital .number .variable").html(this.numberWithCommas(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_BCF"] / 1000000)));
+                this.$el.find(".stat.area .number .variable").html(this.numberWithCommas(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_AF"])));
 
                 this.changeScenario();
             },
 
+            // format a number with commas
+            numberWithCommas: function (number) {
+                return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            },
+
+            // Change the default region.  If global, zoom to the full extent and show data for all countries.  If regional,
+            // zoom to the country based on the bookmark in the extent-bookmarks.json file and hide data for all other countries
             changeRegion: function() {
                 this.region = this.$el.find(".region-select").val();
 
+                // Show/hide the download country summary button
                 if (this.region === "Global") {
-                    this.$el.find(".download-summary").hide();
+                    this.$el.find(".js-getSnapshot").hide();
                 } else {
-                    this.$el.find(".download-summary").show();
+                    this.$el.find(".js-getSnapshot").show();
                 }
-                //this.$el.find(".download-summary .country").html(this.region);
+
                 this.changePeriod();
+
                 var layerDefs = [];
-                var regionExtent = this.extents[this.region].EXTENT;
+                var regionExtent = this.countryConfig[this.region].EXTENT;
 
                 var extent;
 
+                // Set the zoom extent
                 if (this.region === "Global") {
                     var initialExtent = this.app.regionConfig.initialExtent;
                     extent = new esri.geometry.Extent(initialExtent[0],initialExtent[1],initialExtent[2],initialExtent[3]);
@@ -201,10 +259,13 @@ define([
                     extent = new esri.geometry.Extent(regionExtent[0],regionExtent[1],regionExtent[2],regionExtent[3]);
                 }
 
+                // Set the data extent
                 if (this.region === "Global") {
-                    layerDefs[0] = "SHORE_ID <> 0";
+                    layerDefs[0] = ""; //this.activeCountries;
+                } else if (this.region === "US/Puerto Rico") {
+                    layerDefs[0] = "COUNTRY='United States & Puerto Rico'";
                 } else {
-                    layerDefs[0] = "SHORE_ID <> 0 AND COUNTRY='" + this.region +"'";
+                    layerDefs[0] = "COUNTRY='" + this.region + "'";
                 }
                 this.coastalProtectionLayer.setLayerDefinitions(layerDefs);
                 this.map.setExtent(extent);
@@ -213,6 +274,7 @@ define([
 
             },
 
+            // Capture the click from the fact number click events and pass to the changeScenario function
             changeScenarioClick: function(e) {
                 this.layer = $(e.currentTarget).closest(".stat").data("layer");
                 this.$el.find(".stat.active").removeClass("active");
@@ -221,6 +283,7 @@ define([
                 this.changeScenario();
             },
 
+            // Update the renderer to reflect storm return period and the fact being displayed.
             changeScenario: function() {
                 var layerDrawingOptions = [];
                 var layerDrawingOption = new LayerDrawingOptions();
@@ -232,14 +295,8 @@ define([
                     this.variable = "BCF";
                     renderer = this.createRenderer(this.mapClassBreaks.capital, "E2E1_DIF_" + this.period + "_" + this.variable);
                 } else if (this.layer === "area") {
-                    var DiffString;
-                    if (this.period === "ANN") {
-                        DiffString = "DIFF";
-                    } else {
-                        DiffString = "DIF";
-                    }
                     this.variable = "AF";
-                    renderer = this.createRenderer(this.mapClassBreaks.area, "E2E1_" + DiffString + "_" + this.period + "_" + this.variable);
+                    renderer = this.createRenderer(this.mapClassBreaks.area, "E2E1_DIF_" + this.period + "_" + this.variable);
                 }
 
                 layerDrawingOption.renderer = renderer;
@@ -249,8 +306,11 @@ define([
                 this.coastalProtectionLayer.refresh();
 
                 this.updateChart();
+                this.updateLegend();
+                
             },
 
+            // Render the plugin DOM
             render: function() {
 
                 var $el = $(this.pluginTmpl({
@@ -263,10 +323,46 @@ define([
 
             },
 
+            // Draw the custom legend based on our custom class breaks and the current visibility of each layer
+            updateLegend: function () {
+                var html = "";
+
+                if (this.coralReefLayer.visible) {
+                    html += "<span style='background: rgb(29,29,114)' class='legend-item coastal-reef'></span>Coral Reef Habitats<br><br>";
+                }
+
+                if (this.coastalProtectionLayer.visible) {
+                    if (this.layer === "people") {
+                        html += "People Protected (No.)<br>";
+                    } else if (this.layer === "capital") {
+                        html += "Built Capital Protected ($Millions)<br>";
+                    } else if (this.layer === "area") {
+                        html += "Area Protected (sq km)<br>";
+                    }
+
+                    _.each(this.mapClassBreaks[this.layer], function (classbreak) {
+                        html += "<span style='background: rgb(";
+                        html += classbreak[2][0] + ",";
+                        html += classbreak[2][1] + ",";
+                        html += classbreak[2][2];
+                        html += ")' class='legend-item coastal-protection'></span>";
+                        html += classbreak[3] + "<br>";
+                    }, this);
+
+                    
+                }
+
+                $(this.legendContainer).show().html(html);
+
+                return html;
+            },
+
+            // Show graph tooltip on hover
             showGraphTooltip: function(d, self) {
                 self.$el.find(".ncp-tooltip").html(parseInt(d.y).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")).css({width: "auto"}).show();
             },
 
+            // Track graph tooltip to mouse movement
             moveGraphTooltip: function(d, el, self) {
                 var offset = this.$el.offset();
                 var x = d3.event.pageX - offset.left;
@@ -274,15 +370,18 @@ define([
                 this.$el.find(".ncp-tooltip").css({left: x + 5, top: y});
             },
 
+            // Show info tooltip on mouse hover
             showTooltip: function(e) {
                 var text = $(e.currentTarget).data("tooltip");
                 this.$el.find(".ncp-tooltip").html(text).css({width: "240"}).show();
             },
 
+            // Hide graph and info tooltip on mouseout
             hideTooltip: function() {
                 this.$el.find(".ncp-tooltip").empty().hide();
             },
 
+            // Track info tooltip to mouse movement
             moveTooltip: function(e) {
                 var offset = this.$el.offset();
                 var x = e.pageX - offset.left;
@@ -290,15 +389,18 @@ define([
                 this.$el.find(".ncp-tooltip").css({left: x + 5, top: y});
             },
 
+            // Render the D3 Chart
             renderChart: function() {
                 var self = this;
 
+                // Our x values are always the same.  Treat them as ordinal and hard code them here
                 this.chart.x = d3.scale.ordinal()
                     .domain([0, 10, 25, 50, 100])
                     .rangePoints([0, this.chart.position.width]);
 
+                // The x-axis for the bar chart is also ordinal with two values
                 this.chart.barx = d3.scale.ordinal()
-                    .domain(["present", "1m loss"])
+                    .domain(["Present", "Reef Loss"])
                     .rangeRoundBands([0, this.chart.position.width], 0.15);
 
                 this.chart.y = d3.scale.linear()
@@ -340,24 +442,28 @@ define([
                     .append("g")
                         .attr("transform", "translate(" + this.chart.position.margin.left + "," + this.chart.position.margin.right + ")");
 
+                // Add a chart background object that can be styled separately
                 this.chart.svg.append("rect")
                     .attr("class", "chart-area")
                     .attr("width", this.chart.position.width)
                     .attr("height", this.chart.position.height - 20)
                     .attr("fill", "#f6f6f6");
 
+                // Add the xaxis
                 this.chart.svg.append("g")
                     .attr("opacity", 0)
                     .attr("class", "xaxis")
                     .attr("transform", "translate(0," + (this.chart.position.height-20) + ")")
                     .call(this.chart.xAxis);
 
+                // Add the xaxis for the bar chart
                 this.chart.svg.append("g")
                     .attr("opacity", 1)
                     .attr("class", "barxaxis")
                     .attr("transform", "translate(0," + (this.chart.position.height-20) + ")")
                     .call(this.chart.barxAxis);
 
+                // Add the x-axis label
                 this.chart.svg.append("text")
                     .attr("class", "xaxis-label")
                     .attr("opacity", 0)
@@ -365,6 +471,7 @@ define([
                     .attr("transform", "translate(" + (this.chart.position.width / 2) + "," + (this.chart.position.height + 20) + ")")
                     .text("Storm Return Period");
 
+                // Add the y-axis label
                 this.chart.svg.append("text")
                     .attr("class", "yaxis-label")
                     .attr("transform", "rotate(-90)")
@@ -379,7 +486,7 @@ define([
 
                 // Add chart legend
                 this.chart.legend = this.chart.svg.append("g")
-                    .attr("class", "legend")
+                    .attr("class", "chart-legend")
                     .attr("opacity", 0);
 
                     this.chart.legend.append("rect")
@@ -389,7 +496,7 @@ define([
                         .attr("fill", "#30928D");
 
                     this.chart.legend.append("text")
-                        .text("present")
+                        .text("Present")
                         .attr("x", "32")
                         .attr("y", "11");
                     
@@ -401,7 +508,7 @@ define([
                         .attr("fill", "#923034");
 
                     this.chart.legend.append("text")
-                        .text("1m loss")
+                        .text("Reef Loss")
                         .attr("x", "32")
                         .attr("y", "29");
 
@@ -411,21 +518,23 @@ define([
 
             },
 
+            // Initialize the chart points with empty values
             addChartPoints: function() {
                 var self = this;
                 this.chart.data = {};
                 this.chart.data.current = {};
                 this.chart.data.current.x = [0,10,25,50,100];
-                this.chart.data.current.barx = ["present", "1m loss"];
+                this.chart.data.current.barx = ["Present", "Reef Loss"];
                 this.chart.data.current.y = [0,0,0,0,0];
                 this.chart.data.current.xy = [];
 
                 this.chart.data.scenario = {};
                 this.chart.data.scenario.x = [0,10,25,50,100];
-                this.chart.data.scenario.barx = ["present", "1m loss"];
+                this.chart.data.scenario.barx = ["Present", "Reem Loss"];
                 this.chart.data.scenario.y = [0,0,0,0,0];
                 this.chart.data.scenario.xy = [];
 
+                // Create an array of xy point data for the current scenario
                 for (var i=0; i<this.chart.data.current.x.length; i++) {
                     this.chart.data.current.xy.push(
                         {
@@ -435,6 +544,7 @@ define([
                     );
                 }
 
+                // Create an array of xy point data for the 1m loss scenario
                 for (var j=0; j<this.chart.data.scenario.x.length; j++) {
                     this.chart.data.scenario.xy.push(
                         {
@@ -444,6 +554,7 @@ define([
                     );
                 }
 
+                // Attach the 1m loss data
                 this.chart.svg
                     .data([this.chart.data.scenario.xy])
                     .append("path")
@@ -451,6 +562,7 @@ define([
                     .attr("class", "area-scenario")
                     .attr("d", this.chart.area.scenario);
 
+                // Attach the current scenario data
                 this.chart.svg
                     .data([this.chart.data.current.xy])
                     .append("path")
@@ -458,6 +570,7 @@ define([
                     .attr("class", "area-current")
                     .attr("d", this.chart.area.current);
 
+                // Create an interpolation line between points
                 this.chart.svg
                     .append("path")
                     .attr("class", "line current")
@@ -467,6 +580,7 @@ define([
                 this.chart.pointscurrent = this.chart.svg.append("g")
                     .attr("class", "points-current");
 
+                // Add circles for each current scenario point and show value on mouseover
                 this.chart.pointscurrent.selectAll('circle')
                     .data(this.chart.data.current.xy)
                     .enter().append('circle')
@@ -493,6 +607,7 @@ define([
                 this.chart.pointsscenario = this.chart.svg.append("g")
                     .attr("class", "points-scenario");
 
+                // Add circles for each 1m loss scenario point and show value on mouseover
                 this.chart.pointsscenario.selectAll('circle')
                     .data(this.chart.data.scenario.xy)
                     .enter().append('circle')
@@ -512,8 +627,8 @@ define([
 
                 // Bar chart
                 var bardata = [
-                    {x: "present", y: 0},
-                    {x: "1m loss", y: 0}
+                    {x: "Present", y: 0},
+                    {x: "Reef Loss", y: 0}
                 ];
 
                 this.chart.svg.selectAll(".bar")
@@ -538,9 +653,11 @@ define([
 
             },
 
+            // Set the chart data to match the current variable
             updateChart: function() {
                 var self = this;
 
+                // Built Capital should be divided by 1 million
                 var division = 1;
                 if (this.variable === "BCF") {
                     division = 1000000;
@@ -551,9 +668,10 @@ define([
                     annual = true;
                 }
 
+                // Update the  y-axis label to match the current variable selected
                 var text = "";
                 if (this.variable === "BCF") {
-                    text = "Built Capital at Risk (M)";
+                    text = "Built Capital at Risk ($Millions)";
                 } else if (this.variable === "PF") {
                     text = "People at Risk (No.)";
                 } else if (this.variable === "AF") {
@@ -567,6 +685,7 @@ define([
                         .style("opacity", 1)
                         .text(text);
 
+                // Get the data for the scenario from the data.json file and divide into the correct units if specified.  Default is 1
                 this.chart.data.current.xy = [];
                 this.chart.data.current.y = [
                     this.data[this.region]["E1_ANN_" + this.variable] / division,
@@ -576,6 +695,7 @@ define([
                     this.data[this.region]["E1_100RP_" + this.variable] / division
                 ];
 
+                // Create array of xy values for drawing chart points
                 for (var i=0; i<this.chart.data.current.x.length; i++) {
                     this.chart.data.current.xy.push(
                         {
@@ -606,6 +726,7 @@ define([
                 var bary;
                 var bary1m;
 
+                // Set the data for the bar chart
                 if (this.variable === "BCF") {
                     bary = this.data[this.region].E1_ANN_BCF / division;
                     bary1m = this.data[this.region].E2_ANN_BCF / division;
@@ -618,14 +739,18 @@ define([
                 }
 
                 var bardata = [
-                    {x: "present", y: bary},
-                    {x: "1m loss", y: bary1m}
+                    {x: "Present", y: bary},
+                    {x: "Reef Loss", y: bary1m}
                 ];
 
                 if(this.period === "ANN") {
+                    // Set the y-axis for the bar chart
                     this.chart.y.domain([0, bary1m]);
                 } else {
+                    // Set the y-axis for the line chart
                     this.chart.y.domain([0, d3.max(this.chart.data.scenario.y)]);
+                    // Add a DOM class to the active point and legend text so the currently selected storm return
+                    // period can be bolded in the chart
                     if (this.period === "25RP") {
                         this.chart.svg.selectAll(".xaxis .tick").classed("current", false).each(function(d, i) {
                             if ( d === 25 ) {
@@ -644,6 +769,7 @@ define([
                     }
                 }
 
+                // Show and hide as appropriate all the different elements.  We animate these over the course of 1200ms
                 this.chart.svg.select(".yaxis")
                     .transition().duration(1200).ease("linear")
                     .call(this.chart.yAxis);
@@ -675,6 +801,7 @@ define([
                     .attr("opacity", annual ? 0 : 1)
                     .attr("d", this.chart.area.current);
 
+                // Update the chart point data and adjust point position on chart to match
                 this.chart.pointscurrent.selectAll('circle')
                     .data(this.chart.data.current.xy)
                     .transition().duration(1200).ease("sin-in-out")
@@ -695,6 +822,7 @@ define([
                         }
                     });
 
+                // Update the position of the interpolation line to match the new point position
                 this.chart.svg.select(".line.scenario")
                     .transition().duration(1200).ease("sin-in-out")
                     .attr("opacity", annual ? 0 : 1)
@@ -737,6 +865,8 @@ define([
                     .attr("height", function(d) { return self.chart.position.height - 20 - self.chart.y(d.y); });
             },
 
+            // Create a renderer for the coastal protection layer using the custom defined classbreaks and colors for each
+            // scenario and fact combination
             createRenderer: function(classBreaks, field) {
                 var defaultSymbol = new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([0,0,0,0]), 0);
                 var renderer = new ClassBreaksRenderer(defaultSymbol, field);
@@ -744,26 +874,36 @@ define([
                     renderer.addBreak({
                         minValue: classBreak[0], 
                         maxValue: classBreak[1], 
-                        symbol: SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color(classBreak[2]), 4),
+                        symbol: SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color(classBreak[2]), classBreak[4]),
                         label: classBreak[3]
                     });
                 });
                 return renderer;
             },
 
+            // Download the pdf report for the current region
+            printReport: function() {
+                window.open(this.countryConfig[this.region].SNAPSHOT, '_blank'); 
+                return false;
+            },
+
+            // Get the requested template from the template file based on id.
+            // We currently only have one template for this plugin
             getTemplateById: function(id) {
                 return $('<div>').append(templates)
                     .find('#' + id)
                     .html().trim();
             },
 
+            // Turn of the layers when hibernating
             hibernate: function () {
                 // Cleanup
                 if (this.coralReefLayer) {
                     this.coralReefLayer.hide();
                     this.coastalProtectionLayer.hide();
                 }
-            },
+                $(this.legendContainer).hide().html();
+            }
 
         });
     }

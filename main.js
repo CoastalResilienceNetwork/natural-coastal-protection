@@ -23,7 +23,6 @@ define([
     "dojo/_base/declare",
     "d3",
     "framework/PluginBase",
-    "plugins/layer_selector/main",
     "esri/layers/ArcGISDynamicMapServiceLayer",
     "esri/layers/LayerDrawingOptions",
     "esri/renderers/ClassBreaksRenderer",
@@ -37,7 +36,6 @@ define([
     ], function (declare,
               d3,
               PluginBase,
-              LayerSelectorPlugin,
               ArcGISDynamicMapServiceLayer,
               LayerDrawingOptions,
               ClassBreaksRenderer,
@@ -87,7 +85,9 @@ define([
                 this.chart.position.height = 235  - this.chart.position.margin.top - this.chart.position.margin.bottom;
 
                 // Default class breaks and color ramps
-                var opacity = 0.7;
+
+                var opacity = 1;
+
                 this.mapClassBreaks = {
                     people: [
                         [-99999,      0,  [120, 120, 120, opacity], "0", 1.5],
@@ -152,6 +152,7 @@ define([
 
                 this.coralReefLayer = new ArcGISDynamicMapServiceLayer("http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer", {
                     visible: false,
+                    opacity: 0.5
                 });
                 this.coralReefLayer.setVisibleLayers([1]);
 
@@ -218,8 +219,6 @@ define([
             changePeriod: function() {
                 this.period = this.$el.find("input[name=storm" + this.app.paneNumber + "]:checked").val();
                 //http://stackoverflow.com/a/2901298
-                console.log("E2E1_DIF_" + this.period + "_AF");
-                console.log(this.data[this.region]["E2E1_DIF_" + this.period + "_AF"]);
                 this.$el.find(".stat.people .number .variable").html(this.numberWithCommas(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_PF"])));
                 this.$el.find(".stat.capital .number .variable").html(this.numberWithCommas(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_BCF"] / 1000000)));
                 this.$el.find(".stat.area .number .variable").html(this.numberWithCommas(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_AF"])));

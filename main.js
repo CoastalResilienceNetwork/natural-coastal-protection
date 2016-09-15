@@ -320,6 +320,8 @@ define([
 
                 $(this.container).empty().append($el);
 
+                this.$el.find('.i18n').localize();
+
             },
 
             // Draw the custom legend based on our custom class breaks and the current visibility of each layer
@@ -332,11 +334,11 @@ define([
 
                 if (this.coastalProtectionLayer.visible) {
                     if (this.layer === "people") {
-                        html += "People Protected (No.)<br>";
+                        html += i18next.t("People Protected (No.)") + "<br>";
                     } else if (this.layer === "capital") {
-                        html += "Built Capital Protected ($Millions)<br>";
+                        html += i18next.t("Built Capital Protected ($Millions)") + "<br>";
                     } else if (this.layer === "area") {
-                        html += "Area Protected (sq km)<br>";
+                        html += i18next.t("Area Protected (sq km)") + "<br>";
                     }
 
                     _.each(this.mapClassBreaks[this.layer], function (classbreak) {
@@ -410,6 +412,9 @@ define([
                     .orient("bottom");
 
                 this.chart.barxAxis = d3.svg.axis()
+                    .tickFormat(function(d) {
+                        return i18next.t(d);
+                    })
                     .scale(this.chart.barx)
                     .orient("bottom");
 
@@ -468,7 +473,7 @@ define([
                     .attr("opacity", 0)
                     .attr("text-anchor", "middle")
                     .attr("transform", "translate(" + (this.chart.position.width / 2) + "," + (this.chart.position.height + 20) + ")")
-                    .text("Storm Return Period");
+                    .text(i18next.t('Storm Return Period'));
 
                 // Add the y-axis label
                 this.chart.svg.append("text")
@@ -477,7 +482,7 @@ define([
                     .attr("y", 0 - this.chart.position.margin.left + 20)
                     .attr("x", 0 - (this.chart.position.height / 2))
                     .attr("text-anchor", "middle")
-                    .text("People at Risk (No.)");
+                    .text(i18next.t('People Protected (No.)'));
 
                 this.chart.svg.append("g")
                     .attr("class", "yaxis")
@@ -495,7 +500,7 @@ define([
                         .attr("fill", "#30928D");
 
                     this.chart.legend.append("text")
-                        .text("Present")
+                        .text(i18next.t('Present'))
                         .attr("x", "32")
                         .attr("y", "11");
                     
@@ -507,7 +512,7 @@ define([
                         .attr("fill", "#923034");
 
                     this.chart.legend.append("text")
-                        .text("Reef Loss")
+                        .text(i18next.t('Reef Loss'))
                         .attr("x", "32")
                         .attr("y", "29");
 
@@ -670,11 +675,11 @@ define([
                 // Update the  y-axis label to match the current variable selected
                 var text = "";
                 if (this.variable === "BCF") {
-                    text = "Built Capital at Risk ($Millions)";
+                    text = i18next.t('Built Capital Protected ($Millions)');
                 } else if (this.variable === "PF") {
-                    text = "People at Risk (No.)";
+                    text = i18next.t('People Protected (No.)');
                 } else if (this.variable === "AF") {
-                    text = "Area at Risk (sq km)";
+                    text = i18next.t('Area Protected (sq km)');
                 }
 
                 this.chart.svg.select(".yaxis-label")

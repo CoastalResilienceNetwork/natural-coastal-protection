@@ -435,14 +435,14 @@
 </style>
 
 	<div class="mar-plugin">
-	    <div class="title">Flood Protection Provided by Coral Reefs</div>
-	    <div class="main-message">
+	    <div class="title i18n" data-i18n="Flood Protection Provided by Coral Reefs">Flood Protection Provided by Coral Reefs</div>
+	    <div class="main-message i18n" data-i18n="Estimates of the benefits provided by reefs in flood protection annually and from catastrophic storms">
 	    	Estimates of the benefits provided by reefs in flood protection annually and from catastrophic storms
 	    </div>
 	    <div class="controls-container clearfix">
 
 	    	<div class="region-select-container">
-	    		<span class="control-title">Region:</span><br>
+	    		<span class="control-title i18n" data-i18n="Region">Region</span>:<br>
 	    		<div class="styled-select">
 		    		<select class="region-select">
 		    			<optgroup label="Select Region">
@@ -453,17 +453,17 @@
 		    			<option>Draw Custom Region</option>
 		    		</select>
 		    	</div>
-				<a class="download-summary js-getSnapshot" target="_blank" style="display: none">Download Regional Summary <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
-				<a class="download-summary" href="https://www.wavespartnership.org/sites/waves/files/kc/Technical%20Rept%20WAVES%20Coastal%202-11-16%20web.pdf" target="_blank">Download Report <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+				<a class="download-summary js-getSnapshot" target="_blank" style="display: none"><span class="i18n" data-i18n="Download Regional Summary">Download Regional Summary</span> <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+				<a class="download-summary" href="https://www.wavespartnership.org/sites/waves/files/kc/Technical%20Rept%20WAVES%20Coastal%202-11-16%20web.pdf" target="_blank"><span class="i18n" data-i18n="Download Regional Summary">Download Regional Summary</span> <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
 	    	</div>
 
 	    	<div class="storm-buttons-container">
 		    	<div class="expected-benefit">
 			    	<div class="radio-control">
-						<span class="control-title">
-							Annual Expected Benefit
-							<i data-tooltip="Annual expected benefits from reefs for flood protection  represents the predicted flooding avoided to land, people, and infrastructure by keeping coral reefs intact. It is an annualized benefit of the role of reefs in flood reduction that considers local factors such as reef condition, asset distribution, and storm frequency." class="fa fa-info-circle info-annual info-tooltip"></i>
-						</span>
+						<div class="control-title" >
+							<span class="i18n" data-i18n="Annual Expected Benefit">Annual Expected Benefit</span>
+							<i data-i18n="[data-tooltip]AHistorical data and simulation on tropical storms were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events." data-tooltip="Historical data and simulation on tropical storms were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events." class="fa fa-info-circle info-annual info-tooltip i18n"></i>
+						</div>
 			    		<div class="check-group annual">
 							<label>
 								<input  type="radio" name="storm<%=pane%>" value="ANN" checked="checked" />
@@ -475,44 +475,44 @@
 		    	</div>
 
 	    		<div class="radio-control radio-padding catastrophic-select">
-					<span class="control-title">
-						Benefits from Catastrophic Storms
-						<i data-tooltip="30 years of historical data on regional sea level and wave conditions were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events." class="fa fa-info-circle info-period info-tooltip"></i>
-					</span>
+					<div class="control-title">
+						<span class="i18n" data-i18n="Benefits from Catastrophic Storms">Benefits from Catastrophic Storms</span>
+						<i data-tooltip="30 years of historical data on regional sea level and wave conditions were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events." class="fa fa-info-circle info-period info-tooltip i18n" data-i18n="[data-tooltip]30 years of historical data on regional sea level and wave conditions were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events."></i>
+					</div>
 					<div class="slider-select">
 						<div class="check-group">
 							<label>
 								<input  type="radio" name="climate-scenario" value="present" checked="checked" />
 								<div class="radio-select"></div>
-								<br>Present
+								<br><span class="i18n" data-i18n="Present">Present</span>
 							</label>
 			    		</div>
 			    		<div class="check-group">
 							<label>
 								<input type="radio" name="climate-scenario" value="low-2030">
 								<div class="radio-select"></div>
-								<br>Low 2030
+								<br><span class="i18n" data-i18n="Low 2030">Low 2030</span>
 							</label>
 			    		</div>
 			    		<div class="check-group">
 							<label>
 								<input type="radio" name="climate-scenario" value="high-2030">
 								<div class="radio-select"></div>
-								<br>High 2030
+								<br><span class="i18n" data-i18n="High 2030">High 2030</span>
 							</label>
 			    		</div>
 			    		<div class="check-group">
 							<label>
 								<input type="radio" name="climate-scenario" value="low-2050">
 								<div class="radio-select"></div>
-								<br>Low 2050
+								<br><span class="i18n" data-i18n="Low 2050">Low 2050</span>
 							</label>
 			    		</div>
 			    		<div class="check-group">
 							<label>
 								<input type="radio" name="climate-scenario" value="high-2050">
 								<div class="radio-select"></div>
-								<br>High 2050
+								<br><span class="i18n" data-i18n="High 2050">High 2050</span>
 							</label>
 			    		</div>
 					</div>
@@ -520,32 +520,35 @@
 	    	</div>
 
 	    	<div class="coral-select-container">
-		    	<label><input type="checkbox" /><span>View Coral Reef Habitats</span></label>
+		    	<label><input type="checkbox" /><span class="i18n" data-i18n="View Coral Reef Habitats">View Coral Reef Habitats</span></label>
 		    </div>
 
 	    </div>
-	    <div class="stats-description">The people and property protected by coral reefs (values represent predicted losses avoided by keeping reefs intact)</div>
+	    <div class="stats-description i18n" data-i18n="The people and property protected by coral reefs (values represent predicted losses avoided by keeping reefs intact)">The people and property protected by coral reefs (values represent predicted losses avoided by keeping reefs intact)</div>
 	    <div class="stats-container">
 
 	    	<div class="stat people active" data-layer="people">
 	    		<span class="number"><span class="variable"><%= global.E2E1_DIF_ANN_PF %></span></span>
-	    		<span class="description">People Protected
-	    			<i data-tooltip="This value represents the difference of flooding impacts on people when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data." class="fa fa-info-circle info-people info-tooltip"></i></span>
+	    		<div class="description"><span class="i18n" data-i18n="People Protected">People Protected</span>
+	    			<i data-i18n="[data-tooltip]This value represents the difference of flooding impacts on people when coral reefs are present and when the reef is loss (loss of geometry and friction). This value is aggregated to the region from 90m resolution data." data-tooltip="This value represents the difference of flooding impacts on people when coral reefs are present and when the reef is loss (loss of geometry and friction). This value is aggregated to the region from 90m resolution data." class="fa fa-info-circle info-people info-tooltip i18n"></i>
+	    		</div>
 	    	</div>
 
 	    	<div class="stat capital" data-layer="capital">
 	    		<span class="number">$<span class="variable"><%= global.E2E1_DIF_ANN_BCF %></span>M</span>
-	    		<span class="description">Built Capital Protected<br><span class="sub-description">(residential, industrial, and services)</span>
-	    			<i data-tooltip="This value represents the difference of flooding impacts on built capital when coral reefs are present and 
-					when there is 1 meter of reef loss. This value is aggregated
-					to the country scale from 90m resolution data." class="fa fa-info-circle info-capital info-tooltip"></i></span>
+	    		<div class="description">
+	    			<span class="i18n" data-i18n="Built Capital Protected">Built Capital Protected</span><br>
+	    			<span class="sub-description i18n" data-i18n="(residential, industrial, and services)">(residential, industrial, and services)</span>
+	    			<i data-i18n="[data-tooltip]This value represents the difference of flooding impacts on built capital when coral reefs are present and when the reef is loss (loss of geometry and friction). This value is aggregated to the region from 90m resolution data." data-tooltip="This value represents the difference of flooding impacts on built capital when coral reefs are present and when the reef is loss (loss of geometry and friction). This value is aggregated to the region from 90m resolution data." class="fa fa-info-circle info-capital info-tooltip i18n"></i>
+	    		</div>
 	    		
 	    	</div>
 
 	    	<div class="stat area" data-layer="area">
 	    		<span class="number">$<span class="variable"><%= global.E2E1_DIFF_ANN_AF %></span></span>
-	    		<span class="description">Hotels Protected
-	    			<i data-tooltip="This value represents the difference of flooding impacts on land area when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data. " class="fa fa-info-circle info-area info-tooltip"></i></span>
+	    		<div class="description">
+	    			<span class="i18n" data-i18n="Hotels Protected">Hotels Protected</span>
+	    			<i data-i18n="[data-tooltip]This value represents the difference of flooding impacts on land area when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data." data-tooltip="This value represents the difference of flooding impacts on land area when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data." class="fa fa-info-circle info-area info-tooltip i18n"></i></div>
 
 	    	</div>
 

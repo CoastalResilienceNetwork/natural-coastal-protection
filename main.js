@@ -124,7 +124,80 @@ define([
                     ],
                 };
 
+                this.layers = {
+                    'Natural_Coastal_Protection_Final': 0,
+                    'Global Coral Reef Habitat': 1,
+                    'Annual Present People Protected': 2,
+                    'Annual Low CC 2030 People Protected': 3,
+                    'Annual High CC 2030 People Protected': 4,
+                    'Annual Low CC 2050 People Protected': 5,
+                    'Annual High CC 2050 People Protected': 6,
+                    '100 RP Present People Protected': 7,
+                    '100 RP Low CC 2030 People Protected': 8,
+                    '100 RP High CC 2030 People Protected': 9,
+                    '100 RP Low CC 2050 People Protected': 10,
+                    '100 RP High CC 2050 People Protected': 11,
+                    'Annual Present Built Capital Protected': 12,
+                    'Annual Low CC 2030 Built Capital Protected': 13,
+                    'Annual High CC 2030 Built Capital Protected': 14,
+                    'Annual Low CC 2050 Built Capital Protected': 15,
+                    'Annual High CC 2050 Built Capital Protected': 16,
+                    '100 RP Present Built Capital Protected': 17,
+                    '100 RP Low CC 2030 Built Capital Protected': 18,
+                    '100 RP High CC 2030 Built Capital Protected': 19,
+                    '100 RP Low CC 2050 Built Capital Protected': 20,
+                    '100 RP High CC 2050 Built Capital Protected': 21,
+                    'Annual Present Hotels Protected': 22,
+                    'Annual Low CC 2030 Hotels Protected': 23,
+                    'Annual High CC 2030 Hotels Protected': 24,
+                    'Annual Low CC 2050 Hotels Protected': 25,
+                    'Annual High CC 2050 Hotels Protected': 26,
+                    '100 RP Present Hotels Protected': 27,
+                    '100 RP Low CC 2030 Hotels Protected': 28,
+                    '100 RP High CC 2030 Hotels Protected': 29,
+                    '100 RP Low CC 2050 Hotels Protected': 30,
+                    '100 RP High CC 2050 Hotels Protected': 31
+                }
+
                 //this.activeCountries = "COUNTRY_ID = 58 OR COUNTRY_ID = 66 OR COUNTRY_ID = 106 OR COUNTRY_ID = 113 OR COUNTRY_ID = 136 OR COUNTRY_ID = 145 OR COUNTRY_ID = 177 OR COUNTRY_ID = 223";
+            },
+
+            layerStringBuilder: function() {
+                var period = "",
+                    scenario = "",
+                    variable = "",
+                    layerString = "";
+
+                if (this.period === 'ANN') {
+                    period = 'Annual';
+                } else if (this.period ==="100RP") {
+                    period = '100 RP';
+                }
+
+                if (this.scenario === "L2030") {
+                    scenario = "Low CC 2030";
+                } else if (this.scenario === "H2030") {
+                    scenario = "High CC 2030";
+                } else if (this.scenario === "L2050") {
+                    scenario = "Low CC 2050";
+                } else if (this.scenario === "H2050") {
+                    scenario = "High CC 2050";
+                } else {
+                    scenario = "";
+                }
+
+                if (this.variable === "PF") {
+                    variable = "People Protected";
+                } else if (this.variable === "BCF") {
+                    variable = "Built Capital Protected";
+                } else if (this.variable === "HOTEL") {
+                    variable = "Hotels Protected";
+                }
+
+                console.log(layerString = period + " " + scenario + " " + variable, this.layers[layerString = period + " " + scenario + " " + variable])
+
+                return this.layers[layerString = period + " " + scenario + " " + variable];
+
             },
 
             bindEvents: function() {
@@ -308,16 +381,18 @@ define([
                     // Set the data extent
                     if (this.region === "Global") {
                         layerDefs[0] = ""; //this.activeCountries;
-                    } else if (this.region === "US/Puerto Rico") {
-                        layerDefs[0] = "COUNTRY='United States & Puerto Rico'";
                     } else {
                         layerDefs[0] = "COUNTRY='" + this.region + "'";
                     }
+                    console.log(this.layerStringBuilder())
+                    this.coastalProtectionLayer.setVisibleLayers([this.layerStringBuilder()]);
                     this.coastalProtectionLayer.setLayerDefinitions(layerDefs);
                     this.map.setExtent(extent);
 
                     this.updateChart();
                 }
+
+
 
                 
 
@@ -344,7 +419,7 @@ define([
                     this.variable = "BCF";
                     renderer = this.createRenderer(this.mapClassBreaks.capital, "E2E1_DIF_" + this.period + "_" + this.variable);
                 } else if (this.layer === "area") {
-                    this.variable = "AF";
+                    this.variable = "HOTEL";
                     renderer = this.createRenderer(this.mapClassBreaks.area, "E2E1_DIF_" + this.period + "_" + this.variable);
                 }
 
@@ -575,8 +650,8 @@ define([
                     text = i18next.t('Built Capital Protected ($Millions)');
                 } else if (this.variable === "PF") {
                     text = i18next.t('People Protected (No.)');
-                } else if (this.variable === "AF") {
-                    text = i18next.t('Area Protected (sq km)');
+                } else if (this.variable === "HOTEL") {
+                    text = i18next.t('Hotels Protected');
                 }
 
                 this.chart.svg.select(".yaxis-label")
@@ -602,9 +677,9 @@ define([
                 } else if (this.variable === "PF") {
                     bary = this.getRegionSum("E1_" + this.period + "_PF" + scenarioLabel, this.region) / division;
                     bary1m = this.getRegionSum("E2_" + this.period + "_PF" + scenarioLabel, this.region) / division;
-                } else if (this.variable === "AF") {
-                    bary = this.getRegionSum("E1_" + this.period + "_AF" + scenarioLabel, this.region) / division;
-                    bary1m = this.getRegionSum("E2_" + this.period + "_AF" + scenarioLabel, this.region) / division;
+                } else if (this.variable === "HOTEL") {
+                    bary = this.getRegionSum("E1_" + this.period + "_HOTEL" + scenarioLabel, this.region) / division;
+                    bary1m = this.getRegionSum("E2_" + this.period + "_HOTEL" + scenarioLabel, this.region) / division;
                 }
 
                 var bardata = [

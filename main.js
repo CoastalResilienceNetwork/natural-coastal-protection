@@ -394,11 +394,6 @@ define([
             renderChart: function() {
                 var self = this;
 
-                // Our x values are always the same.  Treat them as ordinal and hard code them here
-                this.chart.x = d3.scale.ordinal()
-                    .domain([0, 10, 25, 50, 100])
-                    .rangePoints([0, this.chart.position.width]);
-
                 // The x-axis for the bar chart is also ordinal with two values
                 this.chart.barx = d3.scale.ordinal()
                     .domain(["Present", "Reef Loss"])
@@ -406,10 +401,6 @@ define([
 
                 this.chart.y = d3.scale.linear()
                     .range([this.chart.position.height-20,0]);
-
-                this.chart.xAxis = d3.svg.axis()
-                    .scale(this.chart.x)
-                    .orient("bottom");
 
                 this.chart.barxAxis = d3.svg.axis()
                     .tickFormat(function(d) {
@@ -421,21 +412,6 @@ define([
                 this.chart.yAxis = d3.svg.axis()
                     .scale(this.chart.y)
                     .orient("left").ticks(5);
-
-                this.chart.area = {};
-                this.chart.area.current = d3.svg.area()
-                    .x(function(d) { return self.chart.x(d.x); })
-                    .y0(this.chart.position.height - 20)
-                    .y1(function(d) { return self.chart.y(d.y); });
-
-                this.chart.area.scenario = d3.svg.area()
-                    .x(function(d) { return self.chart.x(d.x); })
-                    .y0(this.chart.position.height - 20)
-                    .y1(function(d) { return self.chart.y(d.y); });
-
-                this.chart.valueline = d3.svg.line()
-                    .x(function(d) { return self.chart.x(d.x); })
-                    .y(function(d) { return self.chart.y(d.y); });
                 
                 var $chartContainer = this.$el.find(".chartContainer");
 
@@ -452,13 +428,6 @@ define([
                     .attr("width", this.chart.position.width)
                     .attr("height", this.chart.position.height - 20)
                     .attr("fill", "#f6f6f6");
-
-                // Add the xaxis
-                this.chart.svg.append("g")
-                    .attr("opacity", 0)
-                    .attr("class", "xaxis")
-                    .attr("transform", "translate(0," + (this.chart.position.height-20) + ")")
-                    .call(this.chart.xAxis);
 
                 // Add the xaxis for the bar chart
                 this.chart.svg.append("g")
@@ -488,34 +457,6 @@ define([
                     .attr("class", "yaxis")
                     .call(this.chart.yAxis);
 
-                // Add chart legend
-                this.chart.legend = this.chart.svg.append("g")
-                    .attr("class", "chart-legend")
-                    .attr("opacity", 0);
-
-                    this.chart.legend.append("rect")
-                        .attr("width", "25")
-                        .attr("height", "15")
-                        .attr("x", "5")
-                        .attr("fill", "#30928D");
-
-                    this.chart.legend.append("text")
-                        .text(i18next.t('Present'))
-                        .attr("x", "32")
-                        .attr("y", "11");
-                    
-                    this.chart.legend.append("rect")
-                        .attr("width", "25")
-                        .attr("height", "15")
-                        .attr("x", "5")
-                        .attr("y", "18")
-                        .attr("fill", "#923034");
-
-                    this.chart.legend.append("text")
-                        .text(i18next.t('Reef Loss'))
-                        .attr("x", "32")
-                        .attr("y", "29");
-
                 // Initialize chart data 
                 this.addChartPoints();
 
@@ -525,109 +466,6 @@ define([
             // Initialize the chart points with empty values
             addChartPoints: function() {
                 var self = this;
-                this.chart.data = {};
-                this.chart.data.current = {};
-                this.chart.data.current.x = [0,10,25,50,100];
-                this.chart.data.current.barx = ["Present", "Reef Loss"];
-                this.chart.data.current.y = [0,0,0,0,0];
-                this.chart.data.current.xy = [];
-
-                this.chart.data.scenario = {};
-                this.chart.data.scenario.x = [0,10,25,50,100];
-                this.chart.data.scenario.barx = ["Present", "Reem Loss"];
-                this.chart.data.scenario.y = [0,0,0,0,0];
-                this.chart.data.scenario.xy = [];
-
-                // Create an array of xy point data for the current scenario
-                for (var i=0; i<this.chart.data.current.x.length; i++) {
-                    this.chart.data.current.xy.push(
-                        {
-                            x: this.chart.data.current.x[i], 
-                            y: this.chart.data.current.y[i]
-                        }
-                    );
-                }
-
-                // Create an array of xy point data for the 1m loss scenario
-                for (var j=0; j<this.chart.data.scenario.x.length; j++) {
-                    this.chart.data.scenario.xy.push(
-                        {
-                            x: this.chart.data.scenario.x[j],
-                            y: this.chart.data.scenario.y[j]
-                        }
-                    );
-                }
-
-                // Attach the 1m loss data
-                this.chart.svg
-                    .data([this.chart.data.scenario.xy])
-                    .append("path")
-                    .attr("opacity", 0)
-                    .attr("class", "area-scenario")
-                    .attr("d", this.chart.area.scenario);
-
-                // Attach the current scenario data
-                this.chart.svg
-                    .data([this.chart.data.current.xy])
-                    .append("path")
-                    .attr("opacity", 0)
-                    .attr("class", "area-current")
-                    .attr("d", this.chart.area.current);
-
-                // Create an interpolation line between points
-                this.chart.svg
-                    .append("path")
-                    .attr("class", "line current")
-                    .attr("opacity", 0)
-                    .attr("d", this.chart.valueline(this.chart.data.current.xy));
-
-                this.chart.pointscurrent = this.chart.svg.append("g")
-                    .attr("class", "points-current");
-
-                // Add circles for each current scenario point and show value on mouseover
-                this.chart.pointscurrent.selectAll('circle')
-                    .data(this.chart.data.current.xy)
-                    .enter().append('circle')
-                    .attr("opacity", 0)
-                    .attr("cx", function(d) { return self.chart.x(d.x); })
-                    .attr("cy", function(d) { return self.chart.y(d.y); })
-                    .attr("r", 3.5)
-                    .on("mouseover", function(e) {
-                        self.showGraphTooltip(e, self);
-                    })
-                    .on("mousemove", function(d) {
-                        self.moveGraphTooltip(d, this, self);
-                    })
-                    .on("mouseout", function() {
-                        self.hideTooltip(self);
-                    });
-
-                this.chart.svg
-                    .append("path")
-                    .attr("opacity", 0)
-                    .attr("class", "line scenario")
-                    .attr("d", this.chart.valueline(this.chart.data.scenario.xy));
-
-                this.chart.pointsscenario = this.chart.svg.append("g")
-                    .attr("class", "points-scenario");
-
-                // Add circles for each 1m loss scenario point and show value on mouseover
-                this.chart.pointsscenario.selectAll('circle')
-                    .data(this.chart.data.scenario.xy)
-                    .enter().append('circle')
-                    .attr("opacity", 0)
-                    .attr("cx", function(d) { return self.chart.x(d.x); })
-                    .attr("cy", function(d) { return self.chart.y(d.y); })
-                    .attr("r", 3.5)
-                    .on("mouseover", function(e) {
-                        self.showGraphTooltip(e, self);
-                    })
-                    .on("mousemove", function(d) {
-                        self.moveGraphTooltip(d, this, self);
-                    })
-                    .on("mouseout", function() {
-                        self.hideTooltip(self);
-                    });
 
                 // Bar chart
                 var bardata = [
@@ -661,15 +499,9 @@ define([
             updateChart: function() {
                 var self = this;
 
-                // Built Capital should be divided by 1 million
                 var division = 1;
                 if (this.variable === "BCF") {
                     division = 1000000;
-                }
-
-                var annual = false;
-                if(this.period === "ANN") {
-                    annual = true;
                 }
 
                 // Update the  y-axis label to match the current variable selected
@@ -688,44 +520,6 @@ define([
                         .transition().duration(600)
                         .style("opacity", 1)
                         .text(text);
-
-                // Get the data for the scenario from the data.json file and divide into the correct units if specified.  Default is 1
-                this.chart.data.current.xy = [];
-                this.chart.data.current.y = [
-                    this.data[this.region]["E1_ANN_" + this.variable] / division,
-                    this.data[this.region]["E1_10RP_" + this.variable] / division,
-                    this.data[this.region]["E1_25RP_"+ this.variable] / division,
-                    this.data[this.region]["E1_50RP_" + this.variable] / division,
-                    this.data[this.region]["E1_100RP_" + this.variable] / division
-                ];
-
-                // Create array of xy values for drawing chart points
-                for (var i=0; i<this.chart.data.current.x.length; i++) {
-                    this.chart.data.current.xy.push(
-                        {
-                            x: this.chart.data.current.x[i], 
-                            y: this.chart.data.current.y[i]
-                        }
-                    );
-                }
-
-                this.chart.data.scenario.xy = [];
-                this.chart.data.scenario.y = [
-                    this.data[this.region]["E2_ANN_" + this.variable] / division,
-                    this.data[this.region]["E2_10RP_" + this.variable] / division,
-                    this.data[this.region]["E2_25RP_"+ this.variable] / division,
-                    this.data[this.region]["E2_50RP_" + this.variable] / division,
-                    this.data[this.region]["E2_100RP_" + this.variable] / division
-                ];
-
-                for (var j=0; j<this.chart.data.scenario.x.length; j++) {
-                    this.chart.data.scenario.xy.push(
-                        {
-                            x: this.chart.data.scenario.x[j], 
-                            y: this.chart.data.scenario.y[j]
-                        }
-                    );
-                }
 
                 var bary;
                 var bary1m;
@@ -747,121 +541,21 @@ define([
                     {x: "Reef Loss", y: bary1m}
                 ];
 
-                if(this.period === "ANN") {
-                    // Set the y-axis for the bar chart
-                    this.chart.y.domain([0, bary1m]);
-                } else {
-                    // Set the y-axis for the line chart
-                    this.chart.y.domain([0, d3.max(this.chart.data.scenario.y)]);
-                    // Add a DOM class to the active point and legend text so the currently selected storm return
-                    // period can be bolded in the chart
-                    if (this.period === "25RP") {
-                        this.chart.svg.selectAll(".xaxis .tick").classed("current", false).each(function(d, i) {
-                            if ( d === 25 ) {
-                                d3.select(this)
-                                    .classed("current", true);
-                            }
-                        });
-                    }
-                    if (this.period === "100RP") {
-                        this.chart.svg.selectAll(".xaxis .tick").classed("current", false).each(function(d, i) {
-                            if ( d === 100 ) {
-                                d3.select(this)
-                                    .classed("current", true);
-                            }
-                        });
-                    }
-                }
+                this.chart.y.domain([0, bary1m]);
 
                 // Show and hide as appropriate all the different elements.  We animate these over the course of 1200ms
                 this.chart.svg.select(".yaxis")
                     .transition().duration(1200).ease("linear")
                     .call(this.chart.yAxis);
 
-                this.chart.svg.select(".xaxis")
-                    .transition().duration(1200).ease("sin-in-out")
-                    .attr("opacity", annual ? 0 : 1);
-
                 this.chart.svg.select(".barxaxis")
                     .transition().duration(1200).ease("sin-in-out")
-                    .attr("opacity", annual ? 1 : 0);
-
-                this.chart.svg.select(".xaxis-label")
-                    .transition().duration(1200).ease("sin-in-out")
-                    .attr("opacity", annual ? 0 : 1);
-
-                this.chart.legend
-                    .transition().delay(750).duration(1200).ease("sin-in-out")
-                    .attr("opacity", annual ? 0 : 1);
-
-                this.chart.svg.select(".line.current")
-                    .transition().duration(1200).ease("sin-in-out")
-                    .attr("opacity", annual ? 0 : 1)
-                    .attr("d", this.chart.valueline(this.chart.data.current.xy));
-
-                this.chart.svg.select(".area-current")
-                    .data([this.chart.data.current.xy])
-                    .transition().duration(1200).ease("sin-in-out")
-                    .attr("opacity", annual ? 0 : 1)
-                    .attr("d", this.chart.area.current);
-
-                // Update the chart point data and adjust point position on chart to match
-                this.chart.pointscurrent.selectAll('circle')
-                    .data(this.chart.data.current.xy)
-                    .transition().duration(1200).ease("sin-in-out")
-                    .attr("opacity", annual ? 0 : 1)
-                    .attr("cx", function(d) { return self.chart.x(d.x); })
-                    .attr("cy", function(d) { return self.chart.y(d.y); })
-                     .attr("r", function(d) {
-                        var period;
-                        if (self.period === "25RP") {
-                            period = 25;
-                        } else if (self.period === "100RP") {
-                            period = 100;
-                        }
-                        if (d.x === period) {
-                           return 5;
-                        } else {
-                            return 3.5;
-                        }
-                    });
-
-                // Update the position of the interpolation line to match the new point position
-                this.chart.svg.select(".line.scenario")
-                    .transition().duration(1200).ease("sin-in-out")
-                    .attr("opacity", annual ? 0 : 1)
-                    .attr("d", this.chart.valueline(this.chart.data.scenario.xy));
-
-                this.chart.svg.select(".area-scenario")
-                    .data([this.chart.data.scenario.xy])
-                    .transition().duration(1200).ease("sin-in-out")
-                    .attr("opacity", annual ? 0 : 1)
-                    .attr("d", this.chart.area.scenario);
-
-                this.chart.pointsscenario.selectAll('circle')
-                    .data(this.chart.data.scenario.xy)
-                    .transition().duration(1200).ease("sin-in-out")
-                    .attr("opacity", annual ? 0 : 1)
-                    .attr("cx", function(d) { return self.chart.x(d.x); })
-                    .attr("cy", function(d) { return self.chart.y(d.y); })
-                    .attr("r", function(d) {
-                        var period;
-                        if (self.period === "25RP") {
-                            period = 25;
-                        } else if (self.period === "100RP") {
-                            period = 100;
-                        }
-                        if (d.x === period) {
-                           return 5;
-                        } else {
-                            return 3.5;
-                        }
-                    });
+                    .attr("opacity", 1);
 
                 this.chart.svg.selectAll(".bar")
                     .data(bardata)
                     .transition().duration(1200).ease("sin-in-out")
-                    .attr("opacity", annual ? 1 : 0)
+                    .attr("opacity", 1)
                     .attr("width", this.chart.barx.rangeBand())
                     .attr("class", function(d) {return "bar " + d.x;})
                     .attr("x", function(d) { return self.chart.barx(d.x); })

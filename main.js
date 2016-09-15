@@ -24,11 +24,15 @@ define([
     "d3",
     "framework/PluginBase",
     "esri/layers/ArcGISDynamicMapServiceLayer",
+    "esri/layers/FeatureLayer",
     "esri/layers/LayerDrawingOptions",
     "esri/renderers/ClassBreaksRenderer",
     "esri/symbols/SimpleLineSymbol",
     "esri/renderer",
     "esri/Color",
+    "esri/toolbars/draw",
+    "esri/tasks/QueryTask",
+    "esri/tasks/query",
     "dojo/text!./template.html",
     "dojo/text!./layers.json",
     "dojo/text!./data.json",
@@ -37,11 +41,15 @@ define([
               d3,
               PluginBase,
               ArcGISDynamicMapServiceLayer,
+              FeatureLayer,
               LayerDrawingOptions,
               ClassBreaksRenderer,
               SimpleLineSymbol,
               Renderer,
               Color,
+              Draw,
+              QueryTask,
+              Query,
               templates,
               layerSourcesJson,
               Data,
@@ -83,6 +91,7 @@ define([
                 };
                 this.chart.position.width = (this.width - 10)- this.chart.position.margin.left - this.chart.position.margin.right;
                 this.chart.position.height = 235  - this.chart.position.margin.top - this.chart.position.margin.bottom;
+                this.selectedUnits = [];
 
                 // Default class breaks and color ramps
 
@@ -145,6 +154,7 @@ define([
             // It sets up the layers with their default settings
 
             firstLoad: function() {
+                var self = this;
                 var layerDefs = [];
                 var layerDrawingOptions = [];
                 var layerDrawingOption = new LayerDrawingOptions();
@@ -158,12 +168,40 @@ define([
 
                 this.coastalProtectionLayer = new ArcGISDynamicMapServiceLayer("http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer", {});
                 this.coastalProtectionLayer.setVisibleLayers([0]);
+                this.coastalProtectionFeatureLayer = new FeatureLayer("http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer/3");
+
                 //layerDefs[0] = this.activeCountries;
                 //this.coastalProtectionLayer.setLayerDefinitions(layerDefs);
 
                 this.coastalProtectionLayer.setLayerDrawingOptions(layerDrawingOptions);
                 this.map.addLayer(this.coastalProtectionLayer);
                 this.map.addLayer(this.coralReefLayer);
+
+                this.draw = new Draw(this.map);
+                this.draw.on("draw-end", function(evt) {
+                    self.draw.deactivate();
+                    console.log(evt);
+
+                    var query = new Query();
+                    query.spatialRelationship = Query.SPATIAL_REL_INTERSECTS;
+                    query.returnGeometry = false;
+                    query.outFields = ["UNIT_ID"];
+                    query.geometry = evt.geometry;
+                    self.coastalProtectionFeatureLayer.queryFeatures(query, function(featureset) {
+                        self.selectedUnits = _(featureset.features).map(function(feature) {
+                            return feature.attributes.UNIT_ID;
+                        });
+                        // TODO Probably set to new custom select value
+                        self.$el.find(".region-select").val("custom");
+                        self.changeRegion();
+                    });
+
+
+
+
+                    
+
+                });
 
             },
 
@@ -235,41 +273,49 @@ define([
             // zoom to the country based on the bookmark in the extent-bookmarks.json file and hide data for all other countries
             changeRegion: function() {
                 this.region = this.$el.find(".region-select").val();
-
                 // Show/hide the download country summary button
                 if (this.region === "Global") {
                     this.$el.find(".js-getSnapshot").hide();
+                } else if (this.region === "custom") {
+                    this.changePeriod();
+                    return;
                 } else {
                     this.$el.find(".js-getSnapshot").show();
                 }
 
-                this.changePeriod();
+                if (this.region === 'draw') {
+                    this.draw.activate(Draw.POLYGON);
+                    } else {
+                        this.changePeriod();
 
-                var layerDefs = [];
-                var regionExtent = this.countryConfig[this.region].EXTENT;
+                    var layerDefs = [];
+                    var regionExtent = this.countryConfig[this.region].EXTENT;
 
-                var extent;
+                    var extent;
 
-                // Set the zoom extent
-                if (this.region === "Global") {
-                    var initialExtent = this.app.regionConfig.initialExtent;
-                    extent = new esri.geometry.Extent(initialExtent[0],initialExtent[1],initialExtent[2],initialExtent[3]);
-                } else {
-                    extent = new esri.geometry.Extent(regionExtent[0],regionExtent[1],regionExtent[2],regionExtent[3]);
+                    // Set the zoom extent
+                    if (this.region === "Global") {
+                        var initialExtent = this.app.regionConfig.initialExtent;
+                        extent = new esri.geometry.Extent(initialExtent[0],initialExtent[1],initialExtent[2],initialExtent[3]);
+                    } else {
+                        extent = new esri.geometry.Extent(regionExtent[0],regionExtent[1],regionExtent[2],regionExtent[3]);
+                    }
+
+                    // Set the data extent
+                    if (this.region === "Global") {
+                        layerDefs[0] = ""; //this.activeCountries;
+                    } else if (this.region === "US/Puerto Rico") {
+                        layerDefs[0] = "COUNTRY='United States & Puerto Rico'";
+                    } else {
+                        layerDefs[0] = "COUNTRY='" + this.region + "'";
+                    }
+                    this.coastalProtectionLayer.setLayerDefinitions(layerDefs);
+                    this.map.setExtent(extent);
+
+                    this.updateChart();
                 }
 
-                // Set the data extent
-                if (this.region === "Global") {
-                    layerDefs[0] = ""; //this.activeCountries;
-                } else if (this.region === "US/Puerto Rico") {
-                    layerDefs[0] = "COUNTRY='United States & Puerto Rico'";
-                } else {
-                    layerDefs[0] = "COUNTRY='" + this.region + "'";
-                }
-                this.coastalProtectionLayer.setLayerDefinitions(layerDefs);
-                this.map.setExtent(extent);
-
-                this.updateChart();
+                
 
             },
 

@@ -44,12 +44,21 @@
 		margin-top: 10px;
 	}
 
-	.mar-plugin .storm-buttons-container .check-group.annual {
-		margin-top: 6px;
+	.mar-plugin .storm-buttons-container .check-group-annual,
+	.mar-plugin .storm-buttons-container .check-group-storm {
+		position: relative;
+		display: block;
+		margin-bottom: 6px;
+	    width: 38px;
+	    height: 20px;
+	    text-align: left;
 	}
 
-	.mar-plugin .storm-buttons-container .check-group.annual label {
+	.mar-plugin .storm-buttons-container .check-group-annual label,
+	.mar-plugin .storm-buttons-container .check-group-storm label {
 		width: 140px;
+		padding-left: 31px;
+    	padding-top: 1px;
 	}
 
 	.mar-plugin .check-group:hover label {
@@ -103,6 +112,8 @@
 
 	.mar-plugin .slider-select {
 		position: relative;
+		display: block;
+		clear: both;
 		height: 45px;
 	}
 
@@ -148,7 +159,7 @@
 
 	.mar-plugin .storm-buttons-container {
 		float: left;
-		width: 210px;
+		width: 220px;
 	}
 
 	.mar-plugin .storm-buttons-container .control-title,
@@ -468,7 +479,7 @@
 							<span class="i18n" data-i18n="Annual Expected Benefit">Annual Expected Benefit</span>
 							<i data-i18n="[data-tooltip]AHistorical data and simulation on tropical storms were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events." data-tooltip="Historical data and simulation on tropical storms were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events." class="fa fa-info-circle info-annual info-tooltip i18n"></i>
 						</div>
-			    		<div class="check-group annual">
+			    		<div class="check-group-annual">
 							<label>
 								<input  type="radio" name="storm<%=pane%>" value="ANN" checked="checked" />
 								<div class="radio-select"></div>
@@ -483,38 +494,45 @@
 						<span class="i18n" data-i18n="Benefits from Catastrophic Storms">Benefits from Catastrophic Storms</span>
 						<i data-tooltip="30 years of historical data on regional sea level and wave conditions were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events." class="fa fa-info-circle info-period info-tooltip i18n" data-i18n="[data-tooltip]30 years of historical data on regional sea level and wave conditions were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events."></i>
 					</div>
+					<div class="check-group-storm">
+							<label>
+								<input  type="radio" name="storm<%=pane%>" value="100RP" checked="checked" />
+								<div class="radio-select"></div>
+								1 in 100-year storm
+							</label>
+			    		</div>
 					<div class="slider-select">
 						<div class="check-group">
 							<label>
-								<input  type="radio" name="climate-scenario" value="present" checked="checked" />
+								<input  type="radio" name="climate-scenario<%=pane%>" value="" checked="checked" />
 								<div class="radio-select"></div>
 								<br><span class="i18n" data-i18n="Present">Present</span>
 							</label>
 			    		</div>
 			    		<div class="check-group">
 							<label>
-								<input type="radio" name="climate-scenario" value="low-2030">
+								<input type="radio" name="climate-scenario<%=pane%>" value="L2030">
 								<div class="radio-select"></div>
 								<br><span class="i18n" data-i18n="Low 2030">Low 2030</span>
 							</label>
 			    		</div>
 			    		<div class="check-group">
 							<label>
-								<input type="radio" name="climate-scenario" value="high-2030">
+								<input type="radio" name="climate-scenario<%=pane%>" value="H2030">
 								<div class="radio-select"></div>
 								<br><span class="i18n" data-i18n="High 2030">High 2030</span>
 							</label>
 			    		</div>
 			    		<div class="check-group">
 							<label>
-								<input type="radio" name="climate-scenario" value="low-2050">
+								<input type="radio" name="climate-scenario<%=pane%>" value="L2050">
 								<div class="radio-select"></div>
 								<br><span class="i18n" data-i18n="Low 2050">Low 2050</span>
 							</label>
 			    		</div>
 			    		<div class="check-group">
 							<label>
-								<input type="radio" name="climate-scenario" value="high-2050">
+								<input type="radio" name="climate-scenario<%=pane%>" value="H2050">
 								<div class="radio-select"></div>
 								<br><span class="i18n" data-i18n="High 2050">High 2050</span>
 							</label>

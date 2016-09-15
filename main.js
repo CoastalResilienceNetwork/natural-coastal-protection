@@ -34,7 +34,6 @@ define([
     "esri/tasks/QueryTask",
     "esri/tasks/query",
     "dojo/text!./template.html",
-    "dojo/text!./layers.json",
     "dojo/text!./data.json",
     "dojo/text!./country-config.json"
     ], function (declare,
@@ -51,7 +50,6 @@ define([
               QueryTask,
               Query,
               templates,
-              layerSourcesJson,
               Data,
               CountryConfig
               ) {
@@ -77,6 +75,7 @@ define([
                 this.region = "Global";
                 this.period = "ANN";
                 this.layer = "people";
+                this.scenario = "";
                 this.variable = "PF";
 
                 this.bindEvents();
@@ -134,6 +133,7 @@ define([
                 // Set event listeners.  We bind "this" where needed so the event handler can access the full
                 // scope of the plugin
                 this.$el.on("change", "input[name=storm" + this.app.paneNumber + "]", $.proxy(this.changePeriod, this));
+                this.$el.on("change", "input[name=climate-scenario" + this.app.paneNumber + "]", $.proxy(this.changePeriod, this));
                 this.$el.on("change", ".region-select", $.proxy(this.changeRegion, this));
                 this.$el.on("click", ".stat", function(e) {self.changeScenarioClick(e);});
                 this.$el.on("change", ".coral-select-container input", $.proxy(this.toggleCoral, this));
@@ -196,11 +196,6 @@ define([
                         self.changeRegion();
                     });
 
-
-
-
-                    
-
                 });
 
             },
@@ -256,10 +251,19 @@ define([
             // Change the storm return period and update the facts to match
             changePeriod: function() {
                 this.period = this.$el.find("input[name=storm" + this.app.paneNumber + "]:checked").val();
+                this.scenario = this.$el.find("input[name=climate-scenario" + this.app.paneNumber + "]:checked").val();
                 //http://stackoverflow.com/a/2901298`
-                this.$el.find(".stat.people .number .variable").html(this.numberWithCommas(Math.round(this.getRegionSum("E2E1_DIF_" + this.period + "_PF", this.region))));
-                this.$el.find(".stat.capital .number .variable").html(this.numberWithCommas(Math.round(this.getRegionSum("E2E1_DIF_" + this.period + "_BCF", this.region) / 1000000)));
-                this.$el.find(".stat.area .number .variable").html(this.numberWithCommas(Math.round(this.getRegionSum("E2E1_DIF_" + this.period + "_HOTEL", this.region))));
+                var scenarioLabel;
+
+                if (this.scenario !== '') {
+                    scenarioLabel = "_" + this.scenario;
+                } else {
+                    scenarioLabel = "";
+                }
+
+                this.$el.find(".stat.people .number .variable").html(this.numberWithCommas(Math.round(this.getRegionSum("E2E1_DIF_" + this.period + "_PF" + scenarioLabel, this.region))));
+                this.$el.find(".stat.capital .number .variable").html(this.numberWithCommas(Math.round(this.getRegionSum("E2E1_DIF_" + this.period + "_BCF" + scenarioLabel, this.region) / 1000000)));
+                this.$el.find(".stat.area .number .variable").html(this.numberWithCommas(Math.round(this.getRegionSum("E2E1_DIF_" + this.period + "_HOTEL" + scenarioLabel, this.region))));
 
                 this.changeScenario();
             },
@@ -505,14 +509,6 @@ define([
                     .attr("transform", "translate(0," + (this.chart.position.height-20) + ")")
                     .call(this.chart.barxAxis);
 
-                // Add the x-axis label
-                this.chart.svg.append("text")
-                    .attr("class", "xaxis-label")
-                    .attr("opacity", 0)
-                    .attr("text-anchor", "middle")
-                    .attr("transform", "translate(" + (this.chart.position.width / 2) + "," + (this.chart.position.height + 20) + ")")
-                    .text(i18next.t('Storm Return Period'));
-
                 // Add the y-axis label
                 this.chart.svg.append("text")
                     .attr("class", "yaxis-label")
@@ -593,16 +589,22 @@ define([
                 var bary;
                 var bary1m;
 
+                if (this.scenario !== '') {
+                    scenarioLabel = "_" + this.scenario;
+                } else {
+                    scenarioLabel = "";
+                }
+
                 // Set the data for the bar chart
                 if (this.variable === "BCF") {
-                    bary = this.getRegionSum("E1_ANN_BCF", this.region) / division;
-                    bary1m = this.getRegionSum("E2_ANN_BCF", this.region) / division;
+                    bary = this.getRegionSum("E1_" + this.period + "_BCF" + scenarioLabel, this.region) / division;
+                    bary1m = this.getRegionSum("E2_" + this.period + "_BCF" + scenarioLabel, this.region) / division;
                 } else if (this.variable === "PF") {
-                    bary = this.getRegionSum("E1_ANN_PF", this.region) / division;
-                    bary1m = this.getRegionSum("E2_ANN_PF", this.region) / division;
+                    bary = this.getRegionSum("E1_" + this.period + "_PF" + scenarioLabel, this.region) / division;
+                    bary1m = this.getRegionSum("E2_" + this.period + "_PF" + scenarioLabel, this.region) / division;
                 } else if (this.variable === "AF") {
-                    bary = this.getRegionSum("E1_ANN_AF", this.region) / division;
-                    bary1m = this.getRegionSum("E2_ANN_AF", this.region) / division;
+                    bary = this.getRegionSum("E1_" + this.period + "_AF" + scenarioLabel, this.region) / division;
+                    bary1m = this.getRegionSum("E2_" + this.period + "_AF" + scenarioLabel, this.region) / division;
                 }
 
                 var bardata = [

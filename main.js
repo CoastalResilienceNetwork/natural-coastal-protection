@@ -218,10 +218,10 @@ define([
             // Change the storm return period and update the facts to match
             changePeriod: function() {
                 this.period = this.$el.find("input[name=storm" + this.app.paneNumber + "]:checked").val();
-                //http://stackoverflow.com/a/2901298
-                this.$el.find(".stat.people .number .variable").html(this.numberWithCommas(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_PF"])));
-                this.$el.find(".stat.capital .number .variable").html(this.numberWithCommas(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_BCF"] / 1000000)));
-                this.$el.find(".stat.area .number .variable").html(this.numberWithCommas(Math.round(this.data[this.region]["E2E1_DIF_" + this.period + "_AF"])));
+                //http://stackoverflow.com/a/2901298`
+                this.$el.find(".stat.people .number .variable").html(this.numberWithCommas(Math.round(this.getRegionSum("E2E1_DIF_" + this.period + "_PF", this.region))));
+                this.$el.find(".stat.capital .number .variable").html(this.numberWithCommas(Math.round(this.getRegionSum("E2E1_DIF_" + this.period + "_BCF", this.region) / 1000000)));
+                this.$el.find(".stat.area .number .variable").html(this.numberWithCommas(Math.round(this.getRegionSum("E2E1_DIF_" + this.period + "_HOTEL", this.region))));
 
                 this.changeScenario();
             },
@@ -311,16 +311,39 @@ define([
 
             // Render the plugin DOM
             render: function() {
-
                 var $el = $(this.pluginTmpl({
                     global: this.data.Global,
-                    regions: this.data,
+                    regions: _(this.data).chain().map(function(segment) {return segment.REGION;}).uniq().value(),
                     pane: this.app.paneNumber
                 }));
 
                 $(this.container).empty().append($el);
 
+
                 this.$el.find('.i18n').localize();
+
+            },
+
+            getRegionSum: function(attribute, region) {
+                var self = this;
+                // Return the summed attribute for the specified region
+                if (region && region !== "Global" && region !== "custom") {
+                    return _(this.data).chain().where({REGION: region}).reduce(function(num, segment) {
+                        return parseFloat(segment[attribute]) + num;
+                    }, 0).value();
+                } else if (region && region === "custom") {
+                    return _(this.data).reduce(function(num, segment) {
+                        if (_.contains(self.selectedUnits, segment.UNIT_ID) ) {
+                            return parseFloat(segment[attribute]) + num;
+                        }
+                        return 0 + num;
+                    }, 0);
+                } else {
+                    // Otherwise, return the global sum
+                    return _(this.data).reduce(function(num, segment) {
+                        return parseFloat(segment[attribute]) + num;
+                    }, 0);
+                }
 
             },
 
@@ -526,14 +549,14 @@ define([
 
                 // Set the data for the bar chart
                 if (this.variable === "BCF") {
-                    bary = this.data[this.region].E1_ANN_BCF / division;
-                    bary1m = this.data[this.region].E2_ANN_BCF / division;
+                    bary = this.getRegionSum("E1_ANN_BCF", this.region) / division;
+                    bary1m = this.getRegionSum("E2_ANN_BCF", this.region) / division;
                 } else if (this.variable === "PF") {
-                    bary = this.data[this.region].E1_ANN_PF / division;
-                    bary1m = this.data[this.region].E2_ANN_PF / division;
+                    bary = this.getRegionSum("E1_ANN_PF", this.region) / division;
+                    bary1m = this.getRegionSum("E2_ANN_PF", this.region) / division;
                 } else if (this.variable === "AF") {
-                    bary = this.data[this.region].E1_ANN_AF / division;
-                    bary1m = this.data[this.region].E2_ANN_AF / division;
+                    bary = this.getRegionSum("E1_ANN_AF", this.region) / division;
+                    bary1m = this.getRegionSum("E2_ANN_AF", this.region) / division;
                 }
 
                 var bardata = [

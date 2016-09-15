@@ -30,7 +30,6 @@ define([
     "esri/renderer",
     "esri/Color",
     "dojo/text!./template.html",
-    "dojo/text!./layers.json",
     "dojo/text!./data.json",
     "dojo/text!./country-config.json"
     ], function (declare,
@@ -43,7 +42,6 @@ define([
               Renderer,
               Color,
               templates,
-              layerSourcesJson,
               Data,
               CountryConfig
               ) {

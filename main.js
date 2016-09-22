@@ -122,6 +122,7 @@ define([
                         [ 50,     100,  [215,48,39, opacity], "51 - 100", 3],
                         [100,   100000,  [165,0,38, opacity], "> 100", 3]
                     ],
+
                 };
 
                 this.layers = {
@@ -157,9 +158,8 @@ define([
                     '100 RP High CC 2030 Hotels Protected': 29,
                     '100 RP Low CC 2050 Hotels Protected': 30,
                     '100 RP High CC 2050 Hotels Protected': 31
-                }
+                };
 
-                //this.activeCountries = "COUNTRY_ID = 58 OR COUNTRY_ID = 66 OR COUNTRY_ID = 106 OR COUNTRY_ID = 113 OR COUNTRY_ID = 136 OR COUNTRY_ID = 145 OR COUNTRY_ID = 177 OR COUNTRY_ID = 223";
             },
 
             layerStringBuilder: function() {
@@ -183,7 +183,7 @@ define([
                 } else if (this.scenario === "H2050") {
                     scenario = "High CC 2050";
                 } else {
-                    scenario = "";
+                    scenario = "Present";
                 }
 
                 if (this.variable === "PF") {
@@ -194,9 +194,9 @@ define([
                     variable = "Hotels Protected";
                 }
 
-                console.log(layerString = period + " " + scenario + " " + variable, this.layers[layerString = period + " " + scenario + " " + variable])
+                layerString = period + " " + scenario + " " + variable;
 
-                return this.layers[layerString = period + " " + scenario + " " + variable];
+                return this.layers[layerString];
 
             },
 
@@ -205,8 +205,7 @@ define([
 
                 // Set event listeners.  We bind "this" where needed so the event handler can access the full
                 // scope of the plugin
-                this.$el.on("change", "input[name=storm" + this.app.paneNumber + "]", $.proxy(this.changePeriod, this));
-                this.$el.on("change", "input[name=climate-scenario" + this.app.paneNumber + "]", $.proxy(this.changePeriod, this));
+                this.$el.on("change", "input[type=radio]", $.proxy(this.getParameters, this));
                 this.$el.on("change", ".region-select", $.proxy(this.changeRegion, this));
                 this.$el.on("click", ".stat", function(e) {self.changeScenarioClick(e);});
                 this.$el.on("change", ".coral-select-container input", $.proxy(this.toggleCoral, this));
@@ -242,9 +241,6 @@ define([
                 this.coastalProtectionLayer = new ArcGISDynamicMapServiceLayer("http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer", {});
                 this.coastalProtectionLayer.setVisibleLayers([0]);
                 this.coastalProtectionFeatureLayer = new FeatureLayer("http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer/3");
-
-                //layerDefs[0] = this.activeCountries;
-                //this.coastalProtectionLayer.setLayerDefinitions(layerDefs);
 
                 this.coastalProtectionLayer.setLayerDrawingOptions(layerDrawingOptions);
                 this.map.addLayer(this.coastalProtectionLayer);
@@ -306,8 +302,7 @@ define([
                     this.$el.find(".coral-select-container input").prop("checked", true);
                 }
 
-                this.changePeriod();
-                this.changeScenario();
+                this.changeRegion();
 
             },
 
@@ -321,11 +316,42 @@ define([
                 this.updateLegend();
             },
 
-            // Change the storm return period and update the facts to match
-            changePeriod: function() {
+            updateLayers: function() {
+                var layerDefs = [];
+                var layerIdx = this.layerStringBuilder();
+                // Set the data extent
+                if (this.region === "Global") {
+                    layerDefs[layerIdx] = "";
+                } else {
+                    layerDefs[layerIdx] = "REGION='" + this.region + "'";
+                }
+                
+                this.coastalProtectionLayer.setLayerDefinitions(layerDefs);
+                this.coastalProtectionLayer.setVisibleLayers([this.layerStringBuilder()]);
+            },
+
+            getParameters: function () {
+                this.region = this.$el.find(".region-select").val();
                 this.period = this.$el.find("input[name=storm" + this.app.paneNumber + "]:checked").val();
                 this.scenario = this.$el.find("input[name=climate-scenario" + this.app.paneNumber + "]:checked").val();
-                //http://stackoverflow.com/a/2901298`
+                this.layer = this.$el.find(".stat.active").closest(".stat").data("layer");
+
+                if (this.layer === "people") {
+                    this.variable = "PF";
+                } else if (this.layer === "capital") {
+                    this.variable = "BCF";
+                } else if (this.layer === "area") {
+                    this.variable = "HOTEL";
+                }
+
+                this.updateStats();
+                this.updateChart();
+                this.updateLayers();
+
+            },
+
+            updateStats: function() {
+
                 var scenarioLabel;
 
                 if (this.scenario !== '') {
@@ -337,8 +363,6 @@ define([
                 this.$el.find(".stat.people .number .variable").html(this.numberWithCommas(Math.round(this.getRegionSum("E2E1_DIF_" + this.period + "_PF" + scenarioLabel, this.region))));
                 this.$el.find(".stat.capital .number .variable").html(this.numberWithCommas(Math.round(this.getRegionSum("E2E1_DIF_" + this.period + "_BCF" + scenarioLabel, this.region) / 1000000)));
                 this.$el.find(".stat.area .number .variable").html(this.numberWithCommas(Math.round(this.getRegionSum("E2E1_DIF_" + this.period + "_HOTEL" + scenarioLabel, this.region))));
-
-                this.changeScenario();
             },
 
             // format a number with commas
@@ -349,12 +373,11 @@ define([
             // Change the default region.  If global, zoom to the full extent and show data for all countries.  If regional,
             // zoom to the country based on the bookmark in the extent-bookmarks.json file and hide data for all other countries
             changeRegion: function() {
-                this.region = this.$el.find(".region-select").val();
+                this.getParameters();
                 // Show/hide the download country summary button
                 if (this.region === "Global") {
                     this.$el.find(".js-getSnapshot").hide();
                 } else if (this.region === "custom") {
-                    this.changePeriod();
                     return;
                 } else {
                     this.$el.find(".js-getSnapshot").show();
@@ -362,76 +385,22 @@ define([
 
                 if (this.region === 'draw') {
                     this.draw.activate(Draw.POLYGON);
-                    } else {
-                        this.changePeriod();
-
-                    var layerDefs = [];
+                } else {
                     var regionExtent = this.countryConfig[this.region].EXTENT;
 
-                    var extent;
+                    var extent = new esri.geometry.Extent(regionExtent[0],regionExtent[1],regionExtent[2],regionExtent[3]);
 
-                    // Set the zoom extent
-                    if (this.region === "Global") {
-                        var initialExtent = this.app.regionConfig.initialExtent;
-                        extent = new esri.geometry.Extent(initialExtent[0],initialExtent[1],initialExtent[2],initialExtent[3]);
-                    } else {
-                        extent = new esri.geometry.Extent(regionExtent[0],regionExtent[1],regionExtent[2],regionExtent[3]);
-                    }
-
-                    // Set the data extent
-                    if (this.region === "Global") {
-                        layerDefs[0] = ""; //this.activeCountries;
-                    } else {
-                        layerDefs[0] = "COUNTRY='" + this.region + "'";
-                    }
-                    console.log(this.layerStringBuilder())
-                    this.coastalProtectionLayer.setVisibleLayers([this.layerStringBuilder()]);
-                    this.coastalProtectionLayer.setLayerDefinitions(layerDefs);
                     this.map.setExtent(extent);
-
-                    this.updateChart();
                 }
-
-
-
-                
 
             },
 
             // Capture the click from the fact number click events and pass to the changeScenario function
             changeScenarioClick: function(e) {
-                this.layer = $(e.currentTarget).closest(".stat").data("layer");
                 this.$el.find(".stat.active").removeClass("active");
                 $(e.currentTarget).closest(".stat").addClass("active");
 
-                this.changeScenario();
-            },
-
-            // Update the renderer to reflect storm return period and the fact being displayed.
-            changeScenario: function() {
-                var layerDrawingOptions = [];
-                var layerDrawingOption = new LayerDrawingOptions();
-                var renderer;
-                if (this.layer === "people") {
-                    this.variable = "PF";
-                    renderer = this.createRenderer(this.mapClassBreaks.people, "E2E1_DIF_" + this.period + "_" + this.variable);
-                } else if (this.layer === "capital") {
-                    this.variable = "BCF";
-                    renderer = this.createRenderer(this.mapClassBreaks.capital, "E2E1_DIF_" + this.period + "_" + this.variable);
-                } else if (this.layer === "area") {
-                    this.variable = "HOTEL";
-                    renderer = this.createRenderer(this.mapClassBreaks.area, "E2E1_DIF_" + this.period + "_" + this.variable);
-                }
-
-                layerDrawingOption.renderer = renderer;
-                layerDrawingOptions[0] = layerDrawingOption;
-                this.coastalProtectionLayer.setLayerDrawingOptions(layerDrawingOptions);
-
-                this.coastalProtectionLayer.refresh();
-
-                this.updateChart();
-                this.updateLegend();
-                
+                this.getParameters();
             },
 
             // Render the plugin DOM

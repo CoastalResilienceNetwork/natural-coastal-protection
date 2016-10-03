@@ -31,6 +31,7 @@ define([
     "esri/renderer",
     "esri/Color",
     "esri/toolbars/draw",
+    "esri/graphic",
     "esri/tasks/QueryTask",
     "esri/tasks/query",
     "dojo/text!./template.html",
@@ -47,6 +48,7 @@ define([
               Renderer,
               Color,
               Draw,
+              Graphic,
               QueryTask,
               Query,
               templates,
@@ -247,15 +249,17 @@ define([
                 this.map.addLayer(this.coralReefLayer);
 
                 this.draw = new Draw(this.map);
-                this.draw.on("draw-end", function(evt) {
+                this.draw.on("draw-complete", function(evt) {
                     self.draw.deactivate();
-                    console.log(evt);
-
+                    
+                    var symbol = new SimpleLineSymbol();
+                    var graphic = new Graphic(evt.geometry, symbol);
                     var query = new Query();
                     query.spatialRelationship = Query.SPATIAL_REL_INTERSECTS;
                     query.returnGeometry = false;
                     query.outFields = ["UNIT_ID"];
                     query.geometry = evt.geometry;
+                    self.map.graphics.add(graphic);
                     self.coastalProtectionFeatureLayer.queryFeatures(query, function(featureset) {
                         self.selectedUnits = _(featureset.features).map(function(feature) {
                             return feature.attributes.UNIT_ID;
@@ -320,8 +324,14 @@ define([
                 var layerDefs = [];
                 var layerIdx = this.layerStringBuilder();
                 // Set the data extent
-                if (this.region === "Global") {
+                if (this.region === "Global" || this.region === "draw") {
                     layerDefs[layerIdx] = "";
+                } else if (this.region === "custom") {
+                    var definitions = [];
+                    _.each(this.selectedUnits, function(unit) {
+                        definitions.push("UNIT_ID=" + unit);
+                    });
+                    layerDefs[layerIdx] = definitions.join(" or ");
                 } else {
                     layerDefs[layerIdx] = "REGION='" + this.region + "'";
                 }
@@ -384,6 +394,7 @@ define([
                 }
 
                 if (this.region === 'draw') {
+                    this.map.graphics.clear();
                     this.draw.activate(Draw.POLYGON);
                 } else {
                     var regionExtent = this.countryConfig[this.region].EXTENT;

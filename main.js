@@ -74,7 +74,7 @@ define([
                 this.$el = $(this.container);
 
                 // Default Settings
-                this.region = "Global";
+                this.region = "Quintana Roo";
                 this.period = "ANN";
                 this.layer = "people";
                 this.scenario = "";
@@ -285,7 +285,7 @@ define([
                 // default variables
                 if (!this.coastalProtectionLayer || !this.coastalProtectionLayer.visible) {
                     this.firstLoad();
-                    this.region = "Global";
+                    this.region = "Quintana Roo";
                     this.period = "ANN";
                     this.layer = "people";
                     this.variable = "PF";
@@ -324,7 +324,7 @@ define([
                 var layerDefs = [];
                 var layerIdx = this.layerStringBuilder();
                 // Set the data extent
-                if (this.region === "Global" || this.region === "draw") {
+                if (this.region === "Quintana Roo" || this.region === "draw") {
                     layerDefs[layerIdx] = "";
                 } else if (this.region === "custom") {
                     var definitions = [];
@@ -385,7 +385,7 @@ define([
             changeRegion: function() {
                 this.getParameters();
                 // Show/hide the download country summary button
-                if (this.region === "Global") {
+                if (this.region === "Quintana Roo") {
                     this.$el.find(".js-getSnapshot").hide();
                 } else if (this.region === "custom") {
                     return;
@@ -393,8 +393,9 @@ define([
                     this.$el.find(".js-getSnapshot").show();
                 }
 
+                this.map.graphics.clear();
+
                 if (this.region === 'draw') {
-                    this.map.graphics.clear();
                     this.draw.activate(Draw.POLYGON);
                 } else {
                     var regionExtent = this.countryConfig[this.region].EXTENT;
@@ -417,7 +418,7 @@ define([
             // Render the plugin DOM
             render: function() {
                 var $el = $(this.pluginTmpl({
-                    global: this.data.Global,
+                    global: this.data["Quintana Roo"],
                     regions: _(this.data).chain().map(function(segment) {return segment.REGION;}).uniq().value(),
                     pane: this.app.paneNumber
                 }));
@@ -432,7 +433,7 @@ define([
             getRegionSum: function(attribute, region) {
                 var self = this;
                 // Return the summed attribute for the specified region
-                if (region && region !== "Global" && region !== "custom") {
+                if (region && region !== "Quintana Roo" && region !== "custom") {
                     return _(this.data).chain().where({REGION: region}).reduce(function(num, segment) {
                         return parseFloat(segment[attribute]) + num;
                     }, 0).value();

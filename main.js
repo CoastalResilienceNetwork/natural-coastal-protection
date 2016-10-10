@@ -371,7 +371,7 @@ define([
                 }
 
                 this.$el.find(".stat.people .number .variable").html(this.numberWithCommas(Math.round(this.getRegionSum("E2E1_DIF_" + this.period + "_PF" + scenarioLabel, this.region))));
-                this.$el.find(".stat.capital .number .variable").html(this.numberWithCommas(Math.round(this.getRegionSum("E2E1_DIF_" + this.period + "_BCF" + scenarioLabel, this.region) / 1000000)));
+                this.$el.find(".stat.capital .number .variable").html(this.getRegionSum("E2E1_DIF_" + this.period + "_BCF" + scenarioLabel, this.region).toFixed(2));
                 this.$el.find(".stat.area .number .variable").html(this.numberWithCommas(Math.round(this.getRegionSum("E2E1_DIF_" + this.period + "_HOTEL" + scenarioLabel, this.region))));
             },
 
@@ -620,11 +620,6 @@ define([
             updateChart: function() {
                 var self = this;
 
-                var division = 1;
-                if (this.variable === "BCF") {
-                    division = 1000000;
-                }
-
                 // Update the  y-axis label to match the current variable selected
                 var text = "";
                 if (this.variable === "BCF") {
@@ -653,14 +648,14 @@ define([
 
                 // Set the data for the bar chart
                 if (this.variable === "BCF") {
-                    bary = this.getRegionSum("E1_" + this.period + "_BCF" + scenarioLabel, this.region) / division;
-                    bary1m = this.getRegionSum("E2_" + this.period + "_BCF" + scenarioLabel, this.region) / division;
+                    bary = this.getRegionSum("E1_" + this.period + "_BCF" + scenarioLabel, this.region);
+                    bary1m = this.getRegionSum("E2_" + this.period + "_BCF" + scenarioLabel, this.region);
                 } else if (this.variable === "PF") {
-                    bary = this.getRegionSum("E1_" + this.period + "_PF" + scenarioLabel, this.region) / division;
-                    bary1m = this.getRegionSum("E2_" + this.period + "_PF" + scenarioLabel, this.region) / division;
+                    bary = this.getRegionSum("E1_" + this.period + "_PF" + scenarioLabel, this.region);
+                    bary1m = this.getRegionSum("E2_" + this.period + "_PF" + scenarioLabel, this.region);
                 } else if (this.variable === "HOTEL") {
-                    bary = this.getRegionSum("E1_" + this.period + "_HOTEL" + scenarioLabel, this.region) / division;
-                    bary1m = this.getRegionSum("E2_" + this.period + "_HOTEL" + scenarioLabel, this.region) / division;
+                    bary = this.getRegionSum("E1_" + this.period + "_HOTEL" + scenarioLabel, this.region);
+                    bary1m = this.getRegionSum("E2_" + this.period + "_HOTEL" + scenarioLabel, this.region);
                 }
 
                 var bardata = [

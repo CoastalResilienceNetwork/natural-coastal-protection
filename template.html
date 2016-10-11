@@ -21,12 +21,13 @@
 	.mar-plugin .check-group {
 		position: relative;
 		display: block;
-	    width: 38px;
+	    width: 42px;
 	    height: 20px;
 	    text-align: left;
 	}
 	
-	.mar-plugin .storm-buttons-container .expected-benefit label {
+	.mar-plugin .storm-buttons-container .expected-benefit .check-group-storm label,
+	.mar-plugin .storm-buttons-container .expected-benefit .check-group-annual label {
 	  position: relative;
 	  display: block;
 	  width: 240px;
@@ -49,14 +50,13 @@
 		position: relative;
 		display: block;
 		margin-bottom: 6px;
-	    width: 38px;
+	    width: 100%;
 	    height: 20px;
 	    text-align: left;
 	}
 
 	.mar-plugin .storm-buttons-container .check-group-annual label,
 	.mar-plugin .storm-buttons-container .check-group-storm label {
-		width: 140px;
 		padding-left: 31px;
     	padding-top: 1px;
 	}
@@ -115,12 +115,20 @@
 		display: block;
 		clear: both;
 		height: 45px;
+		padding-left: 33px;
+		opacity: 1;
+		transition: opacity 0.5s linear;
+	}
+
+	.mar-plugin .slider-select.disabled {
+		opacity: 0.18;
+		pointer-events: none;
 	}
 
 	.mar-plugin .slider-select:before {
 		content: "";
 	    border-bottom: 4px solid #306692;
-	    width: 200px;
+	    width: 208px;
 	    height: 0px;
 	    position: absolute;
 	    margin-top: 6px;
@@ -144,7 +152,7 @@
 	    margin: 6px 3px;
 		font-weight: bold;
 	    font-size: 22px;
-	    text-align: center;
+	    text-align: left;
 	}
 
 	.mar-plugin .main-message {
@@ -152,26 +160,59 @@
 		font-size: 16px;
 	}
 
+	.mar-plugin .top-group {
+		height: 125px;
+		background-color: #f4f2f4;
+	}
+
 	.mar-plugin .controls-container {
-		padding: 10px 8px;
-		background-color: #f3f4f3;
+		width: 100%;
 	}
 
 	.mar-plugin .storm-buttons-container {
 		float: left;
-		width: 220px;
+		width: 100%;
 	}
 
-	.mar-plugin .storm-buttons-container .control-title,
 	.mar-plugin .region-select-container .control-title {
-    	display: inline-block;
-		margin-bottom: 6px;
-    	font-weight: bold;
+
+	}
+
+	.mar-plugin .region-select-containers {
+		position: relative;
+		display: block;
+		height: 63px;
+		border-top: 2px solid #e3e5e3;
+		border-bottom: 2px solid #e3e5e3;
 	}
 
 	.mar-plugin .region-select-container {
-		float: right;
-		width: 155px;
+		position: absolute;
+	    top: 10px;
+	    left: 14px;
+	}
+
+	.mar-plugin .region-select-container .control-title {
+		position: absolute;
+    	width: 100px;
+	    top: 13px;
+	}
+
+	.mar-plugin .draw-custom-container {
+		position: absolute;
+	    left: 261px;
+    	top: 22px;
+	}
+
+	.mar-plugin .draw-button {
+		position: absolute;
+	    width: 24px;
+	    height: 30px;
+	    background: url("plugins/mar/pointer.png") center no-repeat;
+	    left: 83px;
+	    top: -7px;
+	    border: 1px solid gray;
+	    cursor: pointer;
 	}
 
 	.mar-plugin .info-tooltip {
@@ -186,14 +227,25 @@
 	}
 
 	.mar-plugin .styled-select {
-		position: relative;
-		width: 150px;
-		height: 36px;
-		overflow: hidden;
-		border: 2px solid #aaaaaa;
-		border-radius: 4px;
-		background-color: #fff;
-		cursor: pointer;
+		position: absolute;
+	    width: 150px;
+	    height: 36px;
+	    overflow: hidden;
+	    background-color: #fff;
+	    cursor: pointer;
+	    top: 5px;
+	    font-weight: bold;
+	    left: 92px;
+	}
+
+	.mar-plugin .styled-select.disabled {
+		pointer-events: none;
+	    opacity: 0.2;
+	}
+
+	.mar-plugin .styled-select:active,
+	.mar-plugin .styled-select:focus {
+		outline: none;
 	}
 
 	.mar-plugin .styled-select::after {
@@ -208,19 +260,16 @@
 	}
 
 	.mar-plugin .styled-select select {
-		background: transparent;
-		width: 168px;
-		padding: 5px;
-		font-size: 16px;
-		line-height: 1;
-		border: 0;
-		border-radius: 0;
-		color: #333333;
-		height: 32px;
-		-moz-appearance: none;
-		-webkit-appearance: none;
-		appearance: none;
-		cursor: pointer;
+		    background: transparent;
+		    width: 149px;
+		    padding: 5px;
+		    font-size: 16px;
+		    line-height: 1;
+		    -moz-appearance: none;
+		    -webkit-appearance: none;
+		    appearance: none;
+		    border: 1px solid #3f9bd9;
+		    cursor: pointer;
 	}
 
 	.mar-plugin .styled-select select optgroup,
@@ -230,16 +279,15 @@
 
 	.mar-plugin .download-summary {
 		display: block;
-		margin-top: 12px;
-	    margin-left: 1px;
-	    margin-right: 6px;
-	    margin-bottom: 6px;
-	    color: #fff !important;
+		width: 215px;
+	    background: #fff;
+	    color: #3f9bd9;;
+	    border: 2px solid #3f9bd9;;
+	    box-shadow: none;
+	    float: right;
 	    cursor: pointer;
-	    border: 1px solid #226491;
 	    border-radius: 4px;
 	    padding: 4px;
-	    background-color: #226491;
 	    text-align: center;
 	    box-shadow: 2px 2px 5px 1px rgba(34,100,145, 0.2);
 	    transition: box-shadow 0.2s;
@@ -247,13 +295,11 @@
     }
 
     .mar-plugin .download-summary:active {
-    	color: #fff;
-		-webkit-transform: scale(0.9) translateY(4px);
-		-moz-transform: scale(0.9) translateY(4px);
-		-ms-transform: scale(0.9) translateY(4px);
-		-o-transform: scale(0.9) translateY(4px);
-		transform: scale(0.9) translateY(4px);
-		background: darken(#226491, 5%);
+		-webkit-transform: scale(0.96) translateY(2px);
+		-moz-transform: scale(0.96) translateY(2px);
+		-ms-transform: scale(0.96) translateY(2px);
+		-o-transform: scale(0.96) translateY(2px);
+		transform: scale(0.96) translateY(2px);
     }
 
 	.mar-plugin .a:visited {
@@ -262,8 +308,6 @@
 	}
 
 	.mar-plugin .download-summary:hover {
-		color: #fff;
-		background: darken(#226491, 5%);
 		-webkit-transition: all 0.05s ease;
 		-moz-transition: all 0.05s ease;
 		-ms-transition: all 0.05s ease;
@@ -277,12 +321,12 @@
 
 	.mar-plugin .stats-container {
 		width: 100%;
-		display: table;
 	}
 
 	.mar-plugin .stat {
-		display: table-row;
-		height: 50px;
+		position: relative;
+		height: 39px;
+		  border-bottom: 1px dotted #aeaeae;
 	}
 
 	.mar-plugin .stat.active .description,
@@ -291,15 +335,17 @@
 	}
 
 	.mar-plugin .stat .number {
-		display: table-cell;
-    	width: 50%;
+		position: absolute;
+    	left: 10px;
 		cursor: pointer;
-		padding-left: 8px;
-		text-align: right;
-		font-size: 45px;
+		font-size: 35px;
 	    font-weight: bold;
 	    color: #d8d8d8;
 	    transition: color 0.35s linear;
+	}
+
+	.mar-plugin .stat.capital .description {
+		line-height: normal;
 	}
 
 	.mar-plugin .stat:hover .description,
@@ -308,14 +354,12 @@
 	}
 
 	.mar-plugin .stat .description {
+		position: absolute;
+    	left: 170px;
 		cursor: pointer;
-	    display: table-cell;
-    	width: 50%;
-	    padding-left: 10px;
 		color: #d8d8d8;
-	    font-size: 19px;
-	    vertical-align: middle;
-	    text-align: left;
+	    font-size: 16px;
+	    line-height: 39px;
 	    transition: color 0.35s linear;
 	}
 
@@ -325,7 +369,8 @@
 
 	.mar-plugin .coral-select-container {
 		float: left;
-	    width: 175px;
+	    width: 100%;
+	    padding-left: 12px;
 	    text-align: left;
 	    margin-top: 10px;
 		font-size: 16px;
@@ -448,96 +493,134 @@
 </style>
 
 	<div class="mar-plugin">
-	    <div class="title i18n" data-i18n="Flood Protection Provided by Coral Reefs">Flood Protection Provided by Coral Reefs</div>
-	    <div class="main-message i18n" data-i18n="Estimates of the benefits provided by reefs in flood protection annually and from catastrophic storms">
-	    	Estimates of the benefits provided by reefs in flood protection annually and from catastrophic storms
-	    </div>
+		<div class="top-group">
+		    <div class="title i18n" data-i18n="Flood Protection Provided by Coral Reefs">Flood Protection Provided by Coral Reefs</div>
+		    <div class="main-message i18n" data-i18n="Estimates of the benefits provided by reefs in flood protection annually and from catastrophic storms">
+		    	Estimates of the benefits provided by reefs in flood protection annually and from catastrophic storms
+		    </div>
+		    <a class="download-summary js-getSnapshot" target="_blank" style="display: none"><span class="i18n" data-i18n="Download Regional Summary">Download Regional Summary</span> <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+		</div>
 	    <div class="controls-container clearfix">
 
-	    	<div class="region-select-container">
-	    		<span class="control-title i18n" data-i18n="Region">Region</span>:<br>
-	    		<div class="styled-select">
-		    		<select class="region-select">
-		    			<optgroup label="Select Region">
-		    				<option value="Quintana Roo" selected>Quintana Roo</option>
-		    			<% _.each(regions, function(val) { %>
-		    				<option value="<%= val %>"><%= val %></option>
-		    			<% }); %>
-		    			</optgroup>
-		    			<option value="custom" style="display: none;">Custom Selected</option>
-		    			<option value="draw">Draw Custom Region</option>
-		    		</select>
+	    	<div class="region-select-containers">
+		    	<div class="region-select-container">
+		    		<span class="control-title i18n" data-i18n="Choose a Region">Choose a Region</span>
+		    		<div class="styled-select">
+			    		<select class="region-select">
+			    			<optgroup label="Select Region">
+			    				<option value="Quintana Roo" selected>Quintana Roo</option>
+			    			<% _.each(regions, function(val) { %>
+			    				<option value="<%= val %>"><%= val %></option>
+			    			<% }); %>
+			    			</optgroup>
+			    			<option value="custom" style="display: none;">Custom Selected</option>
+			    		</select>
+			    	</div>
 		    	</div>
-				<a class="download-summary js-getSnapshot" target="_blank" style="display: none"><span class="i18n" data-i18n="Download Regional Summary">Download Regional Summary</span> <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
-				<a class="download-summary" href="https://www.wavespartnership.org/sites/waves/files/kc/Technical%20Rept%20WAVES%20Coastal%202-11-16%20web.pdf" target="_blank"><span class="i18n" data-i18n="Download Regional Summary">Download Regional Summary</span> <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
-	    	</div>
+		    	<div class="draw-custom-container">
+		    		<span data-i18n="Draw a region">Draw a region</span>:
+		    		<div class="draw-button"></div>
+		    	</div>
+		    </div>
 
 	    	<div class="storm-buttons-container">
 		    	<div class="expected-benefit">
-			    	<div class="radio-control">
-						<div class="control-title" >
-							<span class="i18n" data-i18n="Annual Expected Benefit">Annual Expected Benefit</span>
-							<i data-i18n="[data-tooltip]Annual expected benefits from reefs for flood protection  represents the predicted flooding avoided to land, people, and infrastructure by keeping coral reefs intact. It is an annualized benefit of the role of reefs in flood reduction that considers local factors such as reef condition, asset distribution, and storm frequency." data-tooltip="Annual expected benefits from reefs for flood protection  represents the predicted flooding avoided to land, people, and infrastructure by keeping coral reefs intact. It is an annualized benefit of the role of reefs in flood reduction that considers local factors such as reef condition, asset distribution, and storm frequency." class="fa fa-info-circle info-annual info-tooltip i18n"></i>
-						</div>
-			    		<div class="check-group-annual">
+		    		<div class="radio-control radio-padding catastrophic-select">
+						<div class="check-group-annual">
 							<label>
 								<input  type="radio" name="storm<%=pane%>" value="ANN" checked="checked" />
 								<div class="radio-select"></div>
-								&nbsp;
+								<span class="i18n" data-i18n="Annual Expected Benefit">Annual Expected Benefit</span>
+								<i data-i18n="[data-tooltip]Annual expected benefits from reefs for flood protection  represents the predicted flooding avoided to land, people, and infrastructure by keeping coral reefs intact. It is an annualized benefit of the role of reefs in flood reduction that considers local factors such as reef condition, asset distribution, and storm frequency." data-tooltip="Annual expected benefits from reefs for flood protection  represents the predicted flooding avoided to land, people, and infrastructure by keeping coral reefs intact. It is an annualized benefit of the role of reefs in flood reduction that considers local factors such as reef condition, asset distribution, and storm frequency." class="fa fa-info-circle info-annual info-tooltip i18n"></i>
 							</label>
 			    		</div>
-		    		</div>
+						<div class="slider-select">
+							<div class="check-group">
+								<label>
+									<input  type="radio" name="climate-scenario<%=pane%>" value="" checked="checked" />
+									<div class="radio-select"></div>
+									<br><span class="i18n" data-i18n="Present">Present</span>
+								</label>
+				    		</div>
+				    		<div class="check-group">
+								<label>
+									<input type="radio" name="climate-scenario<%=pane%>" value="L2030">
+									<div class="radio-select"></div>
+									<br><span class="i18n" data-i18n="Low 2030">Low 2030</span>
+								</label>
+				    		</div>
+				    		<div class="check-group">
+								<label>
+									<input type="radio" name="climate-scenario<%=pane%>" value="H2030">
+									<div class="radio-select"></div>
+									<br><span class="i18n" data-i18n="High 2030">High 2030</span>
+								</label>
+				    		</div>
+				    		<div class="check-group">
+								<label>
+									<input type="radio" name="climate-scenario<%=pane%>" value="L2050">
+									<div class="radio-select"></div>
+									<br><span class="i18n" data-i18n="Low 2050">Low 2050</span>
+								</label>
+				    		</div>
+				    		<div class="check-group">
+								<label>
+									<input type="radio" name="climate-scenario<%=pane%>" value="H2050">
+									<div class="radio-select"></div>
+									<br><span class="i18n" data-i18n="High 2050">High 2050</span>
+								</label>
+				    		</div>
+						</div>
+			    	</div>
 		    	</div>
 
-	    		<div class="radio-control radio-padding catastrophic-select">
-					<div class="control-title">
-						<span class="i18n" data-i18n="Benefits from Catastrophic Storms">Benefits from Catastrophic Storms</span>
-						<i data-tooltip="Historical data and simulation on tropical storms were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events." class="fa fa-info-circle info-period info-tooltip i18n" data-i18n="[data-tooltip]Historical data and simulation on tropical storms were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events."></i>
-					</div>
-					<div class="check-group-storm">
-							<label>
-								<input  type="radio" name="storm<%=pane%>" value="100RP" checked="checked" />
-								<div class="radio-select"></div>
-								1 in 100-year storm
-							</label>
-			    		</div>
-					<div class="slider-select">
-						<div class="check-group">
-							<label>
-								<input  type="radio" name="climate-scenario<%=pane%>" value="" checked="checked" />
-								<div class="radio-select"></div>
-								<br><span class="i18n" data-i18n="Present">Present</span>
-							</label>
-			    		</div>
-			    		<div class="check-group">
-							<label>
-								<input type="radio" name="climate-scenario<%=pane%>" value="L2030">
-								<div class="radio-select"></div>
-								<br><span class="i18n" data-i18n="Low 2030">Low 2030</span>
-							</label>
-			    		</div>
-			    		<div class="check-group">
-							<label>
-								<input type="radio" name="climate-scenario<%=pane%>" value="H2030">
-								<div class="radio-select"></div>
-								<br><span class="i18n" data-i18n="High 2030">High 2030</span>
-							</label>
-			    		</div>
-			    		<div class="check-group">
-							<label>
-								<input type="radio" name="climate-scenario<%=pane%>" value="L2050">
-								<div class="radio-select"></div>
-								<br><span class="i18n" data-i18n="Low 2050">Low 2050</span>
-							</label>
-			    		</div>
-			    		<div class="check-group">
-							<label>
-								<input type="radio" name="climate-scenario<%=pane%>" value="H2050">
-								<div class="radio-select"></div>
-								<br><span class="i18n" data-i18n="High 2050">High 2050</span>
-							</label>
-			    		</div>
-					</div>
+		    	<div class="expected-benefit">
+		    		<div class="radio-control radio-padding catastrophic-select">
+						<div class="check-group-storm">
+								<label>
+									<input  type="radio" name="storm<%=pane%>" value="100RP" checked="checked" />
+									<div class="radio-select"></div>
+									<span class="i18n" data-i18n="Benefits from 1 in 100 year storm">Benefits from 1 in 100 year storm</span>
+								</label>
+				    		</div>
+						<div class="slider-select disabled">
+							<div class="check-group">
+								<label>
+									<input  type="radio" name="climate-scenario<%=pane%>" value="" checked="checked" />
+									<div class="radio-select"></div>
+									<br><span class="i18n" data-i18n="Present">Present</span>
+								</label>
+				    		</div>
+				    		<div class="check-group">
+								<label>
+									<input type="radio" name="climate-scenario<%=pane%>" value="L2030">
+									<div class="radio-select"></div>
+									<br><span class="i18n" data-i18n="Low 2030">Low 2030</span>
+								</label>
+				    		</div>
+				    		<div class="check-group">
+								<label>
+									<input type="radio" name="climate-scenario<%=pane%>" value="H2030">
+									<div class="radio-select"></div>
+									<br><span class="i18n" data-i18n="High 2030">High 2030</span>
+								</label>
+				    		</div>
+				    		<div class="check-group">
+								<label>
+									<input type="radio" name="climate-scenario<%=pane%>" value="L2050">
+									<div class="radio-select"></div>
+									<br><span class="i18n" data-i18n="Low 2050">Low 2050</span>
+								</label>
+				    		</div>
+				    		<div class="check-group">
+								<label>
+									<input type="radio" name="climate-scenario<%=pane%>" value="H2050">
+									<div class="radio-select"></div>
+									<br><span class="i18n" data-i18n="High 2050">High 2050</span>
+								</label>
+				    		</div>
+						</div>
+			    	</div>
 		    	</div>
 	    	</div>
 

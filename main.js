@@ -64,6 +64,7 @@ define([
             height: 740,
             showServiceLayersInLegend: false, // Disable the default legend item which doesn't pick up our custom class breaks
             allowIdentifyWhenActive: false,
+            drawing: false,
 
             initialize: function(frameworkParameters, currentRegion) {
                 declare.safeMixin(this, frameworkParameters);
@@ -161,7 +162,6 @@ define([
                     '100 RP Low CC 2050 Hotels Protected': 30,
                     '100 RP High CC 2050 Hotels Protected': 31
                 };
-
             },
 
             layerStringBuilder: function() {
@@ -207,9 +207,11 @@ define([
 
                 // Set event listeners.  We bind "this" where needed so the event handler can access the full
                 // scope of the plugin
+                this.$el.on("change", "input[name=storm" + this.app.paneNumber + "]", $.proxy(this.changeGroupSelect, this));
                 this.$el.on("change", "input[type=radio]", $.proxy(this.getParameters, this));
                 this.$el.on("change", ".region-select", $.proxy(this.changeRegion, this));
                 this.$el.on("click", ".stat", function(e) {self.changeScenarioClick(e);});
+                this.$el.on("click", ".draw-button", $.proxy(this.drawCustomRegion, this));
                 this.$el.on("change", ".coral-select-container input", $.proxy(this.toggleCoral, this));
 
                 this.$el.on("mouseenter", ".info-tooltip", function(e) {self.showTooltip(e);});
@@ -250,6 +252,8 @@ define([
 
                 this.draw = new Draw(this.map);
                 this.draw.on("draw-complete", function(evt) {
+                    self.drawing = false;
+                    self.$el.find(".region-select-container .styled-select").removeClass("disabled");
                     self.draw.deactivate();
                     
                     var symbol = new SimpleLineSymbol();
@@ -360,6 +364,12 @@ define([
 
             },
 
+            changeGroupSelect: function(e) {
+                this.$el.find("input[name=storm" + this.app.paneNumber + "]:checked").closest(".expected-benefit").find(".slider-select").removeClass("disabled");
+                this.$el.find("input[name=storm" + this.app.paneNumber + "]:checked").closest(".expected-benefit").find("input[name=climate-scenario" + this.app.paneNumber + "]").first().prop("checked", true);
+                this.$el.find("input[name=storm" + this.app.paneNumber + "]").not(":checked").closest(".expected-benefit").find(".slider-select").addClass("disabled");
+            },
+
             updateStats: function() {
 
                 var scenarioLabel;
@@ -395,16 +405,28 @@ define([
 
                 this.map.graphics.clear();
 
-                if (this.region === 'draw') {
-                    this.draw.activate(Draw.POLYGON);
+                var regionExtent = this.countryConfig[this.region].EXTENT;
+
+                var extent = new esri.geometry.Extent(regionExtent[0],regionExtent[1],regionExtent[2],regionExtent[3]);
+
+                this.map.setExtent(extent);
+                
+
+            },
+
+            drawCustomRegion: function() {
+                if (this.drawing) {
+                    this.drawing = false;
+                    this.$el.find(".region-select-container .styled-select").removeClass("disabled");
+                    this.map.graphics.clear();
+                    this.draw.deactivate();
                 } else {
-                    var regionExtent = this.countryConfig[this.region].EXTENT;
-
-                    var extent = new esri.geometry.Extent(regionExtent[0],regionExtent[1],regionExtent[2],regionExtent[3]);
-
-                    this.map.setExtent(extent);
+                    this.drawing = true;
+                    this.$el.find(".region-select-container .styled-select").addClass("disabled");
+                    this.map.graphics.clear();
+                    this.draw.activate(Draw.POLYGON);
                 }
-
+                
             },
 
             // Capture the click from the fact number click events and pass to the changeScenario function

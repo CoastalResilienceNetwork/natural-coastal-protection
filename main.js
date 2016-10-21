@@ -26,9 +26,7 @@ define([
     "esri/layers/ArcGISDynamicMapServiceLayer",
     "esri/layers/FeatureLayer",
     "esri/layers/LayerDrawingOptions",
-    "esri/renderers/ClassBreaksRenderer",
     "esri/symbols/SimpleLineSymbol",
-    "esri/renderer",
     "esri/Color",
     "esri/toolbars/draw",
     "esri/graphic",
@@ -43,9 +41,7 @@ define([
               ArcGISDynamicMapServiceLayer,
               FeatureLayer,
               LayerDrawingOptions,
-              ClassBreaksRenderer,
               SimpleLineSymbol,
-              Renderer,
               Color,
               Draw,
               Graphic,
@@ -234,7 +230,6 @@ define([
                 var layerDefs = [];
                 var layerDrawingOptions = [];
                 var layerDrawingOption = new LayerDrawingOptions();
-                var renderer = this.createRenderer(this.mapClassBreaks.people, "E2E1_DIF_ANN_PF");
 
                 this.coralReefLayer = new ArcGISDynamicMapServiceLayer("http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer", {
                     visible: false,
@@ -705,22 +700,6 @@ define([
                     .attr("x", function(d) { return self.chart.barx(d.x); })
                     .attr("y", function(d) { return self.chart.y(d.y); })
                     .attr("height", function(d) { return self.chart.position.height - 20 - self.chart.y(d.y); });
-            },
-
-            // Create a renderer for the coastal protection layer using the custom defined classbreaks and colors for each
-            // scenario and fact combination
-            createRenderer: function(classBreaks, field) {
-                var defaultSymbol = new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([0,0,0,0]), 0);
-                var renderer = new ClassBreaksRenderer(defaultSymbol, field);
-                _(classBreaks).each(function(classBreak) {
-                    renderer.addBreak({
-                        minValue: classBreak[0], 
-                        maxValue: classBreak[1], 
-                        symbol: SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color(classBreak[2]), classBreak[4]),
-                        label: classBreak[3]
-                    });
-                });
-                return renderer;
             },
 
             // Download the pdf report for the current region

@@ -215,7 +215,6 @@ define([
                 this.$el.on("mousemove", ".info-tooltip", function(e) {self.moveTooltip(e);});
 
                 this.$el.on("click", ".js-getSnapshot", $.proxy(this.printReport, this));
-
             },
 
             getLayersJson: function() {
@@ -367,7 +366,6 @@ define([
             },
 
             updateStats: function() {
-
                 var scenarioLabel;
 
                 if (this.scenario !== '') {

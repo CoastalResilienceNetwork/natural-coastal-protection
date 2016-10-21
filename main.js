@@ -62,7 +62,7 @@ define([
             resizable: true,
             width: 425,
             height: 740,
-            showServiceLayersInLegend: false, // Disable the default legend item which doesn't pick up our custom class breaks
+            showServiceLayersInLegend: true, // Disable the default legend item which doesn't pick up our custom class breaks
             allowIdentifyWhenActive: false,
             drawing: false,
 

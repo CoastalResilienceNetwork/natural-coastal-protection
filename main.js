@@ -248,6 +248,7 @@ define([
                 this.draw = new Draw(this.map);
                 this.draw.on("draw-complete", function(evt) {
                     self.drawing = false;
+                    self.$el.find(".draw-button").removeClass("active");
                     self.$el.find(".region-select-container .styled-select").removeClass("disabled");
                     self.draw.deactivate();
                     
@@ -405,23 +406,28 @@ define([
                 var extent = new esri.geometry.Extent(regionExtent[0],regionExtent[1],regionExtent[2],regionExtent[3]);
 
                 this.map.setExtent(extent);
-                
-
             },
 
             drawCustomRegion: function() {
                 if (this.drawing) {
                     this.drawing = false;
                     this.$el.find(".region-select-container .styled-select").removeClass("disabled");
+                    this.$el.find(".draw-button").removeClass("active");
                     this.map.graphics.clear();
                     this.draw.deactivate();
                 } else {
                     this.drawing = true;
                     this.$el.find(".region-select-container .styled-select").addClass("disabled");
+                    this.$el.find(".draw-button").addClass("active");
+                    
+                    // Reset to global data
+                    this.region = "Quintana Roo";
+                    this.$el.find(".region-select").val(this.region);
+                    this.updateLayers();
+
                     this.map.graphics.clear();
                     this.draw.activate(Draw.POLYGON);
                 }
-                
             },
 
             // Capture the click from the fact number click events and pass to the changeScenario function

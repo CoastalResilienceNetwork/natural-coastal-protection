@@ -23,6 +23,7 @@ define([
     "dojo/_base/declare",
     "d3",
     "framework/PluginBase",
+    "dojo/i18n!esri/nls/jsapi",
     "esri/layers/ArcGISDynamicMapServiceLayer",
     "esri/layers/FeatureLayer",
     "esri/layers/LayerDrawingOptions",
@@ -38,6 +39,7 @@ define([
     ], function (declare,
               d3,
               PluginBase,
+              bundle,
               ArcGISDynamicMapServiceLayer,
               FeatureLayer,
               LayerDrawingOptions,
@@ -69,7 +71,8 @@ define([
                 this.pluginTmpl = _.template(this.getTemplateById('plugin'));
 
                 this.$el = $(this.container);
-
+console.log(bundle);
+console.log(this.map)
                 // Default Settings
                 this.region = "Quintana Roo";
                 this.period = "ANN";

@@ -648,7 +648,7 @@ define([
                 } else if (this.variable === "PF") {
                     text = i18next.t('People Protected (No.)');
                 } else if (this.variable === "HOTEL") {
-                    text = i18next.t('Hotels Protected');
+                    text = i18next.t('Hotels Protected ($Millions)');
                 }
 
                 this.chart.svg.select(".yaxis-label")

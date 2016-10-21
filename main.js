@@ -506,7 +506,11 @@ define([
 
             // Show graph tooltip on hover
             showGraphTooltip: function(d, self) {
-                self.$el.find(".ncp-tooltip").html(parseInt(d.y).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")).css({width: "auto"}).show();
+                if (d.y < 10) {
+                    self.$el.find(".ncp-tooltip").html(d.y.toFixed(2)).css({width: "auto"}).show();
+                } else {
+                    self.$el.find(".ncp-tooltip").html(parseInt(d.y).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")).css({width: "auto"}).show();
+                }
             },
 
             // Track graph tooltip to mouse movement

@@ -71,8 +71,12 @@ define([
                 this.pluginTmpl = _.template(this.getTemplateById('plugin'));
 
                 this.$el = $(this.container);
-console.log(bundle);
-console.log(this.map)
+
+                // Translate Built-in ArcGIS Strings
+                bundle.toolbars.draw.start = i18next.t("Click to start drawing");
+                bundle.toolbars.draw.resume = i18next.t("Click to continue drawing");
+                bundle.toolbars.draw.finish = i18next.t("Double click to complete");
+
                 // Default Settings
                 this.region = "Quintana Roo";
                 this.period = "ANN";

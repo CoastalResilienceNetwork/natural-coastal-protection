@@ -323,7 +323,6 @@ define([
                 } else {
                     this.coralReefLayer.setVisibility();
                 }
-                this.updateLegend();
             },
 
             updateLayers: function() {

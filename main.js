@@ -382,7 +382,7 @@ define([
 
                 this.$el.find(".stat.people .number .variable").html(this.numberWithCommas(Math.round(this.getRegionSum("E2E1_DIF_" + this.period + "_PF" + scenarioLabel, this.region))));
                 this.$el.find(".stat.capital .number .variable").html(this.getRegionSum("E2E1_DIF_" + this.period + "_BCF" + scenarioLabel, this.region).toFixed(2));
-                this.$el.find(".stat.area .number .variable").html(this.numberWithCommas(Math.round(this.getRegionSum("E2E1_DIF_" + this.period + "_HOTEL" + scenarioLabel, this.region))));
+                this.$el.find(".stat.area .number .variable").html((this.getRegionSum("E2E1_DIF_" + this.period + "_HOTEL" + scenarioLabel, this.region) / 1000000).toFixed(2));
             },
 
             // format a number with commas

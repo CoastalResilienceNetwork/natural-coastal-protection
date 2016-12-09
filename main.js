@@ -597,11 +597,12 @@ define([
                     .call(this.chart.barxAxis);
 
                 // Add the y-axis label
-                this.chart.svg.append("text")
+                this.chart.svg.append("foreignObject")
                     .attr("class", "yaxis-label")
                     .attr("transform", "rotate(-90)")
-                    .attr("y", 0 - this.chart.position.margin.left + 20)
-                    .attr("x", 0 - (this.chart.position.height / 2))
+                    .attr("y", 0 - this.chart.position.margin.left + 5)
+                    .attr("x", 0 - (this.chart.position.height - 10))
+                    .attr("width", this.chart.position.height - 20)
                     .attr("text-anchor", "middle")
                     .text(i18next.t('People Protected (No.)'));
 
@@ -662,11 +663,7 @@ define([
                 }
 
                 this.chart.svg.select(".yaxis-label")
-                        .transition().duration(600)
-                        .style("opacity", 0)
-                        .transition().duration(600)
-                        .style("opacity", 1)
-                        .text(text);
+                    .text(text);
 
                 var bary;
                 var bary1m;

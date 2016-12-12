@@ -396,11 +396,12 @@ define([
                 this.getParameters();
                 // Show/hide the download country summary button
                 if (this.region === "Quintana Roo") {
-                    this.$el.find(".js-getSnapshot").hide();
+                    this.$el.find(".js-getSnapshot").show();
                 } else if (this.region === "custom") {
+                    this.$el.find(".js-getSnapshot").hide();
                     return;
                 } else {
-                    this.$el.find(".js-getSnapshot").show();
+                    this.$el.find(".js-getSnapshot").hide();
                 }
 
                 this.map.graphics.clear();

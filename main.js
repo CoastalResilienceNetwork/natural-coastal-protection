@@ -267,6 +267,12 @@ define([
 
                 this.updateChart();
 
+                ga('send', 'event', {
+                    eventCategory: 'MAR',
+                    eventAction: 'change region',
+                    eventLabel: this.region
+                });
+
             },
 
             // Capture the click from the fact number click events and pass to the changeScenario function

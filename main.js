@@ -268,7 +268,7 @@ define([
                 this.updateChart();
 
                 ga('send', 'event', {
-                    eventCategory: 'MAR',
+                    eventCategory: 'NCP',
                     eventAction: 'change region',
                     eventLabel: this.region
                 });

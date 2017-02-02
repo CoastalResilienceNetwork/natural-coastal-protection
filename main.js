@@ -29,6 +29,8 @@ define([
     "esri/symbols/SimpleLineSymbol",
     "esri/renderer",
     "esri/Color",
+    "dijit/layout/ContentPane",
+    "dojo/dom",
     "dojo/text!./template.html",
     "dojo/text!./data.json",
     "dojo/text!./country-config.json"
@@ -41,6 +43,8 @@ define([
               SimpleLineSymbol,
               Renderer,
               Color,
+              ContentPane,
+              dom,
               templates,
               Data,
               CountryConfig
@@ -48,12 +52,11 @@ define([
         return declare(PluginBase, {
             toolbarName: "Natural Coastal Protection",
             fullName: "Configure and control layers to be overlayed on the base map.",
-			infoGraphic: "plugins/natural_coastal_protection/coastalprotection.jpg",
-            resizable: true,
+            resizable: false,
             width: 425,
-            height: 740,
             showServiceLayersInLegend: false, // Disable the default legend item which doesn't pick up our custom class breaks
             allowIdentifyWhenActive: false,
+            size:'custom',
 
             initialize: function(frameworkParameters, currentRegion) {
                 declare.safeMixin(this, frameworkParameters);
@@ -314,13 +317,27 @@ define([
             // Render the plugin DOM
             render: function() {
 
-                var $el = $(this.pluginTmpl({
+                /*var $el = $(this.pluginTmpl({
                     global: this.data.Global,
                     regions: this.data,
                     pane: this.app.paneNumber
-                }));
+                }));*/
 
-                $(this.container).empty().append($el);
+                //$(this.container).empty().append($el);
+
+                this.appDiv = new ContentPane({style:'padding:0; color:#000; flex:1; display:flex; flex-direction:column;}'});
+                this.id = this.appDiv.id;
+                $(dom.byId(this.container)).addClass('sty_flexColumn');
+                dom.byId(this.container).appendChild(this.appDiv.domNode);                  
+                // Get html from content.html, prepend appDiv.id to html element id's, and add to appDiv
+                var idUpdate = this.pluginTmpl({
+                    global: this.data.Global,
+                    regions: this.data,
+                    pane: this.app.paneNumber}).replace(/id='/g, "id='" + this.id);  
+                $('#' + this.id).html(idUpdate);
+
+
+
 
             },
 

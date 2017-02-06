@@ -204,6 +204,24 @@ define([
 
             },
 
+            deactivate: function() {
+                if (this.appDiv !== undefined){
+                    this.map.removeLayer(this.coralReefLayer);
+                    this.map.removeLayer(coastalProtectionLayer);
+                    $(this.legendContainer).hide().html();
+                }
+            },
+
+            // Turn of the layers when hibernating
+            hibernate: function () {
+                // Cleanup
+                if (this.appDiv !== undefined){
+                    this.map.removeLayer(this.coralReefLayer);
+                    this.map.removeLayer(coastalProtectionLayer);
+                    $(this.legendContainer).hide().html();
+                }               
+            },
+
             // Turn the coral reef layer on and off
             toggleCoral: function() {
                 if ($(".coral-select-container input").is(":checked")) {
@@ -328,7 +346,7 @@ define([
                 this.appDiv = new ContentPane({style:'padding:0; color:#000; flex:1; display:flex; flex-direction:column;}'});
                 this.id = this.appDiv.id;
                 $(dom.byId(this.container)).addClass('sty_flexColumn');
-                dom.byId(this.container).appendChild(this.appDiv.domNode);                  
+                this.$el.html(this.appDiv.domNode);                  
                 // Get html from content.html, prepend appDiv.id to html element id's, and add to appDiv
                 var idUpdate = this.pluginTmpl({
                     global: this.data.Global,
@@ -911,16 +929,6 @@ define([
                 return $('<div>').append(templates)
                     .find('#' + id)
                     .html().trim();
-            },
-
-            // Turn of the layers when hibernating
-            hibernate: function () {
-                // Cleanup
-                if (this.coralReefLayer) {
-                    this.coralReefLayer.hide();
-                    this.coastalProtectionLayer.hide();
-                }
-                $(this.legendContainer).hide().html();
             }
 
         });

@@ -312,16 +312,12 @@
 		font-weight: 600;
 	}
 
-	.ncp-plugin .ncp-tooltip {
-		position: absolute;
-		display: none;
+	.ncp-tooltip {
 		color: #333;
 		border: 1px solid #7EABCD;
 		background-color:  #fff;
 		padding: 5px;
 		border-radius: 5px;
-		width: 240px;
-		z-index: 101;
 	}
 
 	/* Chart SVG Styles */
@@ -439,7 +435,7 @@
 		    	<div class="radio-control">
 					<span class="control-title">
 						Annual Expected Benefit
-						<i data-tooltip="Annual expected benefits from reefs for flood protection  represents the predicted flooding avoided to land, people, and infrastructure by keeping coral reefs intact. It is an annualized benefit of the role of reefs in flood reduction that considers local factors such as reef condition, asset distribution, and storm frequency." class="fa fa-info-circle info-annual info-tooltip"></i>
+						<i title="Annual expected benefits from reefs for flood protection  represents the predicted flooding avoided to land, people, and infrastructure by keeping coral reefs intact. It is an annualized benefit of the role of reefs in flood reduction that considers local factors such as reef condition, asset distribution, and storm frequency." class="fa fa-info-circle info-annual info-tooltip"></i>
 					</span>
 		    		<div class="check-group annual">
 						
@@ -454,7 +450,7 @@
 	    		<div class="radio-control radio-padding">
 					<span class="control-title">
 						Benefits from Catastrophic Storms
-						<i data-tooltip="30 years of historical data on regional sea level and wave conditions were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events." class="fa fa-info-circle info-period info-tooltip"></i>
+						<i title="30 years of historical data on regional sea level and wave conditions were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events." class="fa fa-info-circle info-period info-tooltip"></i>
 					</span>
 		    		<div class="check-group">
 						<label>
@@ -484,13 +480,13 @@
 	    	<div class="stat people active" data-layer="people">
 	    		<span class="number"><span class="variable"><%= global.E2E1_DIF_ANN_PF %></span></span>
 	    		<span class="description">People Protected
-	    			<i data-tooltip="This value represents the difference of flooding impacts on people when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data." class="fa fa-info-circle info-people info-tooltip"></i></span>
+	    			<i title="This value represents the difference of flooding impacts on people when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data." class="fa fa-info-circle info-people info-tooltip"></i></span>
 	    	</div>
 
 	    	<div class="stat capital" data-layer="capital">
 	    		<span class="number">$<span class="variable"><%= global.E2E1_DIF_ANN_BCF %></span>M</span>
 	    		<span class="description"> Built Capital Protected
-	    			<i data-tooltip="This value represents the difference of flooding impacts on built capital when coral reefs are present and 
+	    			<i title="This value represents the difference of flooding impacts on built capital when coral reefs are present and 
 					when there is 1 meter of reef loss. This value is aggregated
 					to the country scale from 90m resolution data." class="fa fa-info-circle info-capital info-tooltip"></i></span>
 	    		
@@ -499,13 +495,12 @@
 	    	<div class="stat area" data-layer="area">
 	    		<span class="number"><span class="variable"><%= global.E2E1_DIFF_ANN_AF %></span>km<sup>2</sup></span>
 	    		<span class="description">Area Protected
-	    			<i data-tooltip="This value represents the difference of flooding impacts on land area when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data. " class="fa fa-info-circle info-area info-tooltip"></i></span>
+	    			<i title="This value represents the difference of flooding impacts on land area when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data. " class="fa fa-info-circle info-area info-tooltip"></i></span>
 
 	    	</div>
 
 	    </div>
 
-		<div class="ncp-tooltip"></div>
 	    <div class="chartContainer">
 
 	    </div>

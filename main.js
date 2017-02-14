@@ -33,7 +33,8 @@ define([
     "dojo/dom",
     "dojo/text!./template.html",
     "dojo/text!./data.json",
-    "dojo/text!./country-config.json"
+    "dojo/text!./country-config.json",
+    './js/jquery-ui-1.11.2/jquery-ui'
     ], function (declare,
               d3,
               PluginBase,
@@ -47,7 +48,8 @@ define([
               dom,
               templates,
               Data,
-              CountryConfig
+              CountryConfig,
+              ui
               ) {
         return declare(PluginBase, {
             toolbarName: "Natural Coastal Protection",
@@ -128,9 +130,9 @@ define([
                 this.$el.on("click", ".stat", function(e) {self.changeScenarioClick(e);});
                 this.$el.on("change", ".coral-select-container input", $.proxy(this.toggleCoral, this));
 
-                this.$el.on("mouseenter", ".info-tooltip", function(e) {self.showTooltip(e);});
-                this.$el.on("mouseleave", ".info-tooltip", $.proxy(this.hideTooltip, this));
-                this.$el.on("mousemove", ".info-tooltip", function(e) {self.moveTooltip(e);});
+                //this.$el.on("mouseenter", ".info-tooltip", function(e) {self.showTooltip(e);});
+                //this.$el.on("mouseleave", ".info-tooltip", $.proxy(this.hideTooltip, this));
+                //this.$el.on("mousemove", ".info-tooltip", function(e) {self.moveTooltip(e);});
 
                 this.$el.on("click", ".js-getSnapshot", $.proxy(this.printReport, this));
 
@@ -201,6 +203,12 @@ define([
 
                 this.changePeriod();
                 this.changeScenario();
+
+                this.$el.find('.info-tooltip').tooltip({
+                    tooltipClass: "ncp-tooltip",
+                    track: true
+                });
+
 
             },
 
@@ -391,38 +399,6 @@ define([
                 $(this.legendContainer).show().html(html);
 
                 return html;
-            },
-
-            // Show graph tooltip on hover
-            showGraphTooltip: function(d, self) {
-                self.$el.find(".ncp-tooltip").html(parseInt(d.y).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")).css({width: "auto"}).show();
-            },
-
-            // Track graph tooltip to mouse movement
-            moveGraphTooltip: function(d, el, self) {
-                var offset = this.$el.offset();
-                var x = d3.event.pageX - offset.left;
-                var y = d3.event.pageY - offset.top;
-                this.$el.find(".ncp-tooltip").css({left: x + 5, top: y});
-            },
-
-            // Show info tooltip on mouse hover
-            showTooltip: function(e) {
-                var text = $(e.currentTarget).data("tooltip");
-                this.$el.find(".ncp-tooltip").html(text).css({width: "240"}).show();
-            },
-
-            // Hide graph and info tooltip on mouseout
-            hideTooltip: function() {
-                this.$el.find(".ncp-tooltip").empty().hide();
-            },
-
-            // Track info tooltip to mouse movement
-            moveTooltip: function(e) {
-                var offset = this.$el.offset();
-                var x = e.pageX - offset.left;
-                var y = e.pageY - offset.top;
-                this.$el.find(".ncp-tooltip").css({left: x + 5, top: y});
             },
 
             // Render the D3 Chart
@@ -621,10 +597,11 @@ define([
                     .data(this.chart.data.current.xy)
                     .enter().append('circle')
                     .attr("opacity", 0)
+                    .attr("class", "info-tooltip")
                     .attr("cx", function(d) { return self.chart.x(d.x); })
                     .attr("cy", function(d) { return self.chart.y(d.y); })
                     .attr("r", 3.5)
-                    .on("mouseover", function(e) {
+                    /*.on("mouseover", function(e) {
                         self.showGraphTooltip(e, self);
                     })
                     .on("mousemove", function(d) {
@@ -632,7 +609,7 @@ define([
                     })
                     .on("mouseout", function() {
                         self.hideTooltip(self);
-                    });
+                    });*/
 
                 this.chart.svg
                     .append("path")
@@ -648,18 +625,10 @@ define([
                     .data(this.chart.data.scenario.xy)
                     .enter().append('circle')
                     .attr("opacity", 0)
+                    .attr("class", "info-tooltip")
                     .attr("cx", function(d) { return self.chart.x(d.x); })
                     .attr("cy", function(d) { return self.chart.y(d.y); })
                     .attr("r", 3.5)
-                    .on("mouseover", function(e) {
-                        self.showGraphTooltip(e, self);
-                    })
-                    .on("mousemove", function(d) {
-                        self.moveGraphTooltip(d, this, self);
-                    })
-                    .on("mouseout", function() {
-                        self.hideTooltip(self);
-                    });
 
                 // Bar chart
                 var bardata = [
@@ -671,19 +640,13 @@ define([
                     .data(bardata)
                     .enter().append("rect")
                     .attr("opacity", 0)
-                    .attr("class", "bar")
+                    .attr("class", "bar info-tooltip")
                     .attr("x", function(d) { return self.chart.barx(d.x); })
                     .attr("width", 30)
                     .attr("y", function(d) { return self.chart.y(d.y); })
-                    .on("mouseover", function(e) {
-                        self.showGraphTooltip(e, self);
+                    .attr("title", function(d) {
+                        return parseInt(d.y).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                     })
-                    .on("mousemove", function(d) {
-                        self.moveGraphTooltip(d, this, self);
-                    })
-                    .on("mouseout", function() {
-                        self.hideTooltip(self);
-                    });
 
                 this.updateChart();
 
@@ -842,6 +805,9 @@ define([
                     .data(this.chart.data.current.xy)
                     .transition().duration(1200).ease("sin-in-out")
                     .attr("opacity", annual ? 0 : 1)
+                    .attr("title", function(d) {
+                        return parseInt(d.y).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    })
                     .attr("cx", function(d) { return self.chart.x(d.x); })
                     .attr("cy", function(d) { return self.chart.y(d.y); })
                      .attr("r", function(d) {
@@ -874,6 +840,9 @@ define([
                     .data(this.chart.data.scenario.xy)
                     .transition().duration(1200).ease("sin-in-out")
                     .attr("opacity", annual ? 0 : 1)
+                    .attr("title", function(d) {
+                        return parseInt(d.y).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    })
                     .attr("cx", function(d) { return self.chart.x(d.x); })
                     .attr("cy", function(d) { return self.chart.y(d.y); })
                     .attr("r", function(d) {
@@ -895,7 +864,11 @@ define([
                     .transition().duration(1200).ease("sin-in-out")
                     .attr("opacity", annual ? 1 : 0)
                     .attr("width", this.chart.barx.rangeBand())
-                    .attr("class", function(d) {return "bar " + d.x;})
+                    .attr("class", function(d) {return "info-tooltip bar " + d.x;})
+                    // TODO: Don't animate title
+                    .attr("title", function(d) {
+                        return parseInt(d.y).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    })
                     .attr("x", function(d) { return self.chart.barx(d.x); })
                     .attr("y", function(d) { return self.chart.y(d.y); })
                     .attr("height", function(d) { return self.chart.position.height - 20 - self.chart.y(d.y); });

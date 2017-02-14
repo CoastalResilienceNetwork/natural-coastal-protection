@@ -130,10 +130,6 @@ define([
                 this.$el.on("click", ".stat", function(e) {self.changeScenarioClick(e);});
                 this.$el.on("change", ".coral-select-container input", $.proxy(this.toggleCoral, this));
 
-                //this.$el.on("mouseenter", ".info-tooltip", function(e) {self.showTooltip(e);});
-                //this.$el.on("mouseleave", ".info-tooltip", $.proxy(this.hideTooltip, this));
-                //this.$el.on("mousemove", ".info-tooltip", function(e) {self.moveTooltip(e);});
-
                 this.$el.on("click", ".js-getSnapshot", $.proxy(this.printReport, this));
 
             },

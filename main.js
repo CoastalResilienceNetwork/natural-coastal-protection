@@ -211,7 +211,7 @@ define([
             deactivate: function() {
                 if (this.appDiv !== undefined){
                     this.map.removeLayer(this.coralReefLayer);
-                    this.map.removeLayer(coastalProtectionLayer);
+                    this.map.removeLayer(this.coastalProtectionLayer);
                     $(this.legendContainer).hide().html();
                 }
             },
@@ -221,7 +221,7 @@ define([
                 // Cleanup
                 if (this.appDiv !== undefined){
                     this.map.removeLayer(this.coralReefLayer);
-                    this.map.removeLayer(coastalProtectionLayer);
+                    this.map.removeLayer(this.coastalProtectionLayer);
                     $(this.legendContainer).hide().html();
                 }               
             },

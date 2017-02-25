@@ -126,7 +126,7 @@ define([
                 // Set event listeners.  We bind "this" where needed so the event handler can access the full
                 // scope of the plugin
                 this.$el.on("change", "input[name=storm" + this.app.paneNumber + "]", $.proxy(this.changePeriod, this));
-                this.$el.on("change", ".region-select", $.proxy(this.changeRegion, this));
+                this.$el.on("click", ".country .dropdown li", $.proxy(this.changeRegion, this));
                 this.$el.on("click", ".stat", function(e) {self.changeScenarioClick(e);});
                 this.$el.on("change", ".coral-select-container input", $.proxy(this.toggleCoral, this));
 
@@ -254,8 +254,10 @@ define([
 
             // Change the default region.  If global, zoom to the full extent and show data for all countries.  If regional,
             // zoom to the country based on the bookmark in the extent-bookmarks.json file and hide data for all other countries
-            changeRegion: function() {
-                this.region = this.$el.find(".region-select").val();
+            changeRegion: function(e) {
+                this.region = $(e.currentTarget).data('country');
+
+                this.$el.find(".region-label").html(this.region);
 
                 // Show/hide the download country summary button
                 if (this.region === "Global") {

@@ -1,16 +1,7 @@
+
 require({
     // Specify library locations.
     packages: [
-        {
-            name: "jquery",
-            location: "//ajax.googleapis.com/ajax/libs/jquery/1.9.0",
-            main: "jquery.min"
-        },
-        {
-            name: "underscore",
-            location: "//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3",
-            main: "underscore-min"
-        },
         {
             name: "d3",
             location: "//d3js.org",
@@ -33,8 +24,7 @@ define([
     "dojo/dom",
     "dojo/text!./template.html",
     "dojo/text!./data.json",
-    "dojo/text!./country-config.json",
-    './js/jquery-ui-1.11.2/jquery-ui'
+    "dojo/text!./country-config.json"
     ], function (declare,
               d3,
               PluginBase,
@@ -48,8 +38,7 @@ define([
               dom,
               templates,
               Data,
-              CountryConfig,
-              ui
+              CountryConfig
               ) {
         return declare(PluginBase, {
             toolbarName: "Natural Coastal Protection",
@@ -126,7 +115,7 @@ define([
                 // Set event listeners.  We bind "this" where needed so the event handler can access the full
                 // scope of the plugin
                 this.$el.on("change", "input[name=storm" + this.app.paneNumber + "]", $.proxy(this.changePeriod, this));
-                this.$el.on("click", ".country .dropdown li", $.proxy(this.changeRegion, this));
+                this.$el.on("change", "#select-region", $.proxy(this.changeRegion, this));
                 this.$el.on("click", ".stat", function(e) {self.changeScenarioClick(e);});
                 this.$el.on("change", ".coral-select-container input", $.proxy(this.toggleCoral, this));
 
@@ -255,7 +244,7 @@ define([
             // Change the default region.  If global, zoom to the full extent and show data for all countries.  If regional,
             // zoom to the country based on the bookmark in the extent-bookmarks.json file and hide data for all other countries
             changeRegion: function(e) {
-                this.region = $(e.currentTarget).data('country');
+                this.region = $(e.currentTarget).val();
 
                 this.$el.find(".region-label").html(this.region);
 
@@ -360,7 +349,10 @@ define([
                     pane: this.app.paneNumber}).replace(/id='/g, "id='" + this.id);  
                 $('#' + this.id).html(idUpdate);
 
-
+                this.$el.find('#select-region').chosen({
+                    disable_search_threshold: 20,
+                    width: '100%'
+                });
 
 
             },
@@ -598,7 +590,7 @@ define([
                     .attr("class", "info-tooltip")
                     .attr("cx", function(d) { return self.chart.x(d.x); })
                     .attr("cy", function(d) { return self.chart.y(d.y); })
-                    .attr("r", 3.5)
+                    .attr("r", 3.5);
                     /*.on("mouseover", function(e) {
                         self.showGraphTooltip(e, self);
                     })
@@ -626,7 +618,7 @@ define([
                     .attr("class", "info-tooltip")
                     .attr("cx", function(d) { return self.chart.x(d.x); })
                     .attr("cy", function(d) { return self.chart.y(d.y); })
-                    .attr("r", 3.5)
+                    .attr("r", 3.5);
 
                 // Bar chart
                 var bardata = [
@@ -644,7 +636,7 @@ define([
                     .attr("y", function(d) { return self.chart.y(d.y); })
                     .attr("title", function(d) {
                         return parseInt(d.y).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                    })
+                    });
 
                 this.updateChart();
 

@@ -10,6 +10,7 @@
 		-ms-user-select: none;
 		user-select:none;
 		line-height: 16px;
+		overflow-x: hidden;
 	}
 
 	section {
@@ -27,7 +28,7 @@
 
 	section.country {
 		float: left;
-		width: 60%;
+		width: 258px;
 		height: 196px;
 		padding: 10px;
 		background-color: #ececec;
@@ -35,7 +36,7 @@
 
 	section.documents {
 		float: left;
-		width: 40%;
+		width: 151px;
 		height: 196px;
 		padding: 10px;
 		background-color: #cdd5d5;
@@ -45,21 +46,22 @@
 		content: "";
 	    display: block;
 	    background: url(plugins/natural_coastal_protection/download.svg);
-	    width: 23px;
-	    height: 23px;
-	    background-size: 23px 23px;
+	    width: 17px;
+	    height: 17px;
+	    background-size: 17px 17px;
 	    position: absolute;
 	    left: 4px;
 	    top: 50%;
-	    margin-top: -13px;
+	    margin-top: -9px;
 	}
 
 	section.documents button {
 		position: relative;
-		padding-left: 34px;
+		width: 131px;
+		padding-left: 24px;
+	    padding-right: 8px;
+	    font-size: 12px;
 	}
-
-	
 
 	section.documents button,
 	section.country button {
@@ -260,55 +262,55 @@
     	clear: both;
     }
 
-	.ncp-plugin .stats-container {
-		width: 100%;
-		margin-top: 15px;
+
+
+    .ncp-plugin .stats-container {
+		margin: auto;
 	}
 
 	.ncp-plugin .stat {
-		margin-bottom: 24px;
-    	height: 34px;
-		border-bottom: 1px dotted #ccc;
+		height: 45px;
+    	padding-top: 15px;
+		border-bottom: 1px solid #ccc;
+	}
+
+	.ncp-plugin .stat .description,
+	.ncp-plugin .stat .number {
+		display: inline-block;
+		cursor: pointer;
+		text-align: left;
+		transition: color 0.35s linear;
+		vertical-align: middle;
 	}
 
 	.ncp-plugin .stat:last-child {
-		border-bottom: none;
-	}
-
-	.ncp-plugin .stat.active .description,
-	.ncp-plugin .stat.active .number {
-		color: #226491;
+		border: none;
 	}
 
 	.ncp-plugin .stat .number {
-    	width: 40%;
-		cursor: pointer;
-		padding-left: 8px;
-		vertical-align: top;
-		font-size: 40px;
+		width: 160px;
+		padding-left: 14px;
+		font-size: 30px;
 	    font-weight: bold;
 	    color: #d8d8d8;
-	    transition: color 0.35s linear;
-	    float: left;
-		display: block;
 	}
 
+	.ncp-plugin .stat .units {
+		font-size: 28px;
+	}
+
+	.ncp-plugin .stat.active .description,
+	.ncp-plugin .stat.active .number,
 	.ncp-plugin .stat:hover .description,
 	.ncp-plugin .stat:hover .number {
-		color: #226491;
+		color: #438c9d;
 	}
 
 	.ncp-plugin .stat .description {
-		cursor: pointer;
-    	width: 60%;
 	    padding-left: 10px;
 		color: #d8d8d8;
-	    font-size: 19px;
-	    vertical-align: top;
-	    text-align: left;
+	    font-size: 18px;
 	    transition: color 0.35s linear;
-	    float: left;
-		display: block;
 	}
 
 	.ncp-plugin .coral-select-container {
@@ -439,22 +441,16 @@
 	    </section>
 	    <section class="country">
 
-	    	<div class="dropdown" style="width: 160px;">
-				<button style="width: 160px; text-align: center; margin-left: -5px;" class="button dropdown-toggle" type="button" id="countrydropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					<span class="region-label">Global</span>
-					<i class="icon-down-open-mini caret" style="right: 10px; top: 15px; position: absolute;"></i>
-				</button>
-				<ul class="dropdown-menu" aria-labelledby="countrydropdown">
+		    <div class="chosen-wrap" style="width: 160px; margin-bottom:10px;">
+				<select id="select-region" class="chosen">
 					<% _.each(regions, function(val, key) { %>
-	    				<li data-country="<%= key %>" <% if (key === "Global") { %> selected <% } %>><a href="#"><%= key %></a></li>
+	    				<option value="<%= key %>" <% if (key === "Global") { %> selected <% } %>><%= key %></option>
 	    			<% }); %>
-				</ul>
+				</select>
 			</div>
 
 
 	    	<div class="storm-buttons-container">
-
-
 
 	    		<label class="form-component" for="ANN-option">
                     <input checked="checked" type="radio" id="ANN-option" value="ANN" name="storm<%=pane%>">
@@ -501,9 +497,9 @@
 
     	<section class="documents">
     		<span class="control-title">Documents:</span><br>
-    		<button class="button button-default js-getSnapshot" target="_blank" style="display: none">Download Country Summary <i class="fa fa-file-pdf-o" aria-hidden="true"></i></button>
-    		<a href="https://www.wavespartnership.org/sites/waves/files/kc/Technical%20Rept%20WAVES%20Coastal%202-11-16%20web.pdf" target="_blank">
-				<button class="button button-default js-getSnapshot">Download Waves Report <i class="fa fa-file-pdf-o" aria-hidden="true"></i></button>
+    		<button class="button button-default js-getSnapshot" target="_blank" style="display: none">Download<br>Country Summary</button>
+    		<a class="js-global" href="https://www.wavespartnership.org/sites/waves/files/kc/Technical%20Rept%20WAVES%20Coastal%202-11-16%20web.pdf" target="_blank">
+				<button class="button button-default">Download<br>Waves Report</button>
 			</a>
     	</section>
 
@@ -518,7 +514,7 @@
 	    	</div>
 
 	    	<div class="stat capital" data-layer="capital">
-	    		<div class="number">$<span class="variable"><%= global.E2E1_DIF_ANN_BCF %></span>M</div>
+	    		<div class="number">$<span class="variable"><%= global.E2E1_DIF_ANN_BCF %></span><span class="units">M</span></div>
 	    		<div class="description"> Built Capital Protected
 	    			<i title="This value represents the difference of flooding impacts on built capital when coral reefs are present and 
 					when there is 1 meter of reef loss. This value is aggregated
@@ -527,7 +523,7 @@
 	    	</div>
 
 	    	<div class="stat area" data-layer="area">
-	    		<div class="number"><span class="variable"><%= global.E2E1_DIFF_ANN_AF %></span>km<sup>2</sup></div>
+	    		<div class="number"><span class="variable"><%= global.E2E1_DIFF_ANN_AF %></span><span class="units">km<sup>2</sup></span></div>
 	    		<div class="description">Area Protected
 	    			<i title="This value represents the difference of flooding impacts on land area when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data. " class="fa fa-info-circle info-area info-tooltip"></i></div>
 

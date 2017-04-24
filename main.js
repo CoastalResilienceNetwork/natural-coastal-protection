@@ -351,10 +351,10 @@ define([
                     pane: this.app.paneNumber}).replace(/id='/g, "id='" + this.id);  
                 $('#' + this.id).html(idUpdate);
 
-               /* this.$el.find('#select-region').chosen({
+                this.$el.find('#select-region').chosen({
                     disable_search_threshold: 20,
                     width: '100%'
-                });*/
+                });
 
                 $(this.container).parent().append('<button title="View infographic" class="button button-default ig-icon viewCrsInfoGraphicIcon"><img src="plugins/coral-reef-fisheries/InfographicIcon_v1_23x23.png" alt="show overview graphic"></button>');
                 $(this.container).parent().find(".viewCrsInfoGraphicIcon").on('click',function(c) {

@@ -357,7 +357,7 @@ define([
                 });
 
                 $(this.container).parent().find('.viewCrsInfoGraphicIcon').remove();
-                $(this.container).parent().find('.sidebar-nav').append('<button title="View infographic" class="button button-default ig-icon viewCrsInfoGraphicIcon"><img src="plugins/coral-reef-fisheries/InfographicIcon_v1_23x23.png" alt="show overview graphic"></button>');
+                $(this.container).parent().find('.sidebar-nav').prepend('<button title="View infographic" class="button button-default ig-icon viewCrsInfoGraphicIcon"><img src="plugins/coral-reef-fisheries/InfographicIcon_v1_23x23.png" alt="show overview graphic"></button>');
                 $(this.container).parent().find(".viewCrsInfoGraphicIcon").on('click',function(c) {
                     TINY.box.show({
                         animate: true,

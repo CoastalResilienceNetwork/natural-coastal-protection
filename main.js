@@ -281,7 +281,7 @@ define([
                     layerDefs[0] = "COUNTRY='" + this.region + "'";
                 }
                 this.coastalProtectionLayer.setLayerDefinitions(layerDefs);
-                this.map.setExtent(extent);
+                this.map.setExtent(extent, true);
 
                 this.updateChart();
 

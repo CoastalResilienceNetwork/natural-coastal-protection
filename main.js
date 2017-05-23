@@ -70,7 +70,7 @@ define([
                 this.chart.position.margin = {
                     top: 30,
                     right: 30,
-                    left: 100,
+                    left: 105,
                     bottom: 30
                 };
                 this.chart.position.width = (this.width - 10)- this.chart.position.margin.left - this.chart.position.margin.right;
@@ -491,7 +491,7 @@ define([
                 this.chart.svg.append("text")
                     .attr("class", "yaxis-label")
                     .attr("transform", "rotate(-90)")
-                    .attr("y", 0 - this.chart.position.margin.left + 20)
+                    .attr("y", 0 - this.chart.position.margin.left + 12)
                     .attr("x", 0 - (this.chart.position.height / 2))
                     .attr("text-anchor", "middle")
                     .text("People at Risk (No.)");

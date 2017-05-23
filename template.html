@@ -162,6 +162,7 @@
 	}
 
 	.ncp-plugin .stat .info-tooltip {
+		float: right;
 		padding-left: 2px;
 		margin-top: -4px;
 		background-color:  #fff;
@@ -290,7 +291,7 @@
 	}
 
 	.ncp-plugin .stat .units {
-		font-size: 28px;
+		font-size: 22px;
 	}
 
 	.ncp-plugin .stat.active .description,
@@ -305,6 +306,7 @@
 		color: #d8d8d8;
 	    font-size: 18px;
 	    transition: color 0.35s linear;
+	    width: calc(100% - 174px);
 	}
 
 	.ncp-plugin .coral-select-container {
@@ -346,7 +348,7 @@
 	}
 
 	.ncp-plugin path {
-		stroke: #333;
+		stroke: #3e6f6a;
 		stroke-width: 2px;
 		fill: none;
 	}
@@ -364,7 +366,7 @@
 	}
 
 	.ncp-plugin path.scenario {
-		stroke: #333;
+		stroke: #8e1212;
 	}
 
 	.ncp-plugin .points-scenario circle {
@@ -453,8 +455,8 @@
                 </label>
 
 
-	    		<div style="padding-left: 21px;">
-					<span class="control-title">
+	    		<div style="padding-left: 1px;">
+					<span class="control-title" style="margin-bottom: 4px; display: inline-block;">
 						Benefits from Catastrophic Storms
 						<i title="30 years of historical data on regional sea level and wave conditions were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events." class="fa fa-info-circle info-period info-tooltip"></i>
 					</span>
@@ -490,7 +492,7 @@
     	</section>
 
     	<section class="documents">
-    		<span class="control-title">Documents:</span><br>
+    		<span class="control-title" style="display: block; margin-bottom: 3px;">Documents:</span>
     		<button class="button button-default js-getSnapshot" target="_blank" style="display: none">Download<br>Country Summary</button>
     		<a class="js-global" href="https://www.wavespartnership.org/sites/waves/files/kc/Technical%20Rept%20WAVES%20Coastal%202-11-16%20web.pdf" target="_blank">
 				<button class="button button-default">Download<br>Waves Report</button>

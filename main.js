@@ -120,7 +120,7 @@ define([
                 // can access the full scope of the plugin
                 this.$el.on('change', 'input[name=storm' +
                         this.app.paneNumber + ']', $.proxy(this.updateLayers, this));
-                this.$el.on('change', '#select-region', $.proxy(this.changeRegion, this));
+                this.$el.on('change', '#ncp-select-region', $.proxy(this.changeRegion, this));
                 this.$el.on('click', '.stat', function(e) {self.changeScenarioClick(e);});
                 this.$el.on('change', '.coral-select-container input',
                         $.proxy(this.toggleCoral, this));
@@ -193,7 +193,7 @@ define([
                 this.$el.find('.' + this.layer + '.stat').addClass('active');
 
                 // Restore state of region select
-                this.$el.find('#select-region').val(this.region).trigger('chosen:updated');
+                this.$el.find('#ncp-select-region').val(this.region).trigger('chosen:updated');
 
                 // Restore state of coral reef checkbox
                 if (this.coralReefLayer.visible) {
@@ -228,7 +228,7 @@ define([
 
             // Turn the coral reef layer on and off
             toggleCoral: function() {
-                if ($('.coral-select-container input').is(':checked')) {
+                if (this.$el.find('.coral-select-container input').is(':checked')) {
                     this.coralReefLayer.setVisibility(true);
                     this.state = this.state.setCoralVisibility(true);
                 } else {
@@ -263,7 +263,8 @@ define([
             // bookmark in the extent-bookmarks.json file and hide data for all other
             // countries
             changeRegion: function(e) {
-                this.region = $('#select-region').val();
+                this.region = this.$el.find('#ncp-select-region').val();
+                console.log(this.region)
                 // Show/hide the download country summary button
                 if (this.region === 'Global') {
                     this.$el.find('.js-getSnapshot').hide();
@@ -349,8 +350,8 @@ define([
             updateLayers: function() {
                 this.period = this.$el.find('input[name=storm' + this.app.paneNumber +
                         ']:checked').val();
-                this.region = $('#select-region').val();
-                this.layer = $('.stat.active').data('layer');
+                this.region = this.$el.find('#ncp-select-region').val();
+                this.layer = this.$el.find('.stat.active').data('layer');
 
                 switch (this.layer) {
                     case 'people':
@@ -393,9 +394,9 @@ define([
                     global: this.data.Global,
                     regions: this.data,
                     pane: this.app.paneNumber}).replace(/id='/g, "id='" + this.id);
-                $('#' + this.id).html(idUpdate);
+                this.$el.find('#' + this.id).html(idUpdate);
 
-                this.$el.find('#select-region').chosen({
+                this.$el.find('#ncp-select-region').chosen({
                     disable_search_threshold: 20,
                     width: '100%'
                 });

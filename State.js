@@ -8,12 +8,15 @@ define([
         var State = declare(null, {
             constructor: function(data) {
                 this.savedState = _.defaults({}, data, {
-
+                    region: 'Global',
+                    period: 'ANN',
+                    layer: 'people',
+                    variable: 'PF',
+                    coralVisibility: false
                 });
             },
 
             getState: function() {
-                console.log(this.savedState);
                 return this.savedState;
             },
 
@@ -24,7 +27,7 @@ define([
             },
 
             getRegion: function() {
-                return this.savedState.region || 'Global';
+                return this.savedState.region;
             },
 
             setPeriod: function(period) {
@@ -34,7 +37,7 @@ define([
             },
 
             getPeriod: function() {
-                return this.savedState.period || 'ANN';
+                return this.savedState.period;
             },
 
             setLayer: function(layer) {
@@ -44,7 +47,7 @@ define([
             },
 
             getLayer: function() {
-                return this.savedState.layer || 'people';
+                return this.savedState.layer;
             },
 
             setVariable: function(variable) {
@@ -54,7 +57,17 @@ define([
             },
 
             getVariable: function() {
-                return this.savedState.variable || 'PF';
+                return this.savedState.variable;
+            },
+
+            setCoralVisibility: function(coralVisibility) {
+                return this.clone({
+                    coralVisibility: coralVisibility
+                });
+            },
+
+            getCoralVisibility: function() {
+                return this.savedState.coralVisibility;
             },
 
             // Return new State combined with `data`.

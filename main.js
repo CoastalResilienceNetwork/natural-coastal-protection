@@ -61,12 +61,11 @@ define([
                 this.$el = $(this.container);
 
                 this.state = new State();
-
-                // Default Settings
                 this.region = this.state.getRegion();
                 this.period = this.state.getPeriod();
                 this.layer = this.state.getLayer();
                 this.variable = this.state.getVariable();
+                this.coralVisibility = this.state.getCoralVisibility();
 
                 this.bindEvents();
 
@@ -120,7 +119,7 @@ define([
                 // Set event listeners.  We bind 'this' where needed so the event handler
                 // can access the full scope of the plugin
                 this.$el.on('change', 'input[name=storm' +
-                        this.app.paneNumber + ']', $.proxy(this.changePeriod, this));
+                        this.app.paneNumber + ']', $.proxy(this.updateLayers, this));
                 this.$el.on('change', '#select-region', $.proxy(this.changeRegion, this));
                 this.$el.on('click', '.stat', function(e) {self.changeScenarioClick(e);});
                 this.$el.on('change', '.coral-select-container input',
@@ -129,13 +128,23 @@ define([
                 this.$el.on('click', '.js-getSnapshot', $.proxy(this.printReport, this));
             },
 
-            setState: function() {
-                console.log('setting');
-
+            setState: function(data) {
+                this.state = new State(data);
+                this.region = data.region;
+                this.period = data.period;
+                this.layer = data.layer;
+                this.variable = data.variable;
+                this.coralVisibility = data.coralVisibility;
             },
 
-            getLayersJson: function() {
-                return layerSourcesJson;
+            getState: function() {
+                return {
+                    region: this.state.getRegion(),
+                    period: this.state.getPeriod(),
+                    layer: this.state.getLayer(),
+                    variable: this.state.getVariable(),
+                    coralVisibility: this.state.getCoralVisibility()
+                };
             },
 
             // This function loads the first time the plugin is opened, or after the plugin has
@@ -148,7 +157,7 @@ define([
                 var renderer = this.createRenderer(this.mapClassBreaks.people, 'E2E1_DIF_ANN_PF');
 
                 this.coralReefLayer = new ArcGISDynamicMapServiceLayer('http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {
-                    visible: false,
+                    visible: this.state.getCoralVisibility(),
                     opacity: 0.5
                 });
                 this.coralReefLayer.setVisibleLayers([1]);
@@ -157,7 +166,6 @@ define([
                 this.coastalProtectionLayer.setLayerDrawingOptions(layerDrawingOptions);
                 this.map.addLayer(this.coastalProtectionLayer);
                 this.map.addLayer(this.coralReefLayer);
-
             },
 
             // This function runs everytime the plugin is open.  If the plugin was previously
@@ -174,11 +182,8 @@ define([
                 // run the firstLoad function and reset the default variables
                 if (!this.coastalProtectionLayer || !this.coastalProtectionLayer.visible) {
                     this.firstLoad();
-                    this.region = 'Global';
-                    this.period = 'ANN';
-                    this.layer = 'people';
-                    this.variable = 'PF';
                 }
+                this.coastalProtectionLayer.show();
 
                 // Restore storm period radios
                 this.$el.find('input[value=' + this.period + ']').prop('checked', true);
@@ -188,38 +193,35 @@ define([
                 this.$el.find('.' + this.layer + '.stat').addClass('active');
 
                 // Restore state of region select
-                this.$el.find('.region-select').val(this.region);
+                this.$el.find('#select-region').val(this.region).trigger('chosen:updated');
 
                 // Restore state of coral reef checkbox
                 if (this.coralReefLayer.visible) {
                     this.$el.find('.coral-select-container input').prop('checked', true);
                 }
 
-                this.changePeriod();
-                this.changeScenario();
-
                 this.$el.find('.info-tooltip').tooltip({
                     tooltipClass: 'ncp-tooltip',
                     track: true
                 });
 
-
+                this.updateLayers();
             },
 
             deactivate: function() {
                 if (this.appDiv !== undefined) {
-                    this.map.removeLayer(this.coralReefLayer);
-                    this.map.removeLayer(this.coastalProtectionLayer);
+                    this.coralReefLayer.hide();
+                    this.coastalProtectionLayer.hide();
                     $(this.legendContainer).hide().html();
                 }
             },
 
-            // Turn of the layers when hibernating
+            // Turn off the layers when hibernating
             hibernate: function() {
                 // Cleanup
                 if (this.appDiv !== undefined) {
-                    this.map.removeLayer(this.coralReefLayer);
-                    this.map.removeLayer(this.coastalProtectionLayer);
+                    this.coralReefLayer.hide();
+                    this.coastalProtectionLayer.hide();
                     $(this.legendContainer).hide().html();
                 }
             },
@@ -228,18 +230,16 @@ define([
             toggleCoral: function() {
                 if ($('.coral-select-container input').is(':checked')) {
                     this.coralReefLayer.setVisibility(true);
+                    this.state = this.state.setCoralVisibility(true);
                 } else {
                     this.coralReefLayer.setVisibility();
+                    this.state = this.state.setCoralVisibility(false);
                 }
                 this.updateLegend();
             },
 
             // Change the storm return period and update the facts to match
             changePeriod: function() {
-                this.period = this.$el.find('input[name=storm' + this.app.paneNumber +
-                        ']:checked').val();
-                this.state = this.state.setPeriod(this.period);
-
                 //http://stackoverflow.com/a/2901298
                 this.$el.find('.stat.people .number .variable').html(
                     this.numberWithCommas(Math.round(this.data[this.region]['E2E1_DIF_' + this.period + '_PF']))
@@ -251,7 +251,6 @@ define([
                     this.numberWithCommas(Math.round(this.data[this.region]['E2E1_DIF_' + this.period + '_AF']))
                 );
 
-                this.changeScenario();
             },
 
             // format a number with commas
@@ -264,11 +263,7 @@ define([
             // bookmark in the extent-bookmarks.json file and hide data for all other
             // countries
             changeRegion: function(e) {
-                this.region = $(e.currentTarget).val();
-                this.state = this.state.setRegion(this.region);
-
-                this.$el.find('.region-label').html(this.region);
-
+                this.region = $('#select-region').val();
                 // Show/hide the download country summary button
                 if (this.region === 'Global') {
                     this.$el.find('.js-getSnapshot').hide();
@@ -276,11 +271,9 @@ define([
                     this.$el.find('.js-getSnapshot').show();
                 }
 
-                this.changePeriod();
-
-                var layerDefs = [];
                 var regionExtent = this.countryConfig[this.region].EXTENT;
                 var extent;
+                var layerDefs = [];
 
                 // Set the zoom extent
                 if (this.region === 'Global') {
@@ -304,20 +297,21 @@ define([
                 if (this.region === 'Global') {
                     layerDefs[0] = ''; //this.activeCountries;
                 } else if (this.region === 'US/Puerto Rico') {
-                    layerDefs[0] = 'COUNTRY="United States & Puerto Rico"';
+                    layerDefs[0] = 'COUNTRY=\'United States & Puerto Rico\'';
                 } else {
-                    layerDefs[0] = 'COUNTRY="' + this.region + '"';
+                    layerDefs[0] = 'COUNTRY=\'' + this.region + '\'';
                 }
-                this.coastalProtectionLayer.setLayerDefinitions(layerDefs);
-                this.map.setExtent(extent, true);
+                this.coastalProtectionLayer.setLayerDefinitions(layerDefs, true);
 
-                this.updateChart();
+                this.map.setExtent(extent, true);
 
                 ga('send', 'event', {
                     eventCategory: 'NCP',
                     eventAction: 'change region',
                     eventLabel: this.region
                 });
+
+                this.updateLayers();
 
             },
 
@@ -328,7 +322,7 @@ define([
                 this.$el.find('.stat.active').removeClass('active');
                 $(e.currentTarget).closest('.stat').addClass('active');
 
-                this.changeScenario();
+                this.updateLayers();
             },
 
             // Update the renderer to reflect storm return period and the fact being displayed.
@@ -337,22 +331,46 @@ define([
                 var layerDrawingOption = new LayerDrawingOptions();
                 var renderer;
                 if (this.layer === 'people') {
-                    this.variable = 'PF';
                     renderer = this.createRenderer(this.mapClassBreaks.people,
                         'E2E1_DIF_' + this.period + '_' + this.variable);
                 } else if (this.layer === 'capital') {
-                    this.variable = 'BCF';
                     renderer = this.createRenderer(this.mapClassBreaks.capital,
                         'E2E1_DIF_' + this.period + '_' + this.variable);
                 } else if (this.layer === 'area') {
-                    this.variable = 'AF';
                     renderer = this.createRenderer(this.mapClassBreaks.area,
                         'E2E1_DIF_' + this.period + '_' + this.variable);
                 }
 
                 layerDrawingOption.renderer = renderer;
                 layerDrawingOptions[0] = layerDrawingOption;
-                this.coastalProtectionLayer.setLayerDrawingOptions(layerDrawingOptions);
+                this.coastalProtectionLayer.setLayerDrawingOptions(layerDrawingOptions, true);
+            },
+
+            updateLayers: function() {
+                this.period = this.$el.find('input[name=storm' + this.app.paneNumber +
+                        ']:checked').val();
+                this.region = $('#select-region').val();
+                this.layer = $('.stat.active').data('layer');
+
+                switch (this.layer) {
+                    case 'people':
+                        this.variable = 'PF';
+                        break;
+                    case 'capital':
+                        this.variable = 'BCF';
+                        break;
+                    case 'area':
+                        this.variable = 'AF';
+                        break;
+                }
+
+                this.changeScenario();
+                this.changePeriod();
+
+                this.state = this.state.setRegion(this.region);
+                this.state = this.state.setPeriod(this.period);
+                this.state = this.state.setLayer(this.layer);
+                this.state = this.state.setVariable(this.variable);
 
                 this.coastalProtectionLayer.refresh();
 

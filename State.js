@@ -71,6 +71,12 @@ define([
                 return this.savedState.coralVisibility;
             },
 
+            setMangroveVisibility: function(mangroveVisibility) {
+                return this.clone({
+                    mangroveVisibility: mangroveVisibility
+                });
+            },
+
             getMangroveVisibility: function() {
                 return this.savedState.mangroveVisibility;
             },

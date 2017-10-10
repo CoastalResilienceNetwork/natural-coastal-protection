@@ -176,6 +176,7 @@ define([
                 this.coastalProtectionLayer.setVisibleLayers([40]);
                 this.map.addLayer(this.coastalProtectionLayer);
                 this.map.addLayer(this.coralReefLayer);
+                this.map.addLayer(this.mangroveLayer);
             },
 
             // This function runs everytime the plugin is open.  If the plugin was previously
@@ -259,7 +260,8 @@ define([
                         this.$el.find('#ncp-select-region').val("Global").trigger('chosen:updated');
                         this.changeRegion();
                     }
-                    this.$el.find('.provider-name').html('coral reefs');
+                    this.$el.find('.coral-only').show();
+                    this.$el.find('.mangrove-only').hide();
                 } else if (this.provider === 'mangroves') {
                     this.$el.find('#rp50').show();
                     this.$el.find('#rp100').hide();
@@ -273,7 +275,8 @@ define([
                         this.$el.find('#ncp-select-region').val("Global").trigger('chosen:updated');
                         this.changeRegion();
                     }
-                    this.$el.find('.provider-name').html('mangroves');
+                    this.$el.find('.coral-only').hide();
+                    this.$el.find('.mangrove-only').show();
                     if (this.layer === 'area') {
                         this.layer = 'people';
                         this.$el.find('.stat.active').removeClass('active');
@@ -281,6 +284,7 @@ define([
                     }
                 }
                 this.$el.find('#ncp-select-region').trigger("chosen:updated");
+                this.changeRegion();
                 this.changePeriod();
                 this.updateLayers();
             },
@@ -298,11 +302,13 @@ define([
 
             toggleMangrove: function() {
                 if (this.$el.find('.mangrove-select-container input').is(':checked')) {
-                    this.coralReefLayer.setVisibility(true);
-                    this.state = this.state.setCoralVisibility(true);
+                    console.log('on')
+                    this.mangroveLayer.setVisibility(true);
+                    this.state = this.state.setMangroveVisibility(true);
                 } else {
-                    this.coralReefLayer.setVisibility();
-                    this.state = this.state.setCoralVisibility(false);
+                    console.log('off')
+                    this.mangroveLayer.setVisibility();
+                    this.state = this.state.setMangroveVisibility(false);
                 }
             },
 
@@ -351,11 +357,17 @@ define([
                     this.$el.find('.js-getSnapshot').show();
                 }
 
-                var regionExtent = this.countryConfig[this.region].EXTENT;
+                var regionExtent;
                 var extent;
-
+                if (this.provider === 'mangroves' && this.countryConfig[this.region].EXTENT_MANGROVES) {
+                    regionExtent = this.countryConfig[this.region].EXTENT_MANGROVES;
+                } else {
+                    regionExtent = this.countryConfig[this.region].EXTENT;
+                }
+                console.log(regionExtent);
+                
                 // Set the zoom extent
-                if (this.region === 'Global') {
+                if (this.region === 'Global' && this.provider === 'coral') {
                     var initialExtent = this.app.regionConfig.initialExtent;
                     extent = new esri.geometry.Extent(
                         initialExtent[0],
@@ -1004,12 +1016,7 @@ define([
 
             // Download the pdf report for the current region
             printReport: function() {
-                if (this.provider === 'coral') {
-                    window.open(this.countryConfig[this.region].SNAPSHOT, '_blank');
-                } else {
-                    window.open(this.countryConfig[this.region].SNAPSHOT_MANGROVES, '_blank');
-                }
-                
+                window.open(this.countryConfig[this.region].SNAPSHOT, '_blank');
                 return false;
             },
 

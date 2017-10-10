@@ -1,6 +1,7 @@
 {
 	"Global" : {
-		"EXTENT" : [-180,-82,180,85]
+		"EXTENT" : [-180,-82,180,85],
+		"EXTENT_MANGROVES": [114.653320,4.346411,127.836914,19.766704]
 	},
 	"Cuba" : {
 		"EXTENT" : [-88.154297,15.686510,-69.884033,25.433353],
@@ -28,8 +29,7 @@
 	},
 	"Philippines" : {
 		"EXTENT" : [114.653320,4.346411,127.836914,19.766704],
-		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Philippines.pdf",
-		"SNAPSHOT_MANGROVES": "http://conservationgateway.org/ConservationPractices/Marine/crr/library/Documents/CoastalProtectionServicesMangrovesPhilippinesReport-3.pdf"
+		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Philippines.pdf"
 	},
 	"Saudi Arabia" : {
 		"EXTENT" : [31.904297,11.953349,60.292969,37.926868],

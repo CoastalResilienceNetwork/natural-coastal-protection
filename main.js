@@ -15,8 +15,6 @@ define([
     'd3',
     'framework/PluginBase',
     'esri/layers/ArcGISDynamicMapServiceLayer',
-    'esri/layers/LayerDrawingOptions',
-    'esri/renderers/ClassBreaksRenderer',
     'esri/symbols/SimpleLineSymbol',
     'esri/renderer',
     'esri/Color',
@@ -25,13 +23,12 @@ define([
     'dojo/dom',
     'dojo/text!./template.html',
     'dojo/text!./data.json',
+    'dojo/text!./data-mangroves.json',
     'dojo/text!./country-config.json'
     ], function(declare,
               d3,
               PluginBase,
               ArcGISDynamicMapServiceLayer,
-              LayerDrawingOptions,
-              ClassBreaksRenderer,
               SimpleLineSymbol,
               Renderer,
               Color,
@@ -40,6 +37,7 @@ define([
               dom,
               templates,
               Data,
+              DataMangrove,
               CountryConfig
 ) {
         return declare(PluginBase, {
@@ -48,24 +46,62 @@ define([
             resizable: false,
             width: 425,
             // Disable the default legend item which doesn't pick up our custom class breaks
-            showServiceLayersInLegend: false,
+            showServiceLayersInLegend: true,
             allowIdentifyWhenActive: false,
             size: 'custom',
 
             initialize: function(frameworkParameters, currentRegion) {
                 declare.safeMixin(this, frameworkParameters);
                 this.data = $.parseJSON(Data);
+                this.dataMangrove = $.parseJSON(DataMangrove);
                 this.countryConfig = $.parseJSON(CountryConfig);
                 this.pluginTmpl = _.template(this.getTemplateById('plugin'));
 
                 this.$el = $(this.container);
 
+                this.provider = 'coral';
                 this.state = new State();
                 this.region = this.state.getRegion();
                 this.period = this.state.getPeriod();
                 this.layer = this.state.getLayer();
                 this.variable = this.state.getVariable();
                 this.coralVisibility = this.state.getCoralVisibility();
+                this.mangroveVisibility = this.state.getMangroveVisibility();
+                this.layerID = 40; // TODO GET/SAVE STATE
+
+                this.layerLookup = {
+                    mangroves: {
+                        ANN: {
+                            people: 33,
+                            capital: 34,
+                        },
+                        '25RP': {
+                            people: 35,
+                            capital: 36,
+                        },
+                        '50RP': {
+                            people: 37,
+                            capital: 38,
+                        }
+                    },
+                    coral: {
+                        ANN: {
+                            people: 40,
+                            capital: 41,
+                            area: 42,
+                        },
+                        '25RP': {
+                            people: 43,
+                            capital: 44,
+                            area: 45,
+                        },
+                        '100RP': {
+                            people: 46,
+                            capital: 47,
+                            area: 48,
+                        }
+                    }
+                };
 
                 this.bindEvents();
 
@@ -75,42 +111,12 @@ define([
                     top: 30,
                     right: 30,
                     left: 105,
-                    bottom: 30
+                    bottom: 80
                 };
                 this.chart.position.width = (this.width - 10) -
                     this.chart.position.margin.left - this.chart.position.margin.right;
-                this.chart.position.height = 235 - this.chart.position.margin.top -
+                this.chart.position.height = 285 - this.chart.position.margin.top -
                     this.chart.position.margin.bottom;
-
-                // Default class breaks and color ramps
-                var opacity = 1;
-                this.mapClassBreaks = {
-                    people: [
-                        [-99999, 0, [120, 120, 120, opacity], '0', 1.5],
-                        [1, 500, [26, 152, 80, opacity], '1 - 500', 3],
-                        [501, 2500, [145, 207, 96, opacity], '501 - 2,500', 3],
-                        [2501, 5000, [217, 239, 139, opacity], '2501 - 5,000', 3],
-                        [5001, 10000, [254, 224, 139, opacity], '5001 - 10,000', 3],
-                        [10001, 50000, [252, 141, 89, opacity], '10,001 - 50,000', 3],
-                        [50001, 20000000, [215, 48, 39, opacity], '> 50,000', 3]
-                    ],
-                    capital: [
-                        [-99999, 0, [120, 120, 120, opacity], '0', 1],
-                        [0, 75000000, [26, 150, 65, opacity], '1 - 75', 3],
-                        [75000000, 250000000, [166, 217, 106, opacity], '76 - 250', 3],
-                        [250000000, 750000000, [253, 174, 97, opacity], '251 - 750', 3],
-                        [750000000, 1000000000, [215, 48, 39, opacity] , '751 - 1,000', 3],
-                        [1000000000, 9000000000000, [165, 0, 38, opacity], '> 1,001', 3]
-                    ],
-                    area: [
-                        [-99999, 0, [120, 120, 120, opacity], '0', 1],
-                        [1, 5, [26, 150, 65, opacity], '1 - 5', 3],
-                        [5, 20, [166, 217, 106, opacity], '6 - 20', 3],
-                        [20, 50, [253, 174, 97, opacity], '21 - 50', 3],
-                        [50, 100, [215, 48, 39, opacity], '51 - 100', 3],
-                        [100, 100000, [165, 0, 38, opacity], '> 100', 3]
-                    ],
-                };
             },
 
             bindEvents: function() {
@@ -121,9 +127,13 @@ define([
                 this.$el.on('change', 'input[name=storm' +
                         this.app.paneNumber + ']', $.proxy(this.updateLayers, this));
                 this.$el.on('change', '#ncp-select-region', $.proxy(this.changeRegion, this));
+                this.$el.on('change', '#ncp-provider', $.proxy(this.changeProvider, this));
+                
                 this.$el.on('click', '.stat', function(e) {self.changeScenarioClick(e);});
                 this.$el.on('change', '.coral-select-container input',
                         $.proxy(this.toggleCoral, this));
+                this.$el.on('change', '.mangrove-select-container input',
+                        $.proxy(this.toggleMangrove, this));
 
                 this.$el.on('click', '.js-getSnapshot', $.proxy(this.printReport, this));
             },
@@ -143,7 +153,8 @@ define([
                     period: this.state.getPeriod(),
                     layer: this.state.getLayer(),
                     variable: this.state.getVariable(),
-                    coralVisibility: this.state.getCoralVisibility()
+                    coralVisibility: this.state.getCoralVisibility(),
+                    mangroveVisibility: this.state.getMangroveVisibility()
                 };
             },
 
@@ -151,19 +162,18 @@ define([
             // been closed (not minimized). It sets up the layers with their default settings
 
             firstLoad: function() {
-                var layerDefs = [];
-                var layerDrawingOptions = [];
-                var layerDrawingOption = new LayerDrawingOptions();
-                var renderer = this.createRenderer(this.mapClassBreaks.people, 'E2E1_DIF_ANN_PF');
-
                 this.coralReefLayer = new ArcGISDynamicMapServiceLayer('http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {
                     visible: this.state.getCoralVisibility(),
                     opacity: 0.5
                 });
                 this.coralReefLayer.setVisibleLayers([1]);
+                this.mangroveLayer = new ArcGISDynamicMapServiceLayer('http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {
+                    visible: this.state.getMangroveVisibility(),
+                    opacity: 0.5
+                });
+                this.mangroveLayer.setVisibleLayers([39]);
                 this.coastalProtectionLayer = new ArcGISDynamicMapServiceLayer('http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {});
-                this.coastalProtectionLayer.setVisibleLayers([0]);
-                this.coastalProtectionLayer.setLayerDrawingOptions(layerDrawingOptions);
+                this.coastalProtectionLayer.setVisibleLayers([40]);
                 this.map.addLayer(this.coastalProtectionLayer);
                 this.map.addLayer(this.coralReefLayer);
             },
@@ -226,6 +236,55 @@ define([
                 }
             },
 
+            changeScenarioClick: function(e) {
+                this.layer = $(e.currentTarget).closest('.stat').data('layer');
+                this.$el.find('.stat.active').removeClass('active');
+                $(e.currentTarget).closest('.stat').addClass('active');
+
+                this.updateLayers();
+            },
+
+            changeProvider: function() {
+                this.provider = this.$el.find('#ncp-provider').val();
+                if (this.provider === 'coral') {
+                    this.$el.find('#rp50').hide();
+                    this.$el.find('#rp100').show();
+                    this.$el.find('.coral-select-container').show();
+                    this.$el.find('.mangrove-select-container').hide();
+                    this.$el.find('.stat.area').show();
+                    this.$el.find('option.coral').show();
+                    this.$el.find('option.mangrove').hide();
+                    this.$el.find('.mangrove-select-container input').prop('checked', false).trigger('change');
+                    if (!this.data[this.region]) {
+                        this.$el.find('#ncp-select-region').val("Global").trigger('chosen:updated');
+                        this.changeRegion();
+                    }
+                    this.$el.find('.provider-name').html('coral reefs');
+                } else if (this.provider === 'mangroves') {
+                    this.$el.find('#rp50').show();
+                    this.$el.find('#rp100').hide();
+                    this.$el.find('.coral-select-container').hide();
+                    this.$el.find('.mangrove-select-container').show();
+                    this.$el.find('.stat.area').hide();
+                    this.$el.find('option.coral').hide();
+                    this.$el.find('option.mangrove').show();
+                    this.$el.find('.coral-select-container input').prop('checked', false).trigger('change');
+                    if (!this.dataMangrove[this.region]) {
+                        this.$el.find('#ncp-select-region').val("Global").trigger('chosen:updated');
+                        this.changeRegion();
+                    }
+                    this.$el.find('.provider-name').html('mangroves');
+                    if (this.layer === 'area') {
+                        this.layer = 'people';
+                        this.$el.find('.stat.active').removeClass('active');
+                        this.$el.find('.stat.people').addClass('active');
+                    }
+                }
+                this.$el.find('#ncp-select-region').trigger("chosen:updated");
+                this.changePeriod();
+                this.updateLayers();
+            },
+
             // Turn the coral reef layer on and off
             toggleCoral: function() {
                 if (this.$el.find('.coral-select-container input').is(':checked')) {
@@ -235,20 +294,41 @@ define([
                     this.coralReefLayer.setVisibility();
                     this.state = this.state.setCoralVisibility(false);
                 }
-                this.updateLegend();
+            },
+
+            toggleMangrove: function() {
+                if (this.$el.find('.mangrove-select-container input').is(':checked')) {
+                    this.coralReefLayer.setVisibility(true);
+                    this.state = this.state.setCoralVisibility(true);
+                } else {
+                    this.coralReefLayer.setVisibility();
+                    this.state = this.state.setCoralVisibility(false);
+                }
             },
 
             // Change the storm return period and update the facts to match
             changePeriod: function() {
                 //http://stackoverflow.com/a/2901298
+                var cap = {};
+                if (this.provider === 'mangroves') {                  
+                    cap.people = this.dataMangrove[this.region]['E2E1_DIF_' + this.period + '_PF'];
+                    cap.capital = this.dataMangrove[this.region]['E2E1_DIF_' + this.period + '_BCF'];
+                    cap.area = 0;
+                } else if (this.provider === 'coral') {
+                    cap.people = this.data[this.region]['E2E1_DIF_' + this.period + '_PF'];
+                    cap.capital = this.data[this.region]['E2E1_DIF_' + this.period + '_BCF'];
+                    cap.area = this.data[this.region]['E2E1_DIF_' + this.period + '_AF'];
+                }
+
+
                 this.$el.find('.stat.people .number .variable').html(
-                    this.numberWithCommas(Math.round(this.data[this.region]['E2E1_DIF_' + this.period + '_PF']))
+                    this.numberWithCommas(Math.round(cap.people))
                 );
                 this.$el.find('.stat.capital .number .variable').html(
-                    this.numberWithCommas(Math.round(this.data[this.region]['E2E1_DIF_' + this.period + '_BCF'] / 1000000))
+                    this.numberWithCommas(Math.round(cap.capital / 1000000))
                 );
                 this.$el.find('.stat.area .number .variable').html(
-                    this.numberWithCommas(Math.round(this.data[this.region]['E2E1_DIF_' + this.period + '_AF']))
+                    this.numberWithCommas(Math.round(cap.area))
                 );
 
             },
@@ -264,7 +344,6 @@ define([
             // countries
             changeRegion: function(e) {
                 this.region = this.$el.find('#ncp-select-region').val();
-                console.log(this.region)
                 // Show/hide the download country summary button
                 if (this.region === 'Global') {
                     this.$el.find('.js-getSnapshot').hide();
@@ -274,7 +353,6 @@ define([
 
                 var regionExtent = this.countryConfig[this.region].EXTENT;
                 var extent;
-                var layerDefs = [];
 
                 // Set the zoom extent
                 if (this.region === 'Global') {
@@ -294,16 +372,6 @@ define([
                     );
                 }
 
-                // Set the data extent
-                if (this.region === 'Global') {
-                    layerDefs[0] = ''; //this.activeCountries;
-                } else if (this.region === 'US/Puerto Rico') {
-                    layerDefs[0] = 'COUNTRY=\'United States & Puerto Rico\'';
-                } else {
-                    layerDefs[0] = 'COUNTRY=\'' + this.region + '\'';
-                }
-                this.coastalProtectionLayer.setLayerDefinitions(layerDefs, true);
-
                 this.map.setExtent(extent, true);
 
                 ga('send', 'event', {
@@ -316,38 +384,8 @@ define([
 
             },
 
-            // Capture the click from the fact number click events and pass to the
-            // changeScenario function
-            changeScenarioClick: function(e) {
-                this.layer = $(e.currentTarget).closest('.stat').data('layer');
-                this.$el.find('.stat.active').removeClass('active');
-                $(e.currentTarget).closest('.stat').addClass('active');
-
-                this.updateLayers();
-            },
-
-            // Update the renderer to reflect storm return period and the fact being displayed.
-            changeScenario: function() {
-                var layerDrawingOptions = [];
-                var layerDrawingOption = new LayerDrawingOptions();
-                var renderer;
-                if (this.layer === 'people') {
-                    renderer = this.createRenderer(this.mapClassBreaks.people,
-                        'E2E1_DIF_' + this.period + '_' + this.variable);
-                } else if (this.layer === 'capital') {
-                    renderer = this.createRenderer(this.mapClassBreaks.capital,
-                        'E2E1_DIF_' + this.period + '_' + this.variable);
-                } else if (this.layer === 'area') {
-                    renderer = this.createRenderer(this.mapClassBreaks.area,
-                        'E2E1_DIF_' + this.period + '_' + this.variable);
-                }
-
-                layerDrawingOption.renderer = renderer;
-                layerDrawingOptions[0] = layerDrawingOption;
-                this.coastalProtectionLayer.setLayerDrawingOptions(layerDrawingOptions, true);
-            },
-
-            updateLayers: function() {
+            updateLayers: function(e) {
+                var layerDefs = [];
                 this.period = this.$el.find('input[name=storm' + this.app.paneNumber +
                         ']:checked').val();
                 this.region = this.$el.find('#ncp-select-region').val();
@@ -365,7 +403,19 @@ define([
                         break;
                 }
 
-                this.changeScenario();
+                this.layerID = this.layerLookup[this.provider][this.period][this.layer];
+                // Set the data extent
+                if (this.region === 'Global') {
+                    layerDefs[this.layerID] = ''; //this.activeCountries;
+                } else if (this.region === 'US/Puerto Rico') {
+                    layerDefs[this.layerID] = 'COUNTRY=\'United States & Puerto Rico\'';
+                } else {
+                    layerDefs[this.layerID] = 'COUNTRY=\'' + this.region + '\'';
+                }
+                this.coastalProtectionLayer.setLayerDefinitions(layerDefs, true);
+
+                this.coastalProtectionLayer.setVisibleLayers([this.layerID]);
+
                 this.changePeriod();
 
                 this.state = this.state.setRegion(this.region);
@@ -376,7 +426,6 @@ define([
                 this.coastalProtectionLayer.refresh();
 
                 this.updateChart();
-                this.updateLegend();
             },
 
             // Render the plugin DOM
@@ -392,7 +441,8 @@ define([
                 // and add to appDiv
                 var idUpdate = this.pluginTmpl({
                     global: this.data.Global,
-                    regions: this.data,
+                    regionsCoral: this.data,
+                    regionsMangrove: this.dataMangrove,
                     pane: this.app.paneNumber}).replace(/id='/g, "id='" + this.id);
                 this.$el.find('#' + this.id).html(idUpdate);
 
@@ -418,40 +468,6 @@ define([
 
             },
 
-            // Draw the custom legend based on our custom class breaks and the current
-            // visibility of each layer
-            updateLegend: function() {
-                var html = '';
-
-                if (this.coralReefLayer.visible) {
-                    html += '<span style="background: rgb(29, 29, 114)" ' +
-                    'class="legend-item coastal-reef"></span>Coral Reef Habitats<br><br>';
-                }
-
-                if (this.coastalProtectionLayer.visible) {
-                    if (this.layer === 'people') {
-                        html += 'People Protected (No.)<br>';
-                    } else if (this.layer === 'capital') {
-                        html += 'Built Capital Protected ($Millions)<br>';
-                    } else if (this.layer === 'area') {
-                        html += 'Area Protected (sq km)<br>';
-                    }
-
-                    _.each(this.mapClassBreaks[this.layer], function(classbreak) {
-                        html += '<span style="background: rgb(';
-                        html += classbreak[2][0] + ',';
-                        html += classbreak[2][1] + ',';
-                        html += classbreak[2][2];
-                        html += ')" class="legend-item coastal-protection"></span>';
-                        html += classbreak[3] + '<br>';
-                    }, this);
-                }
-
-                $(this.legendContainer).show().html(html);
-
-                return html;
-            },
-
             // Render the D3 Chart
             renderChart: function() {
                 var self = this;
@@ -475,6 +491,9 @@ define([
 
                 this.chart.barxAxis = d3.svg.axis()
                     .scale(this.chart.barx)
+                    .tickFormat(function(d) {
+                        return d;
+                    })
                     .orient('bottom');
 
                 this.chart.yAxis = d3.svg.axis()
@@ -563,31 +582,34 @@ define([
 
                 // Add chart legend
                 this.chart.legend = this.chart.svg.append('g')
+                    .attr('transform', 'translate(0,210)')
                     .attr('class', 'chart-legend')
                     .attr('opacity', 0);
 
-                    this.chart.legend.append('rect')
-                        .attr('width', '25')
-                        .attr('height', '15')
-                        .attr('x', '5')
-                        .attr('fill', '#30928D');
+                this.chart.legend.append('rect')
+                    .attr('width', '25')
+                    .attr('height', '15')
+                    .attr('x', '5')
+                    .attr('fill', '#30928D');
 
-                    this.chart.legend.append('text')
-                        .text('Present')
-                        .attr('x', '32')
-                        .attr('y', '11');
+                this.chart.col1 = this.chart.legend.append('text')
+                    .attr('class', 'col-1')
+                    .text('Present')
+                    .attr('x', '32')
+                    .attr('y', '11');
 
-                    this.chart.legend.append('rect')
-                        .attr('width', '25')
-                        .attr('height', '15')
-                        .attr('x', '5')
-                        .attr('y', '18')
-                        .attr('fill', '#923034');
+                this.chart.legend.append('rect')
+                    .attr('width', '25')
+                    .attr('height', '15')
+                    .attr('x', '5')
+                    .attr('y', '18')
+                    .attr('fill', '#923034');
 
-                    this.chart.legend.append('text')
-                        .text('Reef Loss')
-                        .attr('x', '32')
-                        .attr('y', '29');
+                this.chart.col2 = this.chart.legend.append('text')
+                    .attr('class', 'col-2')
+                    .text('Reef Loss')
+                    .attr('x', '32')
+                    .attr('y', '29');
 
                 // Initialize chart data
                 this.addChartPoints();
@@ -601,13 +623,11 @@ define([
                 this.chart.data = {};
                 this.chart.data.current = {};
                 this.chart.data.current.x = [0, 10, 25, 50, 100];
-                this.chart.data.current.barx = ['Present', 'Reef Loss'];
                 this.chart.data.current.y = [0, 0, 0, 0, 0];
                 this.chart.data.current.xy = [];
 
                 this.chart.data.scenario = {};
                 this.chart.data.scenario.x = [0, 10, 25, 50, 100];
-                this.chart.data.scenario.barx = ['Present', 'Reem Loss'];
                 this.chart.data.scenario.y = [0, 0, 0, 0, 0];
                 this.chart.data.scenario.xy = [];
 
@@ -723,6 +743,42 @@ define([
                     annual = true;
                 }
 
+                if (this.provider === 'mangroves') {
+                    this.chart.barx.domain(['Current (2010) Mangroves', 'No Mangroves']);
+
+                    this.chart.svg.select('.col-1')
+                        .transition().duration(600)
+                        .style('opacity', 0)
+                        .transition().duration(600)
+                        .style('opacity', 1)
+                        .text('No Mangroves');
+
+                    this.chart.svg.select('.col-2')
+                        .transition().duration(600)
+                        .style('opacity', 0)
+                        .transition().duration(600)
+                        .style('opacity', 1)
+                        .text('Current (2010) Mangroves');
+
+                } else {
+                    this.chart.barx.domain(['Present', 'Reef Loss']);
+
+                    this.chart.svg.select('.col-1')
+                        .transition().duration(600)
+                        .style('opacity', 0)
+                        .transition().duration(600)
+                        .style('opacity', 1)
+                        .text('Present');
+
+                    this.chart.svg.select('.col-2')
+                        .transition().duration(600)
+                        .style('opacity', 0)
+                        .transition().duration(600)
+                        .style('opacity', 1)
+                        .text('Reef Loss');
+                }
+                
+
                 // Update the  y-axis label to match the current variable selected
                 var text = '';
                 if (this.variable === 'BCF') {
@@ -734,21 +790,22 @@ define([
                 }
 
                 this.chart.svg.select('.yaxis-label')
-                        .transition().duration(600)
-                        .style('opacity', 0)
-                        .transition().duration(600)
-                        .style('opacity', 1)
-                        .text(text);
+                    .transition().duration(600)
+                    .style('opacity', 0)
+                    .transition().duration(600)
+                    .style('opacity', 1)
+                    .text(text);
 
                 // Get the data for the scenario from the data.json file and divide
                 // into the correct units if specified.  Default is 1
                 this.chart.data.current.xy = [];
+                var data = this.provider === 'coral' ? this.data[this.region] : this.dataMangrove[this.region];
                 this.chart.data.current.y = [
-                    this.data[this.region]['E1_ANN_' + this.variable] / division,
-                    this.data[this.region]['E1_10RP_' + this.variable] / division,
-                    this.data[this.region]['E1_25RP_' + this.variable] / division,
-                    this.data[this.region]['E1_50RP_' + this.variable] / division,
-                    this.data[this.region]['E1_100RP_' + this.variable] / division
+                    data['E1_ANN_' + this.variable] / division,
+                    data['E1_10RP_' + this.variable] / division,
+                    data['E1_25RP_' + this.variable] / division,
+                    data['E1_50RP_' + this.variable] / division,
+                    data['E1_100RP_' + this.variable] / division
                 ];
 
                 // Create array of xy values for drawing chart points
@@ -763,11 +820,11 @@ define([
 
                 this.chart.data.scenario.xy = [];
                 this.chart.data.scenario.y = [
-                    this.data[this.region]['E2_ANN_' + this.variable] / division,
-                    this.data[this.region]['E2_10RP_' + this.variable] / division,
-                    this.data[this.region]['E2_25RP_' + this.variable] / division,
-                    this.data[this.region]['E2_50RP_' + this.variable] / division,
-                    this.data[this.region]['E2_100RP_' + this.variable] / division
+                    data['E2_ANN_' + this.variable] / division,
+                    data['E2_10RP_' + this.variable] / division,
+                    data['E2_25RP_' + this.variable] / division,
+                    data['E2_50RP_' + this.variable] / division,
+                    data['E2_100RP_' + this.variable] / division
                 ];
 
                 for (var j = 0; j < this.chart.data.scenario.x.length; j++) {
@@ -784,20 +841,25 @@ define([
 
                 // Set the data for the bar chart
                 if (this.variable === 'BCF') {
-                    bary = this.data[this.region].E1_ANN_BCF / division;
-                    bary1m = this.data[this.region].E2_ANN_BCF / division;
+                    bary = data.E1_ANN_BCF / division;
+                    bary1m = data.E2_ANN_BCF / division;
                 } else if (this.variable === 'PF') {
-                    bary = this.data[this.region].E1_ANN_PF / division;
-                    bary1m = this.data[this.region].E2_ANN_PF / division;
+                    bary = data.E1_ANN_PF / division;
+                    bary1m = data.E2_ANN_PF / division;
                 } else if (this.variable === 'AF') {
-                    bary = this.data[this.region].E1_ANN_AF / division;
-                    bary1m = this.data[this.region].E2_ANN_AF / division;
+                    bary = data.E1_ANN_AF / division;
+                    bary1m = data.E2_ANN_AF / division;
                 }
 
-                var bardata = [
-                    {x: 'Present', y: bary},
-                    {x: 'Reef Loss', y: bary1m}
-                ];
+                var bardata = [];
+                if (this.provider === 'coral') {
+                    bardata.push({x: 'Present', y: bary});
+                    bardata.push({x: 'Reef Loss', y: bary1m});
+                } else {
+                    bardata.push({x: 'Current (2010) Mangroves', y: bary1m});
+                    bardata.push({x: 'No Mangroves', y: bary});
+                }
+
 
                 if (this.period === 'ANN') {
                     // Set the y-axis for the bar chart
@@ -836,10 +898,11 @@ define([
                 this.chart.svg.select('.xaxis')
                     .transition().duration(1200).ease('sin-in-out')
                     .attr('opacity', annual ? 0 : 1);
-
+                  
                 this.chart.svg.select('.barxaxis')
                     .transition().duration(1200).ease('sin-in-out')
-                    .attr('opacity', annual ? 1 : 0);
+                    .attr('opacity', annual ? 1 : 0)
+                    .call(this.chart.barxAxis);
 
                 this.chart.svg.select('.xaxis-label')
                     .transition().duration(1200).ease('sin-in-out')
@@ -924,8 +987,9 @@ define([
                     .transition().duration(1200).ease('sin-in-out')
                     .attr('opacity', annual ? 1 : 0)
                     .attr('width', this.chart.barx.rangeBand())
-                    .attr('class', function(d) {
-                        return 'info-tooltip bar ' + d.x;
+                    
+                    .attr('data-layer', function(d) {
+                        return d.x;
                     })
                     // TODO: Don't animate title
                     .attr('title', function(d) {
@@ -938,27 +1002,14 @@ define([
                     });
             },
 
-            // Create a renderer for the coastal protection layer using the custom defined
-            // classbreaks and colors for each scenario and fact combination
-            createRenderer: function(classBreaks, field) {
-                var defaultSymbol = new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
-                        new Color([0, 0, 0, 0]), 0);
-                var renderer = new ClassBreaksRenderer(defaultSymbol, field);
-                _(classBreaks).each(function(classBreak) {
-                    renderer.addBreak({
-                        minValue: classBreak[0],
-                        maxValue: classBreak[1],
-                        symbol: SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
-                                new Color(classBreak[2]), classBreak[4]),
-                        label: classBreak[3]
-                    });
-                });
-                return renderer;
-            },
-
             // Download the pdf report for the current region
             printReport: function() {
-                window.open(this.countryConfig[this.region].SNAPSHOT, '_blank');
+                if (this.provider === 'coral') {
+                    window.open(this.countryConfig[this.region].SNAPSHOT, '_blank');
+                } else {
+                    window.open(this.countryConfig[this.region].SNAPSHOT_MANGROVES, '_blank');
+                }
+                
                 return false;
             },
 

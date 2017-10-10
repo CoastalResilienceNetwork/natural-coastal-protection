@@ -12,7 +12,8 @@ define([
                     period: 'ANN',
                     layer: 'people',
                     variable: 'PF',
-                    coralVisibility: false
+                    coralVisibility: false,
+                    mangroveVisibility: false,
                 });
             },
 
@@ -68,6 +69,10 @@ define([
 
             getCoralVisibility: function() {
                 return this.savedState.coralVisibility;
+            },
+
+            getMangroveVisibility: function() {
+                return this.savedState.mangroveVisibility;
             },
 
             // Return new State combined with `data`.

@@ -313,7 +313,8 @@
 	    width: calc(100% - 174px);
 	}
 
-	.ncp-plugin .coral-select-container {
+	.ncp-plugin .coral-select-container,
+	.ncp-plugin .mangrove-select-container {
 		float: left;
 	    width: 250px;
 	    text-align: left;
@@ -321,7 +322,8 @@
 	    clear: left;
 	}
 
-	.ncp-plugin .coral-select-container input[type=checkbox] {
+	.ncp-plugin .coral-select-container input[type=checkbox],
+	.ncp-plugin .moral-select-container input[type=checkbox] {
 	  /* Double-sized Checkboxes */
 	    margin-top: 1px;
 		-ms-transform: scale(1.2);
@@ -331,7 +333,8 @@
 		padding: 10px;
 	}
 
-	.ncp-plugin .coral-select-container span {
+	.ncp-plugin .coral-select-container span,
+	.ncp-plugin .mangrove-select-container span {
 		margin-left: 8px;
 		font-weight: 600;
 	}
@@ -413,7 +416,8 @@
 		fill: #923034;
 	}
 
-	.ncp-plugin .bar.Present {
+	.ncp-plugin .bar[data-layer="Present"],
+	.ncp-plugin .bar[data-layer="Current (2010) Mangroves"] {
 		fill: #30928D;
 	}
 
@@ -434,17 +438,28 @@
 
 	<div class="ncp-plugin">
 		<section class="header">
-	    	<h3>Flood Protection Provided by Coral Reefs</h3>
+	    	<h3>Flood Protection Provided by 
+	    	<div class="chosen-wrap" style="display: inline; width: 160px; ">
+				<select id="ncp-provider" class="chosen">
+	    				<option value="coral">Coral Reefs</option>
+	    				<option value="mangroves">Mangroves</option>
+				</select>
+			</div>
+	    	</h3>
+
 		    <div>
-		    	Estimates of the benefits provided by reefs in flood protection annually and from catastrophic storms
+		    	Estimates of the benefits provided by <span class="provider-name">coral reefs</span> in flood protection annually and from catastrophic storms
 		    </div>
 	    </section>
 	    <section class="country">
 
 		    <div class="chosen-wrap" style="width: 160px; margin-bottom:10px;">
 				<select id="ncp-select-region" class="chosen">
-					<% _.each(regions, function(val, key) { %>
-	    				<option value="<%= key %>" <% if (key === "Global") { %> selected <% } %>><%= key %></option>
+					<% _.each(regionsCoral, function(val, key) { %>
+	    				<option class="coral" value="<%= key %>" <% if (key === "Global") { %> selected <% } %>><%= key %></option>
+	    			<% }); %>
+	    			<% _.each(regionsMangrove, function(val, key) { %>
+	    				<option style="display: none;" class="mangrove" value="<%= key %>" <% if (key === "Global") { %> selected <% } %>><%= key %></option>
 	    			<% }); %>
 				</select>
 			</div>
@@ -458,38 +473,45 @@
                     <span class="form-text">Annual Expected Benefit <i title="Annual expected benefits from reefs for flood protection  represents the predicted flooding avoided to land, people, and infrastructure by keeping coral reefs intact. It is an annualized benefit of the role of reefs in flood reduction that considers local factors such as reef condition, asset distribution, and storm frequency." class="fa fa-info-circle info-annual info-tooltip"></i></span>
                 </label>
 
-
 	    		<div style="padding-left: 1px;">
 					<span class="control-title" style="margin-bottom: 4px; display: inline-block;">
 						Benefits from Catastrophic Storms
 						<i title="30 years of historical data on regional sea level and wave conditions were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events." class="fa fa-info-circle info-period info-tooltip"></i>
 					</span>
 
-
-
-					<label class="form-component" for="RP25-option">
+					<label id="rp25" class="form-component" for="RP25-option">
 	                    <input checked="checked" type="radio" id="RP25-option" value="25RP" name="storm<%=pane%>">
 	                    <div class="check"></div>
 	                    <span class="form-text">1 in 25-year storm</span>
 	                </label>
 
+	                <label id="rp50" style="display: none" class="form-component" for="RP50-option">
+	                    <input checked="checked" type="radio" id="RP50-option" value="50RP" name="storm<%=pane%>">
+	                    <div class="check"></div>
+	                    <span class="form-text">1 in 50-year storm</span>
+	                </label>
 
-
-	    			<label class="form-component" for="RP100-option">
+	    			<label id="rp100" class="form-component" for="RP100-option">
 	                    <input checked="checked" type="radio" id="RP100-option" value="100RP" name="storm<%=pane%>">
 	                    <div class="check"></div>
 	                    <span class="form-text">1 in 100-year storm</span>
 	                </label>
-
-
 		    	</div>
 	    	</div>
 
 	    	<div class="coral-select-container">
 		    	<label class="form-component" for="coral-option">
-                    <input type="checkbox" id="coral-option" name="food">
+                    <input type="checkbox" id="coral-option">
                     <div class="check"></div>
                     <span class="form-text">View Coral Reef Habitats</span>
+                </label>
+		    </div>
+
+		    <div style="display: none;" class="mangrove-select-container">
+		    	<label class="form-component" for="mangrove-option">
+                    <input type="checkbox" id="mangrove-option">
+                    <div class="check"></div>
+                    <span class="form-text">View Mangrove Habitats</span>
                 </label>
 		    </div>
 
@@ -497,13 +519,13 @@
 
     	<section class="documents">
     		<span class="control-title" style="display: block; margin-bottom: 3px;">Documents:</span>
-    		<button class="button button-default js-getSnapshot" target="_blank" style="display: none">Download<br>Country Summary</button>
+    		<button class="button button-default js-getSnapshot" target="_blank" style="display: none"><span class="provider-name" style="text-transform: capitalize;">coral reefs</span><br>Country Summary</button>
     		<a class="js-global" href="https://www.wavespartnership.org/sites/waves/files/kc/Technical%20Rept%20WAVES%20Coastal%202-11-16%20web.pdf" target="_blank">
 				<button class="button button-default">Download<br>Waves Report</button>
 			</a>
     	</section>
 
-	    <section class="stats-description">The people and property protected by coral reefs (values represent predicted losses avoided by keeping reefs intact)</section>
+	    <section class="stats-description">The people and property protected by <span class="provider-name">coral reefs</span> (values represent predicted losses avoided by keeping <span class="provider-name">coral reefs</span> intact)</section>
 
 	    <div class="stats-container">
 

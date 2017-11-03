@@ -59,8 +59,8 @@ define([
 
                 this.$el = $(this.container);
 
-                this.provider = 'coral';
                 this.state = new State();
+                this.provider = this.state.getProvider();
                 this.region = this.state.getRegion();
                 this.period = this.state.getPeriod();
                 this.layer = this.state.getLayer();
@@ -216,6 +216,10 @@ define([
                     track: true
                 });
 
+                if (this.provider === 'mangroves') {
+                    this.$el.find('#ncp-provider').prop('checked', true);
+                }
+
                 this.updateLayers();
             },
 
@@ -246,7 +250,17 @@ define([
             },
 
             changeProvider: function() {
-                this.provider = this.$el.find('#ncp-provider').val();
+                if (this.$el.find('#ncp-provider').prop('checked')) {
+                    this.state = this.state.setProvider('mangroves');
+                    this.provider = 'mangroves';
+                } else {
+                    this.state = this.state.setProvider('coral');
+                    this.provider = 'coral';
+                }
+                this.layer = 'people';
+                this.period = 'ANN';
+                this.$el.find('input[value=' + this.period + ']').prop('checked', true);
+                this.$el.find('#ncp-select-region').prop('disabled', false);
                 if (this.provider === 'coral') {
                     this.$el.find('#rp50').hide();
                     this.$el.find('#rp100').show();
@@ -256,12 +270,9 @@ define([
                     this.$el.find('option.coral').show();
                     this.$el.find('option.mangrove').hide();
                     this.$el.find('.mangrove-select-container input').prop('checked', false).trigger('change');
-                    if (!this.data[this.region]) {
-                        this.$el.find('#ncp-select-region').val("Global").trigger('chosen:updated');
-                        this.changeRegion();
-                    }
                     this.$el.find('.coral-only').show();
                     this.$el.find('.mangrove-only').hide();
+                    this.$el.find('#ncp-select-region').val("Global").trigger('chosen:updated');
                 } else if (this.provider === 'mangroves') {
                     this.$el.find('#rp50').show();
                     this.$el.find('#rp100').hide();
@@ -271,16 +282,13 @@ define([
                     this.$el.find('option.coral').hide();
                     this.$el.find('option.mangrove').show();
                     this.$el.find('.coral-select-container input').prop('checked', false).trigger('change');
-                    if (!this.dataMangrove[this.region]) {
-                        this.$el.find('#ncp-select-region').val("Global").trigger('chosen:updated');
-                        this.changeRegion();
-                    }
+                    this.$el.find('#ncp-select-region').val("Philippines").trigger('chosen:updated');
                     this.$el.find('.coral-only').hide();
                     this.$el.find('.mangrove-only').show();
-                    if (this.layer === 'area') {
-                        this.layer = 'people';
-                        this.$el.find('.stat.active').removeClass('active');
-                        this.$el.find('.stat.people').addClass('active');
+                    this.$el.find('.stat.active').removeClass('active');
+                    this.$el.find('.stat.people').addClass('active');
+                    if (Object.keys(this.dataMangrove).length <= 2) { // 2 because we always have a global object
+                        this.$el.find('#ncp-select-region').prop('disabled', true);
                     }
                 }
                 this.$el.find('#ncp-select-region').trigger("chosen:updated");
@@ -302,11 +310,9 @@ define([
 
             toggleMangrove: function() {
                 if (this.$el.find('.mangrove-select-container input').is(':checked')) {
-                    console.log('on')
                     this.mangroveLayer.setVisibility(true);
                     this.state = this.state.setMangroveVisibility(true);
                 } else {
-                    console.log('off')
                     this.mangroveLayer.setVisibility();
                     this.state = this.state.setMangroveVisibility(false);
                 }

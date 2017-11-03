@@ -36,6 +36,7 @@
 
 	section.header h3 {
 		text-align: center;
+		line-height: 2;
 	}
 
 	section.country {
@@ -434,17 +435,97 @@
 	    margin-right: 5px;
 	}
 
+	/* Disable Chosen */
+	.chosen-disabled {
+		opacity: 1 !important;
+	}
+
+	.chosen-disabled .chosen-single {
+
+		border: none !important;
+    	box-shadow: none !important;
+	}
+
+	.chosen-disabled b {
+		display: none !important;
+	}
+
+	/* */
+
+	.toggle-option {
+		line-height: 28px;
+    	vertical-align: top;
+	}
+
+	.switch {
+	  position: relative;
+	  display: inline-block;
+	  width: 50px;
+	  height: 25px;
+	}
+
+	/* Hide default HTML checkbox */
+	.switch input {display:none;}
+
+	/* The slider */
+	.slider {
+	  position: absolute;
+	  cursor: pointer;
+	  top: 0;
+	  left: 0;
+	  right: 0;
+	  bottom: 0;
+	  background-color: #438c9d;
+	  -webkit-transition: .4s;
+	  transition: .4s;
+	}
+
+	.slider:before {
+	  position: absolute;
+	  content: "";
+	  height: 19px;
+	  width: 19px;
+	  left: 2px;
+	  bottom: 3px;
+	  background-color: white;
+	  -webkit-transition: .4s;
+	  transition: .4s;
+	}
+
+	input:checked + .slider:before {
+	  -webkit-transform: translateX(26px);
+	  -ms-transform: translateX(26px);
+	  transform: translateX(26px);
+	}
+
+	/* Rounded sliders */
+	.slider.round {
+	  border-radius: 34px;
+	}
+
+	.slider.round:before {
+	  border-radius: 50%;
+	}
+
 </style>
 
 	<div class="ncp-plugin">
 		<section class="header">
 	    	<h3>Flood Protection Provided by 
-	    	<div class="chosen-wrap" style="display: inline; width: 160px; ">
-				<select id="ncp-provider" class="chosen">
-	    				<option value="coral">Coral Reefs</option>
-	    				<option value="mangroves">Mangroves</option>
-				</select>
-			</div>
+	    		<br />
+	    		<span class="toggle-option">Coral Reefs</span>
+	    		<label class="switch">
+				  	<input id="ncp-provider" type="checkbox">
+				  	<span class="slider round"></span>
+				</label>
+	    		<span class="toggle-option">Mangroves</span>
+		    	<!--<div class="chosen-wrap" style="display: inline; width: 160px; ">
+					<select id="ncp-provider" class="chosen">
+		    				<option value="coral">Coral Reefs</option>
+		    				<option value="mangroves">Mangroves</option>
+					</select>
+				</div>
+				-->
 	    	</h3>
 
 		    <div>
@@ -519,7 +600,7 @@
 
     	<section class="documents">
     		<span class="control-title" style="display: block; margin-bottom: 3px;">Documents:</span>
-    		<button class="button button-default js-getSnapshot" target="_blank" style="display: none">Download<br>Country Summary</button>
+    		<button class="button button-default js-getSnapshot" target="_blank" style="display: none">Print<br>Country Summary</button>
     		
     		<a class="js-global coral-only" href="https://www.wavespartnership.org/sites/waves/files/kc/Technical%20Rept%20WAVES%20Coastal%202-11-16%20web.pdf" target="_blank">
 				<button class="button button-default">Download<br>Waves</span> Report</button>

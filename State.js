@@ -8,6 +8,7 @@ define([
         var State = declare(null, {
             constructor: function(data) {
                 this.savedState = _.defaults({}, data, {
+                    provider: 'coral',
                     region: 'Global',
                     period: 'ANN',
                     layer: 'people',
@@ -24,6 +25,16 @@ define([
             setRegion: function(region) {
                 return this.clone({
                     region: region
+                });
+            },
+
+            getProvider: function() {
+                return this.savedState.provider;
+            },
+
+            setProvider: function(provider) {
+                return this.clone({
+                    provider: provider
                 });
             },
 

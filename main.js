@@ -26,19 +26,19 @@ define([
     'dojo/text!./data-mangroves.json',
     'dojo/text!./country-config.json'
     ], function(declare,
-              d3,
-              PluginBase,
-              ArcGISDynamicMapServiceLayer,
-              SimpleLineSymbol,
-              Renderer,
-              Color,
-              ContentPane,
-              State,
-              dom,
-              templates,
-              Data,
-              DataMangrove,
-              CountryConfig
+        d3,
+        PluginBase,
+        ArcGISDynamicMapServiceLayer,
+        SimpleLineSymbol,
+        Renderer,
+        Color,
+        ContentPane,
+        State,
+        dom,
+        templates,
+        Data,
+        DataMangrove,
+        CountryConfig
 ) {
         return declare(PluginBase, {
             toolbarName: 'Natural Coastal Protection',

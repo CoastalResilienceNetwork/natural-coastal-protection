@@ -156,12 +156,12 @@ define([
                 var layerDrawingOption = new LayerDrawingOptions();
                 var renderer = this.createRenderer(this.mapClassBreaks.people, 'E2E1_DIF_ANN_PF');
 
-                this.coralReefLayer = new ArcGISDynamicMapServiceLayer('http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {
+                this.coralReefLayer = new ArcGISDynamicMapServiceLayer('http://services.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {
                     visible: this.state.getCoralVisibility(),
                     opacity: 0.5
                 });
                 this.coralReefLayer.setVisibleLayers([1]);
-                this.coastalProtectionLayer = new ArcGISDynamicMapServiceLayer('http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {});
+                this.coastalProtectionLayer = new ArcGISDynamicMapServiceLayer('http://services.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {});
                 this.coastalProtectionLayer.setVisibleLayers([0]);
                 this.coastalProtectionLayer.setLayerDrawingOptions(layerDrawingOptions);
                 this.map.addLayer(this.coastalProtectionLayer);

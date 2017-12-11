@@ -39,6 +39,11 @@
 		line-height: 2;
 	}
 
+	section.header .toggle-controls-container {
+		text-align: center;
+	    margin-bottom: 10px;
+	}
+
 	section.country {
 		float: left;
 		width: 65%;
@@ -460,6 +465,8 @@
 	.switch {
 	  position: relative;
 	  display: inline-block;
+	  margin-left: 5px;
+	  margin-right: 5px;
 	  width: 50px;
 	  height: 25px;
 	}
@@ -511,22 +518,15 @@
 
 	<div class="ncp-plugin">
 		<section class="header">
-	    	<h3>Flood Protection Provided by 
-	    		<br />
+	    	<h3>Flood Protection</h3>
+	    	<div class="toggle-controls-container">
 	    		<span class="toggle-option">Coral Reefs</span>
 	    		<label class="switch">
 				  	<input id="ncp-provider" type="checkbox">
 				  	<span class="slider round"></span>
 				</label>
 	    		<span class="toggle-option">Mangroves</span>
-		    	<!--<div class="chosen-wrap" style="display: inline; width: 160px; ">
-					<select id="ncp-provider" class="chosen">
-		    				<option value="coral">Coral Reefs</option>
-		    				<option value="mangroves">Mangroves</option>
-					</select>
-				</div>
-				-->
-	    	</h3>
+	    	</div>
 
 		    <div>
 		    	Estimates of the benefits provided by <span class="coral-only">coral reefs</span><span class="mangrove-only" style="display: none;">mangroves</span> in flood protection annually and from catastrophic storms
@@ -603,10 +603,10 @@
     		<button class="button button-default js-getSnapshot" target="_blank" style="display: none">Print<br>Country Summary</button>
     		
     		<a class="js-global coral-only" href="https://www.wavespartnership.org/sites/waves/files/kc/Technical%20Rept%20WAVES%20Coastal%202-11-16%20web.pdf" target="_blank">
-				<button class="button button-default">Download<br>Waves</span> Report</button>
+				<button class="button button-default">Download<br>Coral Reef Waves</span> Report</button>
 			</a>
 			<a class="js-global mangrove-only" style="display: none;" href="http://conservationgateway.org/ConservationPractices/Marine/crr/library/Documents/CoastalProtectionServicesMangrovesPhilippinesReport-3.pdf" target="_blank">
-				<button class="button button-default">Download<br>Mangroves</span> Report</button>
+				<button class="button button-default">Download<br>Mangroves Waves</span> Report</button>
 			</a>
 
     	</section>

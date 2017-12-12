@@ -874,8 +874,8 @@ define([
                     bardata.push({x: 'Present', y: bary});
                     bardata.push({x: 'Reef Loss', y: bary1m});
                 } else {
-                    bardata.push({x: 'Current (2010) Mangroves', y: bary1m});
-                    bardata.push({x: 'No Mangroves', y: bary});
+                    bardata.push({x: 'Current (2010) Mangroves', y: bary});
+                    bardata.push({x: 'No Mangroves', y: bary1m});
                 }
 
 

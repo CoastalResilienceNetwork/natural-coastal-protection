@@ -896,6 +896,15 @@ define([
                                 }
                             });
                     }
+                    if (this.period === '50RP') {
+                        this.chart.svg.selectAll('.xaxis .tick')
+                            .classed('current', false).each(function(d, i) {
+                                if (d === 50) {
+                                    d3.select(this)
+                                        .classed('current', true);
+                                }
+                            });
+                    }
                     if (this.period === '100RP') {
                         this.chart.svg.selectAll('.xaxis .tick')
                             .classed('current', false).each(function(d, i) {

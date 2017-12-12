@@ -273,6 +273,12 @@ define([
                     this.$el.find('.coral-only').show();
                     this.$el.find('.mangrove-only').hide();
                     this.$el.find('#ncp-select-region').val("Global").trigger('chosen:updated');
+
+                    this.$el.find('label.ann-exp-benefit .form-text i').attr('title', 'Annual expected benefits from reefs for flood protection  represents the predicted flooding avoided to land, people, and infrastructure by keeping coral reefs intact. It is an annualized benefit of the role of reefs in flood reduction that considers local factors such as reef condition, asset distribution, and storm frequency.');
+                    this.$el.find('.benefits-from-storm .control-title i').attr('title', '30 years of historical data on regional sea level and wave conditions were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events.');
+                    this.$el.find('.stat.people .description i').attr('title', 'This value represents the difference of flooding impacts on people when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data.');
+                    this.$el.find('.stat.capital .description i').attr('title', 'This value represents the difference of flooding impacts on built capital when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data.');
+
                 } else if (this.provider === 'mangroves') {
                     this.$el.find('#rp50').show();
                     this.$el.find('#rp100').hide();
@@ -287,6 +293,10 @@ define([
                     this.$el.find('.mangrove-only').show();
                     this.$el.find('.stat.active').removeClass('active');
                     this.$el.find('.stat.people').addClass('active');
+                    this.$el.find('label.ann-exp-benefit .form-text i').attr('title', 'Annual expected benefits from mangroves for flood protection represents the predicted flood damages avoided to people and infrastructure by keeping mangroves intact. It is an annualized benefit metric that considers local factors such as mangrove presence, coastal topography, asset distribution, and storm frequency.');
+                    this.$el.find('.benefits-from-storm .control-title i').attr('title', '>30 years of historical data on regional sea level, wave and storm conditions were used to develop a frequency distribution of storm water levels and their distribution, to estimate flooding for 1 in 25 and 1 in 50 year storm events.');
+                    this.$el.find('.stat.people .description i').attr('title', 'This value represents the difference of flooding impacts on people when mangroves are present and when they are absent. This value is aggregated to the country scale from 90m resolution data.');
+                    this.$el.find('.stat.capital .description i').attr('title', 'This value represents the difference of flood impacts on built capital when mangroves are present and when they are absent.  This value is aggregated to the country scale from 90m resolution data.');
                     if (Object.keys(this.dataMangrove).length <= 2) { // 2 because we always have a global object
                         this.$el.find('#ncp-select-region').prop('disabled', true);
                     }

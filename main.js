@@ -769,14 +769,14 @@ define([
                         .style('opacity', 0)
                         .transition().duration(600)
                         .style('opacity', 1)
-                        .text('No Mangroves');
+                        .text('Current (2010) Mangroves');
 
                     this.chart.svg.select('.col-2')
                         .transition().duration(600)
                         .style('opacity', 0)
                         .transition().duration(600)
                         .style('opacity', 1)
-                        .text('Current (2010) Mangroves');
+                        .text('No Mangroves');
 
                 } else {
                     this.chart.barx.domain(['Present', 'Reef Loss']);

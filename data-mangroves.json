@@ -1,6 +1,6 @@
 {
   "Global": {
-    "E2E1_DIF_ANN_PF": 313461,
+    "E2E1_DIF_ANN_PF": 613461,
     "E1_ANN_PF": 2521004,
     "E2_ANN_PF": 3134465,
     "E2E1_DIF_ANN_BCF": 1000000000,
@@ -32,7 +32,7 @@
     "E2_100RP_BCF": 7921000000
   },
   "Philippines": {
-    "E2E1_DIF_ANN_PF": 313461,
+    "E2E1_DIF_ANN_PF": 613461,
     "E1_ANN_PF": 2521004,
     "E2_ANN_PF": 3134465,
     "E2E1_DIF_ANN_BCF": 1000000000,

@@ -370,7 +370,6 @@ define([
                 } else {
                     regionExtent = this.countryConfig[this.region].EXTENT;
                 }
-                console.log(regionExtent);
                 
                 // Set the zoom extent
                 if (this.region === 'Global' && this.provider === 'coral') {

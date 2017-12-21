@@ -8,11 +8,13 @@ define([
         var State = declare(null, {
             constructor: function(data) {
                 this.savedState = _.defaults({}, data, {
+                    provider: 'coral',
                     region: 'Global',
                     period: 'ANN',
                     layer: 'people',
                     variable: 'PF',
-                    coralVisibility: false
+                    coralVisibility: false,
+                    mangroveVisibility: false,
                 });
             },
 
@@ -23,6 +25,16 @@ define([
             setRegion: function(region) {
                 return this.clone({
                     region: region
+                });
+            },
+
+            getProvider: function() {
+                return this.savedState.provider;
+            },
+
+            setProvider: function(provider) {
+                return this.clone({
+                    provider: provider
                 });
             },
 
@@ -68,6 +80,16 @@ define([
 
             getCoralVisibility: function() {
                 return this.savedState.coralVisibility;
+            },
+
+            setMangroveVisibility: function(mangroveVisibility) {
+                return this.clone({
+                    mangroveVisibility: mangroveVisibility
+                });
+            },
+
+            getMangroveVisibility: function() {
+                return this.savedState.mangroveVisibility;
             },
 
             // Return new State combined with `data`.

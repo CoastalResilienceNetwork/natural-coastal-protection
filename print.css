@@ -1,0 +1,179 @@
+@media print {
+    @page {
+        size: letter portrait;
+        margin: 0.3in;
+    }
+    .page {
+        display: flex;
+        flex-direction: column;
+        page-break-before: always;
+        height: 100%;
+    }
+    /* page 1 */
+    #cover-image {
+        width: 100%;
+    }
+
+    #page-2, #page-3 {
+        flex-wrap: nowrap;
+    }
+
+    #print-map {
+        width: 100%;
+        margin-top: 2rem;
+    }
+
+    h3 {
+
+    }
+
+    .header {
+        border-bottom: 1px solid gray;
+        text-align: right;
+        width: 100%;
+        height: 6mm;
+    }
+
+    .footer {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: auto;
+    }
+    .footer .sponsor {
+        display: flex;
+        flex-direction: column;
+        margin-right: 20mm;
+        flex-grow: 1;
+        align-items: flex-end;
+        color: #14A2F4;
+    }
+    .footer .sponsor .logo img {
+        height: 0.5in;
+    }
+    .footer .sponsor .resource span {
+        border-top: 1px solid #DADADA;
+    }
+    .footer .sponsor .resource img {
+        height: 0.15in;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    .print-row {
+        display: flex;
+    }
+    .stage {
+        font-weight: bolder;
+    }
+    .five-steps {
+        font-size: 4.5mm;
+        text-align: center;
+        font-weight: bold;
+        margin-top: 7mm;
+        margin-bottom: 7mm;
+    }
+    .left-column {
+        flex: 0 0 3in;
+        width: 3in;
+        flex-direction: column;
+    }
+    .right-column {
+        margin-right: auto;
+        flex-grow: 1;
+        flex-direction: column;
+        padding-left: 4mm;
+    }
+    .left-column .stat-box {
+        display: flex;
+        height: 1in;
+        margin-top: 0.15in;
+        border-bottom: 2px solid #020B19;
+    }
+    .left-column .stat-box .stat-value {
+        font-weight: bold;
+        text-align: right;
+        display: flex;
+        align-self: flex-end;
+        justify-content: flex-end;
+        font-size: 8mm;
+        line-height: 9mm;
+        width: 50%;
+    }
+    .left-column .stat-box.description {
+        background-color: #F3F3F3;
+        padding: 0.15in;
+        height: 2.75in;
+        margin-top: 0;
+        line-height: 0.7cm;
+        font-size: 0.45cm;
+        border-bottom: none;
+    }
+    .left-column .bottom-description {
+        text-align: right;
+    }
+
+
+    /* Chart SVG Styles */
+
+    path {
+        stroke: #3e6f6a;
+        stroke-width: 2px;
+        fill: none;
+    }
+
+    .tick line {
+        stroke: #333;
+    }
+
+    .tick.current {
+        font-weight: bold;
+    }
+
+    .points-current circle {
+        fill: #333;
+    }
+
+    path.scenario {
+        stroke: #8e1212;
+    }
+
+    .points-scenario circle {
+        fill: #333;
+    }
+
+    .area-current {
+        fill: #30928D;
+        stroke-width: 0;
+    }
+
+    .area-scenario {
+        fill: #923034;
+        stroke-width: 0;
+    }
+
+    .area.scenario {
+        fill: #923034;
+        stroke-width: 0;
+    }
+
+    .xaxis-label,
+    .yaxis-label {
+
+    }
+    .xaxis path,
+    .yaxis path {
+        fill: none;
+        stroke: #ccc;
+        stroke-width: 1px;
+        shape-rendering: crispEdges;
+    }
+
+    .bar {
+        fill: #923034;
+    }
+
+    .bar[data-layer="Present"],
+    .bar[data-layer="Current (2010) Mangroves"] {
+        fill: #30928D;
+    }
+}

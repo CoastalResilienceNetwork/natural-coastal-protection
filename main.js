@@ -22,6 +22,7 @@ define([
     './State',
     'dojo/dom',
     'dojo/text!./template.html',
+    'dojo/text!./mangrove_print_template.html',
     'dojo/text!./data.json',
     'dojo/text!./data-mangroves.json',
     'dojo/text!./country-config.json'
@@ -36,6 +37,7 @@ define([
         State,
         dom,
         templates,
+        mangrovePrintTemplate,
         Data,
         DataMangrove,
         CountryConfig
@@ -49,6 +51,8 @@ define([
             showServiceLayersInLegend: true,
             allowIdentifyWhenActive: false,
             size: 'custom',
+            hasCustomPrint: true,
+            usePrintModal: false,
 
             initialize: function(frameworkParameters, currentRegion) {
                 declare.safeMixin(this, frameworkParameters);
@@ -56,6 +60,8 @@ define([
                 this.dataMangrove = $.parseJSON(DataMangrove);
                 this.countryConfig = $.parseJSON(CountryConfig);
                 this.pluginTmpl = _.template(this.getTemplateById('plugin'));
+                this.printMangroveTmpl = _.template(mangrovePrintTemplate);
+                this.transitionsEnabled = false;
 
                 this.$el = $(this.container);
 
@@ -117,6 +123,7 @@ define([
                     this.chart.position.margin.left - this.chart.position.margin.right;
                 this.chart.position.height = 285 - this.chart.position.margin.top -
                     this.chart.position.margin.bottom;
+                $(this.printButton).hide();
             },
 
             bindEvents: function() {
@@ -278,7 +285,6 @@ define([
                     this.$el.find('.benefits-from-storm .control-title i').attr('title', '30 years of historical data on regional sea level and wave conditions were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events.');
                     this.$el.find('.stat.people .description i').attr('title', 'This value represents the difference of flooding impacts on people when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data.');
                     this.$el.find('.stat.capital .description i').attr('title', 'This value represents the difference of flooding impacts on built capital when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data.');
-
                 } else if (this.provider === 'mangroves') {
                     this.$el.find('#rp50').show();
                     this.$el.find('#rp100').hide();
@@ -416,7 +422,7 @@ define([
                 this.period = this.$el.find('input[name=storm' + this.app.paneNumber +
                         ']:checked').val();
                 this.region = this.$el.find('#ncp-select-region').val();
-                this.layer = this.$el.find('.stat.active').data('layer');
+                // this.layer = this.$el.find('.stat.active').data('layer');
 
                 switch (this.layer) {
                     case 'people':
@@ -758,7 +764,6 @@ define([
             // Set the chart data to match the current variable
             updateChart: function() {
                 var self = this;
-
                 // Built Capital should be divided by 1 million
                 var division = 1;
                 if (this.variable === 'BCF') {
@@ -774,16 +779,16 @@ define([
                     this.chart.barx.domain(['Current (2010) Mangroves', 'No Mangroves']);
 
                     this.chart.svg.select('.col-1')
-                        .transition().duration(600)
+                        .transition().duration(this.transitionsEnabled ? 600 : 0)
                         .style('opacity', 0)
-                        .transition().duration(600)
+                        .transition().duration(this.transitionsEnabled ? 600 : 0)
                         .style('opacity', 1)
                         .text('Current (2010) Mangroves');
 
                     this.chart.svg.select('.col-2')
-                        .transition().duration(600)
+                        .transition().duration(this.transitionsEnabled ? 600 : 0)
                         .style('opacity', 0)
-                        .transition().duration(600)
+                        .transition().duration(this.transitionsEnabled ? 600 : 0)
                         .style('opacity', 1)
                         .text('No Mangroves');
 
@@ -791,16 +796,16 @@ define([
                     this.chart.barx.domain(['Present', 'Reef Loss']);
 
                     this.chart.svg.select('.col-1')
-                        .transition().duration(600)
+                        .transition().duration(this.transitionsEnabled ? 600 : 0)
                         .style('opacity', 0)
-                        .transition().duration(600)
+                        .transition().duration(this.transitionsEnabled ? 600 : 0)
                         .style('opacity', 1)
                         .text('Present');
 
                     this.chart.svg.select('.col-2')
-                        .transition().duration(600)
+                        .transition().duration(this.transitionsEnabled ? 600 : 0)
                         .style('opacity', 0)
-                        .transition().duration(600)
+                        .transition().duration(this.transitionsEnabled ? 600 : 0)
                         .style('opacity', 1)
                         .text('Reef Loss');
                 }
@@ -817,9 +822,9 @@ define([
                 }
 
                 this.chart.svg.select('.yaxis-label')
-                    .transition().duration(600)
+                    .transition().duration(this.transitionsEnabled ? 600 : 0)
                     .style('opacity', 0)
-                    .transition().duration(600)
+                    .transition().duration(this.transitionsEnabled ? 600 : 0)
                     .style('opacity', 1)
                     .text(text);
 
@@ -928,41 +933,41 @@ define([
                 // Show and hide as appropriate all the different elements.
                 // We animate these over the course of 1200ms
                 this.chart.svg.select('.yaxis')
-                    .transition().duration(1200).ease('linear')
+                    .transition().duration(this.transitionsEnabled ? 1200 : 0).ease('linear')
                     .call(this.chart.yAxis);
 
                 this.chart.svg.select('.xaxis')
-                    .transition().duration(1200).ease('sin-in-out')
+                    .transition().duration(this.transitionsEnabled ? 1200 : 0).ease('sin-in-out')
                     .attr('opacity', annual ? 0 : 1);
                   
                 this.chart.svg.select('.barxaxis')
-                    .transition().duration(1200).ease('sin-in-out')
+                    .transition().duration(this.transitionsEnabled ? 1200 : 0).ease('sin-in-out')
                     .attr('opacity', annual ? 1 : 0)
                     .call(this.chart.barxAxis);
 
                 this.chart.svg.select('.xaxis-label')
-                    .transition().duration(1200).ease('sin-in-out')
+                    .transition().duration(this.transitionsEnabled ? 1200 : 0).ease('sin-in-out')
                     .attr('opacity', annual ? 0 : 1);
 
                 this.chart.legend
-                    .transition().delay(750).duration(1200).ease('sin-in-out')
+                    .transition().delay(this.transitionsEnabled ? 750 : 0).duration(this.transitionsEnabled ? 1200 : 0).ease('sin-in-out')
                     .attr('opacity', annual ? 0 : 1);
 
                 this.chart.svg.select('.line.current')
-                    .transition().duration(1200).ease('sin-in-out')
+                    .transition().duration(this.transitionsEnabled ? 1200 : 0).ease('sin-in-out')
                     .attr('opacity', annual ? 0 : 1)
                     .attr('d', this.chart.valueline(this.chart.data.current.xy));
 
                 this.chart.svg.select('.area-current')
                     .data([this.chart.data.current.xy])
-                    .transition().duration(1200).ease('sin-in-out')
+                    .transition().duration(this.transitionsEnabled ? 1200 : 0).ease('sin-in-out')
                     .attr('opacity', annual ? 0 : 1)
                     .attr('d', this.chart.area.current);
 
                 // Update the chart point data and adjust point position on chart to match
                 this.chart.pointscurrent.selectAll('circle')
                     .data(this.chart.data.current.xy)
-                    .transition().duration(1200).ease('sin-in-out')
+                    .transition().duration(this.transitionsEnabled ? 1200 : 0).ease('sin-in-out')
                     .attr('opacity', annual ? 0 : 1)
                     .attr('title', function(d) {
                         return parseInt(d.y).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -985,19 +990,19 @@ define([
 
                 // Update the position of the interpolation line to match the new point position
                 this.chart.svg.select('.line.scenario')
-                    .transition().duration(1200).ease('sin-in-out')
+                    .transition().duration(this.transitionsEnabled ? 1200 : 0).ease('sin-in-out')
                     .attr('opacity', annual ? 0 : 1)
                     .attr('d', this.chart.valueline(this.chart.data.scenario.xy));
 
                 this.chart.svg.select('.area-scenario')
                     .data([this.chart.data.scenario.xy])
-                    .transition().duration(1200).ease('sin-in-out')
+                    .transition().duration(this.transitionsEnabled ? 1200 : 0).ease('sin-in-out')
                     .attr('opacity', annual ? 0 : 1)
                     .attr('d', this.chart.area.scenario);
 
                 this.chart.pointsscenario.selectAll('circle')
                     .data(this.chart.data.scenario.xy)
-                    .transition().duration(1200).ease('sin-in-out')
+                    .transition().duration(this.transitionsEnabled ? 1200 : 0).ease('sin-in-out')
                     .attr('opacity', annual ? 0 : 1)
                     .attr('title', function(d) {
                         return parseInt(d.y).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -1020,7 +1025,7 @@ define([
 
                 this.chart.svg.selectAll('.bar')
                     .data(bardata)
-                    .transition().duration(1200).ease('sin-in-out')
+                    .transition().duration(this.transitionsEnabled ? 1200 : 0).ease('sin-in-out')
                     .attr('opacity', annual ? 1 : 0)
                     .attr('width', this.chart.barx.rangeBand())
                     
@@ -1040,8 +1045,48 @@ define([
 
             // Download the pdf report for the current region
             printReport: function() {
-                window.open(this.countryConfig[this.region].SNAPSHOT, '_blank');
+                if (this.provider === 'mangroves') {
+                    this.$el.parent('.sidebar').find('.plugin-print').trigger('click');
+                } else {
+                    window.open(this.countryConfig[this.region].SNAPSHOT, '_blank');
+                }
                 return false;
+            },
+
+            prePrintModal: function (preModalDeferred, $printSandbox, $modalSandbox, mapObject) {
+                var self = this;
+                var currentLayer = this.layer;
+                $printSandbox.html(_.template(this.printMangroveTmpl({
+                    region: this.region,
+                    people: this.numberWithCommas(Math.round(this.dataMangrove[this.region]['E2E1_DIF_' + this.period + '_PF'])),
+                    capital: this.numberWithCommas(Math.round(this.dataMangrove[this.region]['E2E1_DIF_' + this.period + '_BCF'] / 1000)),
+                })));
+                this.transitionsEnabled = false;
+                
+                this.layer = 'people';
+                this.updateLayers();
+                $printSandbox.find('.graph.people svg').html(this.chart.svg.node().cloneNode(true)).height('2.2in').width('3.7in');
+                $printSandbox.find('.graph.people svg .yaxis-label').attr({
+                    transform: '',
+                    x: '140',
+                    y: '-10'
+                });
+                this.layer = 'capital';
+                this.updateLayers();
+                
+                setTimeout(function() {
+                    $printSandbox.find('.graph.capital svg').html(self.chart.svg.node().cloneNode(true)).height('2.2in').width('3.7in');
+                    $printSandbox.find('.graph.capital svg .yaxis-label').attr({
+                    transform: '',
+                    x: '140',
+                    y: '-10'
+                });
+                    self.transitionsEnabled = true;
+                    self.layer = currentLayer;
+                    self.updateLayers();
+                    preModalDeferred.resolve();
+                }, 1);
+                
             },
 
             // Get the requested template from the template file based on id.

@@ -1,0 +1,116 @@
+<div class="page letter">
+	<img id="cover-image" src="plugins/natural_coastal_protection/print-assets/cover-image.png" />
+	<div style="margin-left: 3mm;">
+        <div style="font-weight:bold;font-size:8mm;">MAPPING OCEAN WEALTH</div>
+    	<div style="font-size: 6mm;">Flood Protection by Mangroves</div>
+    	<div style="font-weight:bold;font-size: 6mm;">Expected Benefits for <%= region %></div>
+    </div>
+
+	<div class="footer">
+		<div class="sponsor">
+			<div class="logo">
+				<img src="plugins/natural_coastal_protection/print-assets/logo-ucsantacruz.png" />
+			</div>
+            <div class="resource">
+                <span><img src="plugins/natural_coastal_protection/print-assets/icon-email.png" /> oceanwealth@tnc.org</span>
+            </div>
+        </div>
+		<div class="sponsor">
+			<div class="logo">
+				<img src="plugins/natural_coastal_protection/print-assets/logo-tnc.png" />
+			</div>
+			<div class="resource">
+				<span><img src="plugins/natural_coastal_protection/print-assets/icon-web.png" /> http://maps.oceanwealth.org</span>
+			</div>
+		</div>
+		<div class="sponsor">
+			<div class="logo">
+				<img src="plugins/natural_coastal_protection/print-assets/logo-incantabria.png" />
+			</div>
+			<div class="resource">
+				<span><img src="plugins/natural_coastal_protection/print-assets/icon-twitter.png" /> @ocean_wealth</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="page-2" class="page letter">
+	<div class="header">
+		Coastal Protection from Mangroves - Expected Benefits for <%= region %>
+	</div>
+    <div class="print-row">
+        <div class="left-column">
+            <div class="stat-box description">
+                Mangroves act as natural defenses to reduce the risks from flooding and erosion around the world. In the Philippines, mangroves today prevent damages of more than US $1 Billion every year and protect more than 600,000 people, many of whom live in poverty.
+            </div>
+        </div>
+        <div class="right-column">
+            <div>
+                <img style="width: 100%;" src="plugins/natural_coastal_protection/print-assets/graphic-mangrove.jpg" />
+            </div>
+        </div>
+    </div>
+    <div class="print-row">
+    	<div class="left-column" style="flex: 0 0 3in;">
+    		
+    		<h3>Annual Expected Benefits From Mangroves</h3>
+    		<div class="stat-box">
+    			<span class="stat-title">Annual Flood Damages Averted</span>
+    			<span class="stat-value">$<%= ANN_FLOOD_AVERT_BIL %> billion USD</span>
+    		</div>
+    		<div class="stat-box">
+    			<span class="stat-title">Annual Flood Damages Averted/GDP</span>
+    			<span class="stat-value"><%= ANN_FLOOD_AVRT_PER %>%</span>
+    		</div>
+    		<div class="stat-box">
+    			<span class="stat-title">Annual Averted Flooding of People</span>
+    			<span class="stat-value"><%= people %></span>
+    		</div>
+    	</div>
+    	<div class="right-column">
+    		<div id="print-map">
+                <img style="width: 100%;" src="plugins/natural_coastal_protection/print-assets/NCP_Mangroves_Philippines_1to1.png" /> 
+            </div>
+    		
+    	</div>
+    </div>
+</div>
+
+<div id="page-3" class="page letter">
+    <div class="header">
+        Coastal Protection from Mangroves - Expected Benefits for <%= region %>
+    </div>
+    <div class="graph-container" style="border:2mm solid #f3f3f3;">
+        <div style="text-align:center;margin-top:4mm;margin-bottom:4mm;font-weight:bold;">Annual Expected Flood Protection Benefits by Mangroves</div>
+        <div style="text-align:center; line-height:6mm;margin-left:0.8in;margin-right:0.8in;">Representing the predicted flooding avoided to land, people, and infrastructure by keeping coral reefs intact. It is an annualized benefit of the role of reefs in flood reduction that considers local factors such as reef condition, asset distribution, and storm frequency.</div>
+        <div class="graphs">
+            <div class="print-row">
+                <div class="graph-container">
+                    <div class="graph-title"></div>
+                    <div class="graph people"><svg /></div>
+                </div>
+                <div class="graph-container">
+                    <div class="graph-title"></div>
+                    <div class="graph capital"><svg /></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="five-steps">THE FIVE KEY STEPS AND CRITICAL DATA NEEDED FOR THE EXPECTED DAMAGE FUNCTION APPROACH TO ESTIMATE THE FLOOD PROTECTION BENEFITS PROVIDED BY MANGROVES AND OTHER COASTAL HABITATS</div>
+	<div class="print-row">
+        <div class="left-column" style="flex: 0 0 2.2in;">
+    		
+    		<span class="stage">Stage 1</span>: Estimate offshore hydrodynamics (waves and surge);<br />
+    		<span class="stage">Stage 2</span>: Estimate nearshore hydrodynamics as they interact with the coastline;<br />
+    		<span class="stage">Stage 3</span>: Estimate effects of coral reef on hydrodynamics;<br />
+    		<span class="stage">Stage 4</span>: Estimate onshore flooding; and<br />
+    		<span class="stage">Stage 5</span>: Assess expected and averted damages from flooding or erosion. (Beck and Lange, 2016)<br />
+    	</div>
+    	<div class="right-column">
+    		<img style="width: 100%;" src="plugins/natural_coastal_protection/print-assets/graphic-stages.png" />
+    	</div>
+    </div>
+	<div style="margin-top: auto;">
+		World Bank. 2016. Managing Coasts with Natural Solutions: Guidelines for Measuring and Valuing the Coastal Protection Services of Mangroves and Coral Reefs. M. W. Beck and G-M. Lange, editors. Wealth Accounting and the Valuation of Ecosystem Services Partnership (WAVES), World Bank, Washington, DC. https://www.wavespartnership.org/en/knowledge-center/managing-coasts-natural-solutions
+	</div>
+</div>

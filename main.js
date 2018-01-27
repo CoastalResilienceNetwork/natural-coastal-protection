@@ -460,7 +460,7 @@ define([
 
                 this.updateChart();
             },
-
+                var self = this;
             // Render the plugin DOM
             render: function() {
 
@@ -491,10 +491,10 @@ define([
                 $(this.container).parent().find('.viewCrsInfoGraphicIcon').on('click', function(c) {
                     TINY.box.show({
                         animate: true,
-                        url: 'plugins/natural_coastal_protection/infographic.html',
+                        url: self.provider === 'mangroves' ? 'plugins/natural_coastal_protection/infographic_mangroves.html' : 'plugins/natural_coastal_protection/infographic.html',
                         fixed: true,
                         width: 600,
-                        height: 497
+                        height: self.provider === 'mangroves' ? 380 : 497
                     });
                 }).tooltip();
 

@@ -460,10 +460,10 @@ define([
 
                 this.updateChart();
             },
-                var self = this;
+
             // Render the plugin DOM
             render: function() {
-
+                var self = this;
                 this.appDiv = new ContentPane({
                     style: 'padding:0; color:#000; flex:1; display:flex; flex-direction:column;}'
                 });
@@ -1058,8 +1058,10 @@ define([
                 var currentLayer = this.layer;
                 $printSandbox.html(_.template(this.printMangroveTmpl({
                     region: this.region,
-                    people: this.numberWithCommas(Math.round(this.dataMangrove[this.region]['E2E1_DIF_' + this.period + '_PF'])),
-                    capital: this.numberWithCommas(Math.round(this.dataMangrove[this.region]['E2E1_DIF_' + this.period + '_BCF'] / 1000)),
+                    people: this.numberWithCommas(Math.round(this.dataMangrove[this.region]['E2E1_DIF_' + 'ANN' + '_PF'])),
+                    capital: this.numberWithCommas(Math.round(this.dataMangrove[this.region]['E2E1_DIF_' + 'ANN' + '_BCF'] / 1000)),
+                    ANN_FLOOD_AVERT_BIL: this.dataMangrove[this.region]['ANN_FLOOD_AVERT_BIL'],
+                    ANN_FLOOD_AVRT_PER: this.dataMangrove[this.region]['ANN_FLOOD_AVRT_PER']
                 })));
                 this.transitionsEnabled = false;
                 

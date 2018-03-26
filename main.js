@@ -44,7 +44,7 @@ define([
 ) {
         return declare(PluginBase, {
             toolbarName: 'Natural Coastal Protection',
-            fullName: 'Configure and control layers to be overlayed on the base map.',
+            fullName: 'Natural Coastal Protection.',
             resizable: false,
             width: 425,
             // Disable the default legend item which doesn't pick up our custom class breaks

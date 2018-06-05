@@ -375,8 +375,10 @@ define([
                 // Show/hide the download country summary button
                 if (this.region === 'Global') {
                     this.$el.find('.js-getSnapshot').hide();
+                    this.$el.find('.js-getdata').show();
                 } else {
                     this.$el.find('.js-getSnapshot').show();
+                    this.$el.find('.js-getdata').hide();
                 }
 
                 var regionExtent;

@@ -1057,6 +1057,7 @@ define([
 
             prePrintModal: function (preModalDeferred, $printSandbox, $modalSandbox, mapObject) {
                 var self = this;
+                this.$el.find('.js-getSnapshot').prop('disabled', true);
                 var currentLayer = this.layer;
                 $printSandbox.html(_.template(this.printMangroveTmpl({
                     region: this.region,
@@ -1065,6 +1066,9 @@ define([
                     ANN_FLOOD_AVERT_BIL: this.dataMangrove[this.region]['ANN_FLOOD_AVERT_BIL'],
                     ANN_FLOOD_AVRT_PER: this.dataMangrove[this.region]['ANN_FLOOD_AVRT_PER']
                 })));
+                $printSandbox.find('img').on('load', function(img) {
+                    $(img.target).addClass('loaded');
+                });
                 this.transitionsEnabled = false;
                 
                 this.layer = 'people';
@@ -1088,9 +1092,21 @@ define([
                     self.transitionsEnabled = true;
                     self.layer = currentLayer;
                     self.updateLayers();
-                    preModalDeferred.resolve();
-                }, 1);
-                
+                    var imageCount = $printSandbox.find('img').length;
+                    var loadedImages = $printSandbox.find('img.loaded').length;
+                    if (loadedImages === imageCount) {
+                        preModalDeferred.resolve();
+                        self.$el.find('.js-getSnapshot').prop('disabled', false);
+                    } else {
+                        $printSandbox.find('img').on('load', function(img) {
+                            loadedImages += 1;
+                            if (loadedImages === imageCount) {
+                                preModalDeferred.resolve();
+                                self.$el.find('.js-getSnapshot').prop('disabled', false);
+                            }
+                        });
+                    }
+                }, 1);                
             },
 
             // Get the requested template from the template file based on id.

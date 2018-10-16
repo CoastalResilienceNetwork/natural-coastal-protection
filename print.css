@@ -175,7 +175,7 @@
     }
 
     .bar[data-layer="Present"],
-    .bar[data-layer="Current (2010) Mangroves"] {
+    .bar[data-layer="2010 Mangroves"] {
         fill: #30928D;
     }
 }

@@ -3,9 +3,14 @@ require({
     // Specify library locations.
     packages: [
         {
+        	name: "jquery",
+            location: "//ajax.googleapis.com/ajax/libs/jquery/1.9.0",
+            main: "jquery.min"
+        },
+        {
             name: 'd3',
             location: '//d3js.org',
-            main: 'd3.v3.min'
+            main: 'd3.v3.min' 
         }
     ]
 });
@@ -65,6 +70,8 @@ define([
 
                 this.$el = $(this.container);
 
+                
+
                 this.state = new State();
                 this.provider = this.state.getProvider();
                 this.region = this.state.getRegion();
@@ -119,8 +126,6 @@ define([
                     left: 105,
                     bottom: 80
                 };
-                this.chart.position.width = (this.width - 10) -
-                    this.chart.position.margin.left - this.chart.position.margin.right;
                 this.chart.position.height = 285 - this.chart.position.margin.top -
                     this.chart.position.margin.bottom;
                 $(this.printButton).hide();
@@ -131,10 +136,15 @@ define([
 
                 // Set event listeners.  We bind 'this' where needed so the event handler
                 // can access the full scope of the plugin
+                this.$el.on('click', 'input#BCS-option', $.proxy(this.updateRadios, this));
                 this.$el.on('change', 'input[name=storm' +
-                        this.app.paneNumber + ']', $.proxy(this.updateLayers, this));
+                    this.app.paneNumber + ']', $.proxy(this.updateRadios, this));
+
+                this.$el.on('change', 'input[name=storm' +
+                    this.app.paneNumber + ']', $.proxy(this.updateLayers, this));
+
                 this.$el.on('change', '#ncp-select-region', $.proxy(this.changeRegion, this));
-                this.$el.on('change', '#ncp-provider', $.proxy(this.changeProvider, this));
+                this.$el.on('click', '.tab-link', $.proxy(this.changeProvider, this));
                 
                 this.$el.on('click', '.stat', function(e) {self.changeScenarioClick(e);});
                 this.$el.on('change', '.coral-select-container input',
@@ -191,6 +201,8 @@ define([
             activate: function() {
                 var self = this;
 
+                var RP = ['25RP', '50RP', '100RP'];
+
                 this.render();
                 this.renderChart();
 
@@ -205,6 +217,9 @@ define([
 
                 // Restore storm period radios
                 this.$el.find('input[value=' + this.period + ']').prop('checked', true);
+                if(RP.includes(this.period)) {
+                    this.$el.find('input#BCS-option').prop('checked', true);
+                }
 
                 // restore state of people, capital, area selector
                 this.$el.find('.stat.active').removeClass('active');
@@ -224,7 +239,9 @@ define([
                 });
 
                 if (this.provider === 'mangroves') {
-                    this.$el.find('#ncp-provider').prop('checked', true);
+                    this.$el.find('#mangrove-tab').find('.tab-link').click();
+                    this.$el.find('#coral-tab').removeClass('active');
+                    this.$el.find('#mangrove-tab').addClass('active');
                 }
 
                 this.updateLayers();
@@ -257,7 +274,7 @@ define([
             },
 
             changeProvider: function() {
-                if (this.$el.find('#ncp-provider').prop('checked')) {
+                if (this.$el.find('#coral-tab').hasClass('active')) {
                     this.state = this.state.setProvider('mangroves');
                     this.provider = 'mangroves';
                 } else {
@@ -267,6 +284,7 @@ define([
                 this.layer = 'people';
                 this.period = 'ANN';
                 this.$el.find('input[value=' + this.period + ']').prop('checked', true);
+                this.$el.find('input#BCS-option').prop('checked', false);
                 this.$el.find('#ncp-select-region').prop('disabled', false);
                 if (this.provider === 'coral') {
                     this.$el.find('#rp50').hide();
@@ -283,8 +301,8 @@ define([
 
                     this.$el.find('label.ann-exp-benefit .form-text i').attr('title', 'Annual expected benefits from reefs for flood protection  represents the predicted flooding avoided to land, people, and infrastructure by keeping coral reefs intact. It is an annualized benefit of the role of reefs in flood reduction that considers local factors such as reef condition, asset distribution, and storm frequency.');
                     this.$el.find('.benefits-from-storm .control-title i').attr('title', '30 years of historical data on regional sea level and wave conditions were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events.');
-                    this.$el.find('.stat.people .description i').attr('title', 'This value represents the difference of flooding impacts on people when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data.');
-                    this.$el.find('.stat.capital .description i').attr('title', 'This value represents the difference of flooding impacts on built capital when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data.');
+                    this.$el.find('.stat.people i').attr('title', 'This value represents the difference of flooding impacts on people when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data.');
+                    this.$el.find('.stat.capital i').attr('title', 'This value represents the difference of flooding impacts on built capital when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data.');
                 } else if (this.provider === 'mangroves') {
                     this.$el.find('#rp50').show();
                     this.$el.find('#rp100').hide();
@@ -301,8 +319,8 @@ define([
                     this.$el.find('.stat.people').addClass('active');
                     this.$el.find('label.ann-exp-benefit .form-text i').attr('title', 'Annual expected benefits from mangroves for flood protection represents the predicted flood damages avoided to people and infrastructure by keeping mangroves intact. It is an annualized benefit metric that considers local factors such as mangrove presence, coastal topography, asset distribution, and storm frequency.');
                     this.$el.find('.benefits-from-storm .control-title i').attr('title', '>30 years of historical data on regional sea level, wave and storm conditions were used to develop a frequency distribution of storm water levels and their distribution, to estimate flooding for 1 in 25 and 1 in 50 year storm events.');
-                    this.$el.find('.stat.people .description i').attr('title', 'This value represents the difference of flooding impacts on people when mangroves are present and when they are absent. This value is aggregated to the country scale from 90m resolution data.');
-                    this.$el.find('.stat.capital .description i').attr('title', 'This value represents the difference of flood impacts on built capital when mangroves are present and when they are absent.  This value is aggregated to the country scale from 90m resolution data.');
+                    this.$el.find('.stat.people i').attr('title', 'This value represents the difference of flooding impacts on people when mangroves are present and when they are absent. This value is aggregated to the country scale from 90m resolution data.');
+                    this.$el.find('.stat.capital i').attr('title', 'This value represents the difference of flood impacts on built capital when mangroves are present and when they are absent.  This value is aggregated to the country scale from 90m resolution data.');
                     if (Object.keys(this.dataMangrove).length <= 2) { // 2 because we always have a global object
                         this.$el.find('#ncp-select-region').prop('disabled', true);
                     }
@@ -486,26 +504,56 @@ define([
                     width: '100%'
                 });
 
-                $(this.container).parent().find('.viewCrsInfoGraphicIcon').remove();
-                $(this.container).parent().find('.sidebar-nav').prepend(
-                    _.template(this.getTemplateById('info-button-template'))
-                );
-                $(this.container).parent().find('.viewCrsInfoGraphicIcon').on('click', function(c) {
+                $(this.container).find('.viewCrsInfoGraphicIcon').on('click', function(c) {
                     TINY.box.show({
                         animate: true,
                         url: self.provider === 'mangroves' ? 'plugins/natural_coastal_protection/infographic_mangroves.html' : 'plugins/natural_coastal_protection/infographic.html',
                         fixed: true,
-                        width: 600,
-                        height: self.provider === 'mangroves' ? 380 : 497
+                        width: 330,
+                        height: 460
                     });
                 }).tooltip();
 
+                $(this.container).find('.info-button').on('click', function(c) {
+                    TINY.box.show({
+                        animate: true,
+                        url: self.provider === 'mangroves' ? 'plugins/natural_coastal_protection/tooltip_mangroves.html' : 'plugins/natural_coastal_protection/tooltip_corals.html',
+                        fixed: true,
+                        width: 330,
+                        height: 460
+                    });
+                }).tooltip();
+            },
 
+            // Update radio displays for dummy "benefits from catastrophic storm" radio
+            updateRadios: function(e) {
+                var RP = ['25RP', '50RP', '100RP'];
+                var target = e.currentTarget.value;
+                var checked = this.$el.find('input[name=storm' + this.app.paneNumber +
+                        ']:checked').val();
+
+                // dummy button checked without sub radio checked
+                if(target == 'BCS' && checked == 'ANN') {
+                    this.$el.find('input#RP25-option').click();
+                }
+
+                // one of the rps was selected
+                if(RP.includes(target)) {
+                    this.$el.find('input#BCS-option').prop('checked', true);
+                }
+
+                // ANN selected
+                if(target == "ANN") {
+                    this.$el.find('input#BCS-option').prop('checked', false);
+                }
             },
 
             // Render the D3 Chart
             renderChart: function() {
                 var self = this;
+
+                this.chart.position.width = (this.$el.width() - 10) -
+                    this.chart.position.margin.left - this.chart.position.margin.right;
 
                 // Our x values are always the same.  Treat them as ordinal and hard code them here
                 this.chart.x = d3.scale.ordinal()
@@ -778,14 +826,14 @@ define([
                 }
 
                 if (this.provider === 'mangroves') {
-                    this.chart.barx.domain(['Current (2010) Mangroves', 'No Mangroves']);
+                    this.chart.barx.domain(['2010 Mangroves', 'No Mangroves']);
 
                     this.chart.svg.select('.col-1')
                         .transition().duration(this.transitionsEnabled ? 600 : 0)
                         .style('opacity', 0)
                         .transition().duration(this.transitionsEnabled ? 600 : 0)
                         .style('opacity', 1)
-                        .text('Current (2010) Mangroves');
+                        .text("2010 Mangroves")
 
                     this.chart.svg.select('.col-2')
                         .transition().duration(this.transitionsEnabled ? 600 : 0)
@@ -890,7 +938,7 @@ define([
                     bardata.push({x: 'Present', y: bary});
                     bardata.push({x: 'Reef Loss', y: bary1m});
                 } else {
-                    bardata.push({x: 'Current (2010) Mangroves', y: bary});
+                    bardata.push({x: '2010 Mangroves', y: bary});
                     bardata.push({x: 'No Mangroves', y: bary1m});
                 }
 
@@ -1106,7 +1154,8 @@ define([
                             }
                         });
                     }
-                }, 1);                
+                }, 1);
+                
             },
 
             // Get the requested template from the template file based on id.

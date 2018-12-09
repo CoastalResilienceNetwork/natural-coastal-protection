@@ -169,17 +169,17 @@ define([
             // been closed (not minimized). It sets up the layers with their default settings
 
             firstLoad: function() {
-                this.coralReefLayer = new ArcGISDynamicMapServiceLayer('http://services.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {
+                this.coralReefLayer = new ArcGISDynamicMapServiceLayer('https://services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {
                     visible: this.state.getCoralVisibility(),
                     opacity: 0.5
                 });
                 this.coralReefLayer.setVisibleLayers([1]);
-                this.mangroveLayer = new ArcGISDynamicMapServiceLayer('http://services.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {
+                this.mangroveLayer = new ArcGISDynamicMapServiceLayer('https://services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {
                     visible: this.state.getMangroveVisibility(),
                     opacity: 0.5
                 });
                 this.mangroveLayer.setVisibleLayers([39]);
-                this.coastalProtectionLayer = new ArcGISDynamicMapServiceLayer('http://services.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {});
+                this.coastalProtectionLayer = new ArcGISDynamicMapServiceLayer('https://services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {});
                 this.coastalProtectionLayer.setVisibleLayers([40]);
                 this.map.addLayer(this.coastalProtectionLayer);
                 this.map.addLayer(this.coralReefLayer);

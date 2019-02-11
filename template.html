@@ -33,7 +33,9 @@
 		line-height: 2;
 		margin-top: 1rem;
 		margin-bottom: 0;
-		text-transform: uppercase;
+		font-size: 18px;
+		color: #555555;
+		letter-spacing: 0;
 	}
 
 	section.header .toggle-controls-container {
@@ -47,6 +49,7 @@
 	}
 
 	.ncp-description {
+		margin-top: 10px;
 		margin-bottom: 0.75rem;
 		text-align: center;
 	}
@@ -76,17 +79,21 @@
 			position: fixed;
 			bottom: 0;
 			background: #ffffff;
+			border-top: 1px solid #cccccc;
 		}
 
 		section.documents button {
-			color: #438c9d;
-			padding: 5px 0px !important;
-			width: 49.5% !important;
+			color: #000000;
+			padding: 6px 16px !important;
 			text-align: center;
+			width: 49.5%;
+			border-radius: 0px !important;
 			margin-bottom: 0px !important;
-			border: 0px !important;
 			cursor: pointer;
 			box-shadow: 0 0px 0px rgba(16,22,26,.2) !important;
+			border: 0px !important;
+			border-left: 1px solid #ececec !important;
+
 		}
 
 		section.documents .control-title {
@@ -109,10 +116,17 @@
 	section.documents button {
 		position: relative;
 		width: 49%;
-		padding: 8px;
-	    font-size: 12px;
-	    text-align: center;
+		padding: 8px 12px;
+		font-size: 12px;
+		text-align: left;
 		display: inline-block;
+	}
+
+	section.documents button img.download-icon {
+		display: block;
+		margin-right: 7px;
+		margin-top: 2px;
+		float: left;
 	}
 
 	section.country button {
@@ -124,7 +138,7 @@
 	}
 
 	.ncp-plugin .tab-content {
-		padding: 0;
+		padding: 3px 0 0 0;
 	}
 
 	/* Checkboxes */
@@ -264,16 +278,11 @@
 	}
 
 	.ncp-plugin .info-button {
-		height: 35px;
-		width: 35px;
+		height: 48px;
+		width: 48px;
 		position: absolute;
-		top: -17px;
-		right: 70px;
-		border-radius: 18px;
-		box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-		-moz-box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-		-webkit-box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-		-o-box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+		top: -22px;
+		right: 75px;
 	}
 
 	@media screen and (min-width: 740px) {
@@ -289,18 +298,11 @@
 	}
 
 	.ncp-plugin .viewCrsInfoGraphicIcon {
-		height: 35px;
-		width: 35px;
+		height: 48px;
+		width: 48px;
 		position: absolute;
-		top: -17px;
+		top: -22px;
 		right: 25px;
-		border-radius: 18px;
-		box-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-		-moz-box-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-		-webkit-box-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-		-o-box-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-		background: #fff;
-		padding: 5px;
 	}
 
 	.ncp-plugin .styled-select {
@@ -405,21 +407,22 @@
 		}
 	}
 
-    .ncp-plugin .stats-container {
+  .ncp-plugin .stats-container {
 		margin: auto;
+		padding: 10px;
 	}
 
 	.ncp-plugin .stat {
-		min-height: 45px;
-    	padding: 10px 0px;
-		border-bottom: 1px solid #ccc;
+		width: 32%;
+		display: inline-block;
+		text-align: center;
 	}
 
 	.ncp-plugin .stat .description,
 	.ncp-plugin .stat .number {
-		display: inline-block;
+		display: block;
 		cursor: pointer;
-		text-align: left;
+		text-align: center;
 		transition: color 0.35s linear;
 		vertical-align: middle;
 	}
@@ -429,15 +432,13 @@
 	}
 
 	.ncp-plugin .stat .number {
-		width: 160px;
-		padding-left: 14px;
-		font-size: 30px;
-	    font-weight: bold;
-	    color: #d8d8d8;
+		font-size: 24px;
+		font-weight: bold;
+		color: #a2a2a2;
 	}
 
 	.ncp-plugin .stat .units {
-		font-size: 22px;
+		font-size: 18px;
 	}
 
 	.ncp-plugin .stat.active .description,
@@ -448,11 +449,16 @@
 	}
 
 	.ncp-plugin .stat .description {
-	    padding-left: 10px;
-		color: #d8d8d8;
-	    font-size: 18px;
-	    transition: color 0.35s linear;
-	    max-width: calc(100% - 189px);
+			color: #a2a2a2;
+	    font-size: 12px;
+			transition: color 0.35s linear;
+			margin-top: 5px;
+	}
+
+	@media screen and (max-width: 740px) {
+		.ncp-plugin .stat .description {
+			font-size: 10px;
+		}
 	}
 
 	.ncp-plugin .select-containers {
@@ -504,7 +510,7 @@
 	}
 
 	.ncp-plugin path {
-		stroke: #3e6f6a;
+		stroke: #31B91B;
 		stroke-width: 2px;
 		fill: none;
 	}
@@ -522,7 +528,7 @@
 	}
 
 	.ncp-plugin path.scenario {
-		stroke: #8e1212;
+		stroke: #8465E6;
 	}
 
 	.ncp-plugin .points-scenario circle {
@@ -530,17 +536,17 @@
 	}
 
 	.ncp-plugin .area-current {
-	    fill: #30928D;
+	    fill: #31B91B;
 	    stroke-width: 0;
 	}
 
 	.ncp-plugin .area-scenario {
-	    fill: #923034;
+	    fill: #8465E6;
 	    stroke-width: 0;
 	}
 
 	.ncp-plugin .area.scenario {
-	    fill: #923034;
+	    fill: #8465E6;
 	    stroke-width: 0;
 	}
 
@@ -557,12 +563,12 @@
 	}
 
 	.ncp-plugin .bar {
-		fill: #923034;
+		fill: #8465E6;
 	}
 
 	.ncp-plugin .bar[data-layer="Present"],
 	.ncp-plugin .bar[data-layer="2010 Mangroves"] {
-		fill: #30928D;
+		fill: #31B91B;
 	}
 
 	.ncp-plugin .world-bank-report {
@@ -656,7 +662,7 @@
 
 	<div class="ncp-plugin">
 		<section class="header">
-			<h3 class="ncp-title">Flood Protection</h3>
+			<h3 class="ncp-title">Flood Protection Analysis</h3>
 		</section>
 		<ul class="nav nav-tabs" role="tablist">
 			<li role="presentation" id="coral-tab" class="tab-item active"><a href="#tab" class="tab-link" aria-controls="coral" role="tab" data-toggle="tab" aria-expanded="true">Coral Reefs</a></li>
@@ -664,12 +670,12 @@
 		</ul>
 		<div class="tab-content">
 			<div class="tab-pane active" id="tab">
-				<div class="ncp-description">
-					Estimates of the benefits provided by <span class="coral-only">coral reefs</span><span class="mangrove-only" style="display: none;">mangroves</span> in flood protection annually and from catastrophic storms
-				</div>
 				<div class="country-docs-wrap">
-					<img class="info-button mobile-only" src="plugins/natural_coastal_protection/icon_info.svg" alt="info icon" />
-					<img class="viewCrsInfoGraphicIcon" src="plugins/natural_coastal_protection/InfographicIcon_v1_23x23.png" alt="show overview graphic">
+					<div class="ncp-description">
+						Estimates of the benefits provided by <span class="coral-only">coral reefs</span><span class="mangrove-only" style="display: none;">mangroves</span> in flood protection annually and from catastrophic storms
+					</div>
+					<img class="info-button" src="plugins/natural_coastal_protection/infoIcon.svg" alt="info icon" />
+					<img class="viewCrsInfoGraphicIcon" src="plugins/natural_coastal_protection/infoGraphic.svg" alt="show overview graphic">
 					<div class="chosen-wrap" style="max-width: 160px; margin-bottom:10px;">
 						<select id="ncp-select-region" class="chosen">
 							<% _.each(regionsCoral, function(val, key) { %>
@@ -688,7 +694,7 @@
 							<label class="form-component ann-exp-benefit" for="ANN-option">
 								<input checked="checked" type="radio" id="ANN-option" value="ANN" name="storm<%=pane%>">
 								<div class="check"></div>
-								<span class="form-text">Annual Expected Benefit <i title="Annual expected benefits from reefs for flood protection  represents the predicted flooding avoided to land, people, and infrastructure by keeping coral reefs intact. It is an annualized benefit of the role of reefs in flood reduction that considers local factors such as reef condition, asset distribution, and storm frequency." class="fa fa-info-circle info-annual info-tooltip"></i></span>
+								<span class="form-text">Annual Expected Benefit </span>
 							</label>
 
 							<div class="benefits-from-storm" style="padding-left: 1px;">
@@ -697,7 +703,6 @@
 									<div class="check"></div>
 									<span class="form-text">
 										Benefits from Catastrophic Storms
-										<i title="30 years of historical data on regional sea level and wave conditions were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events." class="fa fa-info-circle info-period info-tooltip"></i>
 									</span>
 								</label>
 
@@ -758,7 +763,6 @@
 						<div class="description">
 							<span class="description-text">People Protected</span>
 						</div>
-						<i title="This value represents the difference of flooding impacts on people when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data." class="fa fa-info-circle info-people info-tooltip"></i>
 					</div>
 
 					<div class="stat capital" data-layer="capital">
@@ -766,9 +770,6 @@
 						<div class="description"> 
 							<span class="description-text">Built Capital Protected</span>
 						</div>
-						<i title="This value represents the difference of flooding impacts on built capital when coral reefs are present and 
-							when there is 1 meter of reef loss. This value is aggregated
-							to the country scale from 90m resolution data." class="fa fa-info-circle info-capital info-tooltip"></i>
 					</div>
 
 					<div class="stat area" data-layer="area">
@@ -776,7 +777,6 @@
 						<div class="description">
 							<span class="description-text">Area Protected</span>
 						</div>
-						<i title="This value represents the difference of flooding impacts on land area when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data. " class="fa fa-info-circle info-area info-tooltip"></i>
 					</div>
 
 				</div>
@@ -791,16 +791,16 @@
 		</div>
 		<section class="documents">
 			<span class="control-title" style="margin-bottom: 1rem;">Documents:</span>
-			<button class="button button-default js-getSnapshot" target="_blank" style="display: none">Print<br>Country Summary</button>
+			<button class="button button-default js-getSnapshot" target="_blank" style="display: none"><img class="download-icon" src="plugins/natural_coastal_protection/downloadIcon.svg" alt="download" />Print<br>Country Summary</button>
 			
 			<a class="coral-only" href="http://media.coastalresilience.org/MOW/Gobal_Flood_Protection_by_Coral_Reefs.pdf" target="_blank">
-				<button class="button button-default">Download<br>Published</span> Paper</button>
+				<button class="button button-default"><img class="download-icon" src="plugins/natural_coastal_protection/downloadIcon.svg" alt="download" />Download<br>Published</span> Paper</button>
 			</a>
 			<a class="coral-only js-getdata" href="http://data.coastalresilience.org/MOW_Global/NCP_Annual_Expected_Benefit.zip" target="_blank">
-				<button class="button button-default">Download Global <br/>Point Data</button>
+				<button class="button button-default"><img class="download-icon" src="plugins/natural_coastal_protection/downloadIcon.svg" alt="download" />Download Global <br/>Point Data</button>
 			</a>
 			<a class="mangrove-only" style="display: none;" href="http://conservationgateway.org/ConservationPractices/Marine/crr/library/Documents/CoastalProtectionServicesMangrovesPhilippinesReport-3.pdf" target="_blank">
-				<button class="button button-default">Download<br>Mangroves Waves</span> Report</button>
+				<button class="button button-default"><img class="download-icon" src="plugins/natural_coastal_protection/downloadIcon.svg" alt="download" />Download<br>Mangroves</span> Report</button>
 			</a>
 		</section>
 		

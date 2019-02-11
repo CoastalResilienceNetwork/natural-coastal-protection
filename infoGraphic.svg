@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.4 (67378) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 3</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M19,38 C29.4934102,38 38,29.4934102 38,19 C38,8.50658975 29.4934102,0 19,0 C8.50658975,0 0,8.50658975 0,19 C0,29.4934102 8.50658975,38 19,38 Z" id="path-1"></path>
+        <filter x="-30.3%" y="-17.1%" width="160.5%" height="160.5%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="5" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="3" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.292261096 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="NCP_mobile_1" transform="translate(-282.000000, -460.000000)">
+            <g id="Group-3" transform="translate(288.000000, 461.000000)">
+                <g id="Oval-4">
+                    <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                    <use fill="#49A942" fill-rule="evenodd" xlink:href="#path-1"></use>
+                </g>
+                <circle id="Oval" fill="#FFFFFF" cx="19" cy="19" r="12.5319149"></circle>
+                <image id="InfographicIcon_v1_23x23" x="9.70212766" y="9.70212766" width="18.5957447" height="18.5957447" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAXCAYAAADgKtSgAAAABGdBTUEAALGOfPtRkwAABMJJREFUSA11VVlsVFUY/u4yS+nMdOjeKRQqrRSw2yBdENCCEFRMG2IkxAcSUTFqUB8UHlxiSOStMRhUDA8EATWkggkYUbbKYkMV2rSStlRqW6cM00qnna137tx7PPe0c2YmLX8y9/7n/7/znfNvdwQ8RCYVhbR5RnB5cAi3vD6MBAPQdAJJFOCy2eHOz8P6xUWoLXTBZjYLc9HMaTzV00cOd3Sie3Rsrj0ptsq8XLxaXYnnS0tmcaUYgtEo+aj1Klp6ejmBATDLJjhtWXBaLPArCsYDY1C1GAhHAY3Ll6K54SnIIg1tRuS4osRi5LWfzrE0xG3uvGw0La/CxsWFyDCJkCWJkmqYiGpoHRzE8e6/0O2j0ckCfOEwghEFSlQlFrOJHcDJ3794mRObJBF762vxSnWVcCp+0hxvTdfJ/t/b4AkG8WFNHXZ/+h3S060cychP9/aRt3+5wIwG8YFNT+PZkiU8PDLlJeH716BrU0jLrIDsLGc+KSkF5JNj5OIffYAk4MyVLrJlbbkgB5UoaTz5Az/tvbraFGLDMTU5AH/HxzTHAqyl2zg2WSnMd7L0GIVoPnEBoYhCxOseD/rHxxmuIjcHu9xV/MbxzXGDBJ22Y3wV906/9+58BiuKC9iib9CHtq4BiOcH/uGoHRWPcT1FEaYJTUIMIbOLFi9Gdl320d8I+ao3yJrGJEvCji11fNv5Gz2QL9EhmRaCtQsXcmeyYiI6WxppkSUrRqeiOHQ7QNOrYHVE4tCGxx+F2SQjqsZws2cYoi2nEJkFi7CyrAoZ1ulKq5pKAkqAjEYeEF3XiCAmCEAPMiVaGQWiyskzaKcU5c9na8+oH/K3q8qgxlTYbRmw0tAMz5/32nHs9jF46A0+d++Ay76AE8xWEqNkNM98xzwGUWMajfKLNyCEJiHkLYIepRU2W4QR9QHu+u/CR2RadS8EZ8lsTm5JFJi2PfyBCPPQGkAe8Y9D9Y+CjHlRHZpgDkky862SSPWZnHNjkqKbE0MzGZrCkPcB87qynRAzKtaxhUCjm+q8ynRNBESSCDeJa7aalP/Wm/10/GMMU710ASWvbuAb7p0/zvSssAavffr2mm6Ap7vFcBI9Cho9l7BObzIjR860xVVsqCmDaF9WC2v+YmYcH76N4K/fk+rcKjQ6a1C8sBL2jCI6eWlIc22COWcNzI4SOCwyti7LxuZlBdicHmJ7vzzZSrr6PUwvLcrF6opHaONS+e/aj2Tg0B7mEEwWlL75GRzuhkSlmOfhj7OtneSt5haotLsMObhnGxqfrBRYTFlPNAqZdc8xB1EV3Dn4DnznvkkKnrnmfHzdciWFeGsDjZoSG2B+O02JkL8P7MZk1xVOkr6kAjnrt8Oxoh7yPDtEa7oQDEdJIBzBb7fu4OjZG+js+5fjjQk9/MFLiH/PObmBiEWCZPjoPiNNfIOhGBNavLIewvb9ePlgK262d9APWKLIBubFjSux7/UtSE+zcE72PTechshpNuYYu3qa3P/5CCJDPcxOdA3qYBdigSBu9XtTiMuXuLCzaTVe2OAWmt9lcP5IIY9bs9c0CbHgBAn0tmOi4xImu69DynSC0L+5ohwHolIY69yl2LBqKerLi+GwpfHbxjmM9/8YaM/L8DSvDgAAAABJRU5ErkJggg=="></image>
+            </g>
+        </g>
+    </g>
+</svg>

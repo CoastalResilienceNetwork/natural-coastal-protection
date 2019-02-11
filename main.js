@@ -144,7 +144,7 @@ define([
                     this.app.paneNumber + ']', $.proxy(this.updateLayers, this));
 
                 this.$el.on('change', '#ncp-select-region', $.proxy(this.changeRegion, this));
-                this.$el.on('click', '.tab-link', $.proxy(this.changeProvider, this));
+                this.$el.on('click', '.tab-item:not(.active) .tab-link', $.proxy(this.changeProvider, this));
                 
                 this.$el.on('click', '.stat', function(e) {self.changeScenarioClick(e);});
                 this.$el.on('change', '.coral-select-container input',
@@ -508,9 +508,7 @@ define([
                     TINY.box.show({
                         animate: true,
                         url: self.provider === 'mangroves' ? 'plugins/natural_coastal_protection/infographic_mangroves.html' : 'plugins/natural_coastal_protection/infographic.html',
-                        fixed: true,
-                        width: 330,
-                        height: 460
+                        boxid: 'plugin-tiny-box'
                     });
                 }).tooltip();
 
@@ -518,9 +516,7 @@ define([
                     TINY.box.show({
                         animate: true,
                         url: self.provider === 'mangroves' ? 'plugins/natural_coastal_protection/tooltip_mangroves.html' : 'plugins/natural_coastal_protection/tooltip_corals.html',
-                        fixed: true,
-                        width: 330,
-                        height: 460
+                        boxid: 'plugin-tiny-box'
                     });
                 }).tooltip();
             },
@@ -679,7 +675,7 @@ define([
                     .attr('width', '25')
                     .attr('height', '15')
                     .attr('x', '5')
-                    .attr('fill', '#30928D');
+                    .attr('fill', '#31B91B');
 
                 this.chart.col1 = this.chart.legend.append('text')
                     .attr('class', 'col-1')
@@ -692,7 +688,7 @@ define([
                     .attr('height', '15')
                     .attr('x', '5')
                     .attr('y', '18')
-                    .attr('fill', '#923034');
+                    .attr('fill', '#8465E6');
 
                 this.chart.col2 = this.chart.legend.append('text')
                     .attr('class', 'col-2')

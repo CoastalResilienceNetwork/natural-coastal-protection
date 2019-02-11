@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.4 (67378) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 2</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M19,38 C29.4934102,38 38,29.4934102 38,19 C38,8.50658975 29.4934102,0 19,0 C8.50658975,0 0,8.50658975 0,19 C0,29.4934102 8.50658975,38 19,38 Z" id="path-1"></path>
+        <filter x="-30.3%" y="-17.1%" width="160.5%" height="160.5%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="5" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="3" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.292261096 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="NCP_mobile_1" transform="translate(-341.000000, -460.000000)">
+            <g id="Group-2" transform="translate(347.000000, 461.000000)">
+                <g id="Oval-4-Copy">
+                    <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                    <use fill="#269BF3" fill-rule="evenodd" xlink:href="#path-1"></use>
+                </g>
+                <g id="Shape-2" transform="translate(14.553191, 10.510638)" fill="#FFFFFF" fill-rule="nonzero">
+                    <path d="M5.84027484,0 C6.95245504,0 7.50837905,0.775418298 7.50837905,1.66204723 C7.50837905,2.76939957 6.5426957,3.79372596 5.28418474,3.79372596 C4.2304704,3.79372596 3.61574833,3.15668426 3.64498127,2.10485234 C3.64498127,1.21839319 4.37663506,0 5.84027484,0 Z M2.41553714,16.9787234 C1.53738649,16.9787234 0.893431499,16.4248774 1.50815356,13.9879213 L2.51635754,9.66564766 C2.69192123,8.97342511 2.72065587,8.69667191 2.51635754,8.69667191 C2.25259676,8.69667191 1.11267849,9.17479277 0.438493987,9.64578255 L0,8.89786979 C2.13649551,7.04277447 4.59455328,5.95477787 5.64793543,5.95477787 C6.52575389,5.95477787 6.67241684,7.03479447 6.23342456,8.69650213 L5.07922202,13.2400085 C4.8742593,14.0429323 4.96245638,14.3196855 5.16675472,14.3196855 C5.4301833,14.3196855 6.29404968,13.9863932 7.1426352,13.2940009 L7.64042553,13.986563 C5.56222979,16.146766 3.29368779,16.9787234 2.41553714,16.9787234 Z" id="Shape"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

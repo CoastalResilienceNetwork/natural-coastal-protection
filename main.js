@@ -552,7 +552,15 @@ define([
             renderChart: function() {
                 var self = this;
 
-                this.chart.position.width = (this.$el.width() - 10) -
+                var $chartContainer = this.$el.find('.chartContainer');
+
+                // handle mobile wrapper being larger
+                var chartMaxWidth = $chartContainer.css('max-width').substring(0, $chartContainer.css('max-width').length - 2);
+                var chartSetWidth = $chartContainer.width();
+
+                var chartWidth = chartSetWidth > chartMaxWidth ? chartMaxWidth : chartSetWidth;
+
+                this.chart.position.width = (chartWidth - 10) -
                     this.chart.position.margin.left - this.chart.position.margin.right;
 
                 // Our x values are always the same.  Treat them as ordinal and hard code them here
@@ -597,8 +605,6 @@ define([
                 this.chart.valueline = d3.svg.line()
                     .x(function(d) { return self.chart.x(d.x); })
                     .y(function(d) { return self.chart.y(d.y); });
-
-                var $chartContainer = this.$el.find('.chartContainer');
 
                 this.chart.svg = d3.selectAll($chartContainer.toArray())
                     .append('svg')

@@ -52,12 +52,13 @@
 		margin-top: 10px;
 		margin-bottom: 0.75rem;
 		text-align: center;
+		line-height: 18px;
 	}
 
 	section.country {
 		width: 65%;
 		height: 100%;
-		background-color: #ececec;
+		background-color: #F4F7F9;
 		display: inline-block;
 	}
 
@@ -92,7 +93,7 @@
 			cursor: pointer;
 			box-shadow: 0 0px 0px rgba(16,22,26,.2) !important;
 			border: 0px !important;
-			border-left: 1px solid #ececec !important;
+			border-left: 1px solid #F4F7F9 !important;
 
 		}
 
@@ -108,7 +109,7 @@
 
 
 	.country-docs-wrap {
-		background-color: #ececec;
+		background-color: #F4F7F9;
 		padding-bottom: 0px;
 		position: relative;
 	}
@@ -271,18 +272,13 @@
 		z-index: 101;
 	}
 
-	@media screen and (max-width: 740px) {
-		.ncp-plugin i.info-tooltip {
-			display: none;
-		}
-	}
-
 	.ncp-plugin .info-button {
 		height: 48px;
 		width: 48px;
 		position: absolute;
 		top: -22px;
 		right: 75px;
+		cursor: pointer;
 	}
 
 	@media screen and (min-width: 740px) {
@@ -303,6 +299,7 @@
 		position: absolute;
 		top: -22px;
 		right: 25px;
+		cursor: pointer;
 	}
 
 	.ncp-plugin .styled-select {
@@ -391,7 +388,8 @@
 
     .ncp-plugin .stats-description {
     	padding: 8px;
-    	clear: both;
+			clear: both;
+			line-height: 18px;
     }
 
 	@media screen and (max-width: 740px) {
@@ -434,7 +432,7 @@
 	.ncp-plugin .stat .number {
 		font-size: 24px;
 		font-weight: bold;
-		color: #a2a2a2;
+		color: #555555;
 	}
 
 	.ncp-plugin .stat .units {
@@ -445,11 +443,11 @@
 	.ncp-plugin .stat.active .number,
 	.ncp-plugin .stat:hover .description,
 	.ncp-plugin .stat:hover .number {
-		color: #438c9d;
+		color: #0096d6;
 	}
 
 	.ncp-plugin .stat .description {
-			color: #a2a2a2;
+			color: #555555;
 	    font-size: 12px;
 			transition: color 0.35s linear;
 			margin-top: 5px;
@@ -503,6 +501,7 @@
 		text-align: center;
 		max-width: 425px;
 		margin: auto;
+		background-color: #F4F7F9;
 	}
 
 	.ncp-plugin .chartWrapper {

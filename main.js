@@ -501,7 +501,7 @@ define([
                         url: self.provider === 'mangroves' ? 'plugins/natural_coastal_protection/infographic_mangroves.html' : 'plugins/natural_coastal_protection/infographic.html',
                         boxid: 'plugin-tiny-box',
                         width: 600,
-                        height: 550
+                        height: 400
                     });
                 });
 
@@ -511,7 +511,7 @@ define([
                         url: self.provider === 'mangroves' ? 'plugins/natural_coastal_protection/tooltip_mangroves.html' : 'plugins/natural_coastal_protection/tooltip_corals.html',
                         boxid: 'plugin-tiny-box',
                         width: 640,
-                        height: 600
+                        height: 500
                     });
                 });
             },

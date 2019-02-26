@@ -49,8 +49,7 @@
 	}
 
 	.ncp-description {
-		margin-top: 10px;
-		margin-bottom: 0.75rem;
+		margin-bottom: 2rem;
 		text-align: center;
 		line-height: 18px;
 	}
@@ -58,7 +57,6 @@
 	section.country {
 		width: 65%;
 		height: 100%;
-		background-color: #F4F7F9;
 		display: inline-block;
 	}
 
@@ -109,7 +107,6 @@
 
 
 	.country-docs-wrap {
-		background-color: #F4F7F9;
 		padding-bottom: 0px;
 		position: relative;
 	}
@@ -134,7 +131,7 @@
 		text-align: left;
 	}
 
-	.ncp-plugin .tab-content > section, .ncp-plugin .tab-content .ncp-description, .ncp-plugin .tab-content .country-docs-wrap {
+	.ncp-plugin .tab-content > section, .ncp-plugin .tab-content .country-docs-wrap {
 		padding: 10px;
 	}
 
@@ -387,27 +384,27 @@
 	}
 
     .ncp-plugin .stats-description {
-    	padding: 8px;
+    	padding: 25px 8px 8px 8px;
 			clear: both;
 			line-height: 18px;
+			background-color: #F4F7F9;
     }
 
 	@media screen and (max-width: 740px) {
 		.ncp-plugin .stats-description {
-			padding: 10px !important;
+			padding: 25px 10px 10px 10px !important;
 			text-align: center;
 		}
 	}
 
-	@media screen and (max-width: 740px) {
-		.ncp-plugin .ncp-description {
-			padding: 15px 10px 15px 10px !important;
-		}
+	.ncp-plugin .stats {
+		position: relative;
 	}
 
   .ncp-plugin .stats-container {
 		margin: auto;
 		padding: 10px;
+		background-color: #F4F7F9;
 	}
 
 	.ncp-plugin .stat {
@@ -669,12 +666,45 @@
 		</ul>
 		<div class="tab-content">
 			<div class="tab-pane active" id="tab">
+
+				<section class="stats">
+
+					<section class="stats-description">
+						The people and property protected by <span class="coral-only">coral reefs</span><span class="mangrove-only" style="display: none;">mangroves</span> (values represent predicted losses avoided by keeping <span class="coral-only">coral</span><span class="mangrove-only" style="display: none;">mangroves</span> intact)
+					</section>
+					<img class="info-button" src="plugins/natural_coastal_protection/infoIcon.svg" alt="info icon" />
+					<img class="viewCrsInfoGraphicIcon" src="plugins/natural_coastal_protection/infoGraphic.svg" alt="show overview graphic">
+
+					<div class="stats-container">
+
+						<div class="stat people active" data-layer="people">
+							<div class="number"><span class="variable"><%= global.E2E1_DIF_ANN_PF %></span></div>
+							<div class="description">
+								<span class="description-text">People Protected</span>
+							</div>
+						</div>
+
+						<div class="stat capital" data-layer="capital">
+							<div class="number">$<span class="variable"><%= global.E2E1_DIF_ANN_BCF %></span><span class="units">M</span></div>
+							<div class="description"> 
+								<span class="description-text">Built Capital Protected</span>
+							</div>
+						</div>
+
+						<div class="stat area" data-layer="area">
+							<div class="number"><span class="variable"><%= global.E2E1_DIFF_ANN_AF %></span><span class="units">km<sup>2</sup></span></div>
+							<div class="description">
+								<span class="description-text">Area Protected</span>
+							</div>
+						</div>
+
+					</div>
+				</section>
+
 				<div class="country-docs-wrap">
 					<div class="ncp-description">
 						Estimates of the benefits provided by <span class="coral-only">coral reefs</span><span class="mangrove-only" style="display: none;">mangroves</span> in flood protection annually and from catastrophic storms
 					</div>
-					<img class="info-button" src="plugins/natural_coastal_protection/infoIcon.svg" alt="info icon" />
-					<img class="viewCrsInfoGraphicIcon" src="plugins/natural_coastal_protection/infoGraphic.svg" alt="show overview graphic">
 					<div class="chosen-wrap" style="max-width: 160px; margin-bottom:10px;">
 						<select id="ncp-select-region" class="chosen">
 							<% _.each(regionsCoral, function(val, key) { %>
@@ -748,36 +778,6 @@
 						</div>
 
 					</section>
-				</div>
-
-
-				<section class="stats-description">
-					The people and property protected by <span class="coral-only">coral reefs</span><span class="mangrove-only" style="display: none;">mangroves</span> (values represent predicted losses avoided by keeping <span class="coral-only">coral</span><span class="mangrove-only" style="display: none;">mangroves</span> intact)
-				</section>
-
-				<div class="stats-container">
-
-					<div class="stat people active" data-layer="people">
-						<div class="number"><span class="variable"><%= global.E2E1_DIF_ANN_PF %></span></div>
-						<div class="description">
-							<span class="description-text">People Protected</span>
-						</div>
-					</div>
-
-					<div class="stat capital" data-layer="capital">
-						<div class="number">$<span class="variable"><%= global.E2E1_DIF_ANN_BCF %></span><span class="units">M</span></div>
-						<div class="description"> 
-							<span class="description-text">Built Capital Protected</span>
-						</div>
-					</div>
-
-					<div class="stat area" data-layer="area">
-						<div class="number"><span class="variable"><%= global.E2E1_DIFF_ANN_AF %></span><span class="units">km<sup>2</sup></span></div>
-						<div class="description">
-							<span class="description-text">Area Protected</span>
-						</div>
-					</div>
-
 				</div>
 
 				<div class="chartWrapper">

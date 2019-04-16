@@ -20,32 +20,42 @@ define([
     'd3',
     'framework/PluginBase',
     'esri/layers/ArcGISDynamicMapServiceLayer',
+    'esri/layers/FeatureLayer',
     'esri/symbols/SimpleLineSymbol',
+    'esri/symbols/SimpleFillSymbol',
+    'esri/renderers/SimpleRenderer',
     'esri/renderer',
     'esri/Color',
+    'esri/tasks/query',
+    'esri/tasks/QueryTask',
+    'esri/geometry/Extent',
     'dijit/layout/ContentPane',
     './State',
     'dojo/dom',
     'dojo/text!./template.html',
     'dojo/text!./mangrove_print_template.html',
-    'dojo/text!./data.json',
-    'dojo/text!./data-mangroves.json',
-    'dojo/text!./country-config.json'
+    'dojo/text!./country-config.json',
+    'dojo/text!./region.json'
     ], function(declare,
         d3,
         PluginBase,
         ArcGISDynamicMapServiceLayer,
+        FeatureLayer,
         SimpleLineSymbol,
+        SimpleFillSymbol,
+        SimpleRenderer,
         Renderer,
         Color,
+        Query,
+        QueryTask,
+        Extent,
         ContentPane,
         State,
         dom,
         templates,
         mangrovePrintTemplate,
-        Data,
-        DataMangrove,
-        CountryConfig
+        CountryConfig,
+        RegionJSON
 ) {
         return declare(PluginBase, {
             toolbarName: 'Natural Coastal Protection',
@@ -61,25 +71,36 @@ define([
 
             initialize: function(frameworkParameters, currentRegion) {
                 declare.safeMixin(this, frameworkParameters);
-                this.data = $.parseJSON(Data);
-                this.dataMangrove = $.parseJSON(DataMangrove);
-                this.countryConfig = $.parseJSON(CountryConfig);
+                this.regionJSON = $.parseJSON(RegionJSON);
+                this.data = this.regionJSON.coralData;
+                this.dataMangrove = this.regionJSON.mangroveData;
+                this.referenceLayers = this.regionJSON.referenceLayers;
+                this.countryConfig = this.regionJSON.regions;
+                this.adminFields = this.regionJSON.adminFields;
                 this.pluginTmpl = _.template(this.getTemplateById('plugin'));
                 this.printMangroveTmpl = _.template(mangrovePrintTemplate);
                 this.transitionsEnabled = false;
+                this.serviceURL = this.regionJSON.serviceURL;
+                this.adminUnitsIndex = this.regionJSON.adminUnitsIndex;
+                this.adminTableIndex = this.regionJSON.adminTableIndex;
 
                 this.$el = $(this.container);
 
-                
-
                 this.state = new State();
+                this.state = this.state.setRegion(this.regionJSON.defaultRegion);
+                if(this.regionJSON.hasAdmin && ! this.regionJSON.hasNCP) {
+                    this.state = this.state.setAdminVisibility(true);
+                }
                 this.provider = this.state.getProvider();
                 this.region = this.state.getRegion();
                 this.period = this.state.getPeriod();
                 this.layer = this.state.getLayer();
+                this.adminUnit = this.state.getAdminUnit();
+                this.adminVariable = this.state.getAdminVariable();
                 this.variable = this.state.getVariable();
                 this.coralVisibility = this.state.getCoralVisibility();
                 this.mangroveVisibility = this.state.getMangroveVisibility();
+                this.adminVisibility = this.state.getAdminVisibility();
                 this.layerID = 40; // TODO GET/SAVE STATE
 
                 this.layerLookup = {
@@ -129,6 +150,8 @@ define([
                 this.chart.position.height = 285 - this.chart.position.margin.top -
                     this.chart.position.margin.bottom;
                 $(this.printButton).hide();
+
+                
             },
 
             bindEvents: function() {
@@ -144,9 +167,13 @@ define([
                     this.app.paneNumber + ']', $.proxy(this.updateLayers, this));
 
                 this.$el.on('change', '#ncp-select-region', $.proxy(this.changeRegion, this));
-                this.$el.on('click', '.tab-item:not(.active) .tab-link', $.proxy(this.changeProvider, this));
+                this.$el.on('change', '#chosen-ref-layers', $.proxy(this.changeReferenceLayers, this));
+                this.$el.on('click', '.tab-item:not(.active) .tab-link', $.proxy(this.changeFocus, this));
+                this.$el.on('change', '#ncp-provider', $.proxy(this.changeProvider, this));
                 
-                this.$el.on('click', '.stat', function(e) {self.changeScenarioClick(e);});
+                this.$el.on('click', '#ncp-pane .stat', function(e) {self.changeScenarioClick(e);});
+                this.$el.on('click', '#admin-pane .stat', function(e) {self.changeAdminScenarioClick(e);});
+                this.$el.on('click', '#cancel-admin-select', function(e) {self.clearAdminSelection()});
                 this.$el.on('change', '.coral-select-container input',
                         $.proxy(this.toggleCoral, this));
                 this.$el.on('change', '.mangrove-select-container input',
@@ -161,7 +188,12 @@ define([
                 this.period = data.period;
                 this.layer = data.layer;
                 this.variable = data.variable;
+                this.adminUnit = data.adminUnit;
+                this.adminVariable = data.adminVariable;
                 this.coralVisibility = data.coralVisibility;
+                this.mangroveVisibility = data.mangroveVisibility;
+                this.adminVisibility = data.adminVisibility;
+                this.adminReferenceLayers = data.adminReferenceLayers;
             },
 
             getState: function() {
@@ -170,8 +202,12 @@ define([
                     period: this.state.getPeriod(),
                     layer: this.state.getLayer(),
                     variable: this.state.getVariable(),
+                    adminUnit: this.state.getAdminUnit(),
+                    adminVariable: this.state.getAdminVariable(),
                     coralVisibility: this.state.getCoralVisibility(),
-                    mangroveVisibility: this.state.getMangroveVisibility()
+                    mangroveVisibility: this.state.getMangroveVisibility(),
+                    adminVisibility: this.state.getAdminVisibility(),
+                    adminReferenceLayers: this.state.getAdminReferenceLayers()
                 };
             },
 
@@ -179,21 +215,71 @@ define([
             // been closed (not minimized). It sets up the layers with their default settings
 
             firstLoad: function() {
-                this.coralReefLayer = new ArcGISDynamicMapServiceLayer('https://services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {
-                    visible: this.state.getCoralVisibility(),
-                    opacity: 0.5
-                });
-                this.coralReefLayer.setVisibleLayers([1]);
-                this.mangroveLayer = new ArcGISDynamicMapServiceLayer('https://services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {
-                    visible: this.state.getMangroveVisibility(),
-                    opacity: 0.5
-                });
-                this.mangroveLayer.setVisibleLayers([39]);
-                this.coastalProtectionLayer = new ArcGISDynamicMapServiceLayer('https://services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {});
-                this.coastalProtectionLayer.setVisibleLayers([40]);
-                this.map.addLayer(this.coastalProtectionLayer);
-                this.map.addLayer(this.coralReefLayer);
-                this.map.addLayer(this.mangroveLayer);
+                var self = this;
+
+                if(this.regionJSON.hasNCP) {
+                    this.coralReefLayer = new ArcGISDynamicMapServiceLayer('https://services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {
+                        visible: this.state.getCoralVisibility(),
+                        opacity: 0.5
+                    });
+                    this.coralReefLayer.setVisibleLayers([1]);
+    
+                    this.mangroveLayer = new ArcGISDynamicMapServiceLayer('https://services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {
+                        visible: this.state.getMangroveVisibility(),
+                        opacity: 0.5
+                    });
+                    this.mangroveLayer.setVisibleLayers([39]);
+    
+                    this.coastalProtectionLayer = new ArcGISDynamicMapServiceLayer('https://services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {});
+                    this.coastalProtectionLayer.setVisibleLayers([17]);
+    
+                    this.map.addLayer(this.coastalProtectionLayer);
+                    this.map.addLayer(this.coralReefLayer);
+                    this.map.addLayer(this.mangroveLayer);
+                }
+
+                if(this.regionJSON.hasAdmin) {
+                    this.adminUnitsLayer = new FeatureLayer(this.serviceURL + '/' + this.adminUnitsIndex, {
+                        visible: this.state.getAdminVisibility(),
+                        surfaceType: "svg",
+                        dataAttributes: [
+                            "OBJECTID",
+                            "ADMIN_ID"
+                        ]
+                    });
+    
+                    // Set selection style of the layer
+                    this.adminUnitsLayer.setSelectionSymbol(new SimpleFillSymbol(
+                        SimpleFillSymbol.STYLE_SOLID,
+                            new SimpleLineSymbol(
+                                SimpleLineSymbol.STYLE_SOLID, 
+                                new Color([0, 150, 214, 1]), 
+                                3
+                            ),
+                            new Color([0, 0, 0, 0.1])
+                        )
+                    );
+    
+                    this.adminUnitsLayer.on("click", function(e) {
+                        self.changeAdminClick(e.graphic.attributes.ADMIN_ID, new Extent(e.graphic._extent).expand(1.5));
+                    });
+    
+                    this.adminVisualizationLayer = new ArcGISDynamicMapServiceLayer(this.serviceURL, {
+                        visible: this.state.getAdminVisibility(),
+                        opacity: 0.5
+                    });
+    
+                    this.adminReferenceLayers = new ArcGISDynamicMapServiceLayer(this.serviceURL, {
+                        visible: this.state.getAdminVisibility(),
+                        opacity: 1
+                    });
+    
+                    this.adminLookupTable = new QueryTask(this.serviceURL + "/" + this.adminTableIndex);
+    
+                    this.map.addLayer(this.adminUnitsLayer);
+                    this.map.addLayer(this.adminVisualizationLayer);
+                    this.map.addLayer(this.adminReferenceLayers);
+                }
             },
 
             // This function runs everytime the plugin is open.  If the plugin was previously
@@ -201,56 +287,82 @@ define([
             activate: function() {
                 var self = this;
 
-                var RP = ['25RP', '50RP', '100RP'];
-
-                this.render();
-                this.renderChart();
-
                 this.$el.prev('.sidebar-nav').find('.nav-title').css('margin-left', '25px');
 
                 // If the plugin hasn't been opened, or if it was closed (not-minimized)
                 // run the firstLoad function and reset the default variables
-                if (!this.coastalProtectionLayer || !this.coastalProtectionLayer.visible) {
+                if (!this.coastalProtectionLayer || !this.coastalProtectionLayer.visible || !this.adminUnitsLayer || !this.adminUnitsLayer.visible) {
                     this.firstLoad();
                 }
-                this.coastalProtectionLayer.show();
 
-                // Restore storm period radios
-                this.$el.find('input[value=' + this.period + ']').prop('checked', true);
-                if(RP.includes(this.period)) {
-                    this.$el.find('input#BCS-option').prop('checked', true);
+                var RP = ['25RP', '50RP', '100RP'];
+
+                this.render();
+
+                if(this.regionJSON.hasNCP) {
+                    this.renderChart();
+                    this.coastalProtectionLayer.show();
+    
+                    // Restore storm period radios
+                    this.$el.find('input[value=' + this.period + ']').prop('checked', true);
+                    if(RP.includes(this.period)) {
+                        this.$el.find('input#BCS-option').prop('checked', true);
+                    }
+    
+                    // restore state of people, capital, area selector
+                    this.$el.find('.stat.active').removeClass('active');
+                    this.$el.find('.' + this.layer + '.stat').addClass('active');
+
+                    // Restore state of coral reef checkbox
+                    if (this.coralReefLayer.visible) {
+                        this.$el.find('.coral-select-container input').prop('checked', true);
+                    }
+
+                    this.$el.find('.info-tooltip').tooltip({
+                        tooltipClass: 'ncp-tooltip',
+                        track: true
+                    });
+
+                    if (this.provider === 'mangroves') {
+                        this.$el.find('#ncp-provider').prop('checked', true);
+                    }
+
+                    // Restore state of region select
+                    this.$el.find('#ncp-select-region').val(this.region).trigger('chosen:updated');
+                    this.changeRegion();
+                    this.updateLayers();
                 }
+                
+               
 
-                // restore state of people, capital, area selector
-                this.$el.find('.stat.active').removeClass('active');
-                this.$el.find('.' + this.layer + '.stat').addClass('active');
-
-                // Restore state of region select
-                this.$el.find('#ncp-select-region').val(this.region).trigger('chosen:updated');
-
-                // Restore state of coral reef checkbox
-                if (this.coralReefLayer.visible) {
-                    this.$el.find('.coral-select-container input').prop('checked', true);
+                if(this.regionJSON.hasAdmin) {
+                    this.changeRegion();
+                    this.$el.find('.' + this.adminVariable + '.stat').addClass('active');
+                    if(this.state.getAdminVisibility()) {
+                        this.changeFocus();
+                        this.$el.find('#admin-pane').addClass('active');
+                        this.$el.find('#ncp-pane').removeClass('active');
+                        this.$el.find('#admin-tab').addClass('active');
+                        this.$el.find('#ncp-tab').removeClass('active');
+                        this.adminUnitsLayer.refresh();
+                        this.adminVisualizationLayer.refresh();
+                        this.adminReferenceLayers.refresh();
+                    }
                 }
-
-                this.$el.find('.info-tooltip').tooltip({
-                    tooltipClass: 'ncp-tooltip',
-                    track: true
-                });
-
-                if (this.provider === 'mangroves') {
-                    this.$el.find('#mangrove-tab').find('.tab-link').click();
-                    this.$el.find('#coral-tab').removeClass('active');
-                    this.$el.find('#mangrove-tab').addClass('active');
-                }
-
-                this.updateLayers();
             },
 
             deactivate: function() {
                 if (this.appDiv !== undefined) {
-                    this.coralReefLayer.hide();
-                    this.coastalProtectionLayer.hide();
+                    if(this.regionJSON.hasNCP) {
+                        this.coralReefLayer.hide();
+                        this.coastalProtectionLayer.hide();
+                        this.mangroveLayer.hide();
+                    }
+                    if(this.regionJSON.hasAdmin) {
+                        this.adminUnitsLayer.hide();
+                        this.adminVisualizationLayer.hide();
+                        this.adminReferenceLayers.hide();
+                    }
                     $(this.legendContainer).hide().html();
                 }
             },
@@ -259,8 +371,16 @@ define([
             hibernate: function() {
                 // Cleanup
                 if (this.appDiv !== undefined) {
-                    this.coralReefLayer.hide();
-                    this.coastalProtectionLayer.hide();
+                    if(this.regionJSON.hasNCP) {
+                        this.coralReefLayer.hide();
+                        this.coastalProtectionLayer.hide();
+                        this.mangroveLayer.hide();
+                    }
+                    if(this.regionJSON.hasAdmin) {
+                        this.adminUnitsLayer.hide();
+                        this.adminVisualizationLayer.hide();
+                        this.adminReferenceLayers.hide();
+                    }
                     $(this.legendContainer).hide().html();
                 }
             },
@@ -273,8 +393,52 @@ define([
                 this.updateLayers();
             },
 
+            changeFocus: function() {
+                if(this.regionJSON.hasNCP) {
+                    if(this.$el.find('#ncp-tab').hasClass('active')) {
+                        this.adminUnitsLayer.setVisibility(true);
+                        this.adminVisualizationLayer.setVisibility(true);
+                        this.adminReferenceLayers.setVisibility(true);
+                        this.state = this.state.setAdminVisibility(true);
+                        if(this.state.getAdminUnit()) {
+                            this.changeAdminClick(this.state.getAdminUnit(), null);
+                        } else {
+                            this.calcAdminByCountry();
+                        }
+                        if(this.state.getAdminReferenceLayers()) {
+                            this.$el.find('#chosen-ref-layers').val(this.state.getAdminReferenceLayers()).trigger('chosen:updated').trigger('change');
+                        }
+                        this.$el.find('.' + this.state.getAdminVariable() + '.stat').click();
+                    } else {
+                        console.log('foucs change');
+                        this.adminUnitsLayer.setVisibility(false);
+                        this.adminVisualizationLayer.setVisibility(false);
+                        this.adminReferenceLayers.setVisibility(false);
+                        this.state = this.state.setAdminVisibility(false);
+                        this.changeRegion();
+                        this.changePeriod();
+                        this.updateLayers();
+                    }
+                } else {
+                    this.adminUnitsLayer.setVisibility(true);
+                    this.adminVisualizationLayer.setVisibility(true);
+                    this.adminReferenceLayers.setVisibility(true);
+                    this.state = this.state.setAdminVisibility(true);
+                    if(this.state.getAdminUnit()) {
+                        this.changeAdminClick(this.state.getAdminUnit(), null);
+                    } else {
+                        this.calcAdminByCountry();
+                    }
+                    if(this.state.getAdminReferenceLayers()) {
+                        console.log(this.state.getAdminReferenceLayers());
+                        this.$el.find('#chosen-ref-layers').val(this.state.getAdminReferenceLayers()).trigger('chosen:updated').trigger('change');
+                    }
+                    this.$el.find('.' + this.state.getAdminVariable() + '.stat').click();
+                }
+            },
+
             changeProvider: function() {
-                if (this.$el.find('#coral-tab').hasClass('active')) {
+                if (this.$el.find('#ncp-provider').prop('checked')) {
                     this.state = this.state.setProvider('mangroves');
                     this.provider = 'mangroves';
                 } else {
@@ -286,6 +450,7 @@ define([
                 this.$el.find('input[value=' + this.period + ']').prop('checked', true);
                 this.$el.find('input#BCS-option').prop('checked', false);
                 this.$el.find('#ncp-select-region').prop('disabled', false);
+
                 if (this.provider === 'coral') {
                     this.$el.find('#rp50').hide();
                     this.$el.find('#rp100').show();
@@ -297,7 +462,7 @@ define([
                     this.$el.find('.mangrove-select-container input').prop('checked', false).trigger('change');
                     this.$el.find('.coral-only').show();
                     this.$el.find('.mangrove-only').hide();
-                    this.$el.find('#ncp-select-region').val("Global").trigger('chosen:updated');
+                    this.$el.find('#ncp-select-region').trigger('chosen:updated');
                 } else if (this.provider === 'mangroves') {
                     this.$el.find('#rp50').show();
                     this.$el.find('#rp100').hide();
@@ -343,6 +508,278 @@ define([
                 }
             },
 
+            changeAdminClick: function(admin_id, extent) {
+                var self = this;
+                if(extent) {
+                    this.map.setExtent(extent, true);
+                }
+                
+                // select the chosen admin unti
+                var selectionQuery = new Query();
+                selectionQuery.where = "ADMIN_ID = " + admin_id;
+                selectionQuery.outFields = this.adminFields;
+                this.adminUnitsLayer.selectFeatures(selectionQuery);
+
+                // update state to reflect the new unti
+                this.adminUnit = admin_id;
+                this.state = this.state.setAdminUnit(this.adminUnit);
+
+                // get all fields from lookup table, update UI
+                this.adminLookupTable.execute(selectionQuery, function(featureSet) {
+                    self.updateDemographics(featureSet.features[0].attributes);
+                    self.$el.find('.admin-name').html(featureSet.features[0].attributes.ADMIN_NAME);
+                    self.$el.find('#cancel-admin-select').show();
+                });
+            },
+
+            changeReferenceLayers: function() {
+                var layers = $('#chosen-ref-layers').val();
+                if(layers) {
+                    this.adminReferenceLayers.setVisibleLayers(layers);
+                    this.state = this.state.setAdminReferenceLayers(layers);
+                } else {
+                    this.adminReferenceLayers.setVisibleLayers([]);
+                    this.state = this.state.setAdminReferenceLayers([]);
+                }
+            },
+
+            clearAdminSelection: function() {
+                this.$el.find('.admin-name').html(this.region);
+                this.adminUnitsLayer.clearSelection();
+                this.state = this.state.setAdminUnit(false)
+                this.calcAdminByCountry();
+            },
+
+            calcAdminByCountry: function() {
+                var self = this;
+
+                this.$el.find('#cancel-admin-select').hide();
+
+                var selectionQuery = new Query();
+                selectionQuery.where = "1=1";
+                selectionQuery.outFields = this.adminFields;
+                
+                // get all fields/records from lookup table, update UI
+                this.adminLookupTable.execute(selectionQuery, function(featureSet) {
+                    var values = {};
+                    count = 0;
+
+                    // SUM all values for all records
+                    featureSet.features.forEach(feature => {
+                        var attrs = feature.attributes;
+                        self.adminFields.forEach(field => {
+                            if(values.hasOwnProperty(field) && attrs[field] != null) {
+                                values[field] = values[field] + attrs[field];
+                            } else {
+                                values[field] = attrs[field];
+                            }
+                        });
+                        count = count + 1;
+                    });
+
+                    // for averages, divide by total number of records
+                    if(values["POP_FLDRISK"]) {
+                        values["POP_FLDRISK"] = values["POP_FLDRISK"] / count;
+                    }
+                    if(values["POP_PVTY1"]) {
+                        values["POP_PVTY1"] = values["POP_PVTY1"] / count;
+                    }
+                    if(values["POP_PVTY2"]) {
+                        values["POP_PVTY2"] = values["POP_PVTY2"] / count;
+                    }
+                    if(values["POP_ILLT"]) {
+                        values["POP_ILLT"] = values["POP_ILLT"] / count;
+                    }
+                    if(values["POP_AGE"]) {
+                        values["POP_AGE"] = values["POP_AGE"] / count;
+                    }
+                    if(values["HOUSE_DENS"]) {
+                        values["HOUSE_DENS"] = values["HOUSE_DENS"] / count;
+                    }
+                    if(values["CLIMATE_VUL"]) {
+                        values["CLIMATE_VUL"] = values["CLIMATE_VUL"] / count;
+                    }
+                    if(values["MANG_CHNG"]) {
+                        values["MANG_CHNG"] = values["MANG_CHNG"] / count;
+                    }
+
+                    // Update UI
+                    self.updateDemographics(values);
+                });
+            },
+
+            /* 
+                Update displayed census statistics and their values. 
+                Show/hide fields based on null value returned from service as some geographies will not include all statistics 
+            */
+            updateDemographics: function(stats) {
+                if(stats.POP_FLDRISK_NO != null) {
+                    this.$el.find('.stat.population-flood').show();
+                    this.$el.find('.stat.population-flood .number .variable').html(
+                        this.numberWithCommas(Math.round(stats.POP_FLDRISK_NO))
+                    );
+                } else {
+                    this.$el.find('.stat.population-flood').hide();
+                }
+
+                if(stats.POP_FLDRISK != null) {
+                    this.$el.find('.stat.percent-population-flood').show();
+                    this.$el.find('.stat.percent-population-flood .number .variable').html(
+                        this.numberWithCommas(Math.round(stats.POP_FLDRISK * 100))
+                    );
+                } else {
+                    this.$el.find('.stat.percent-population-flood').hide();
+                }
+
+                if(stats.POP_PVTY1 != null) {
+                    this.$el.find('.stat.percent-population-icv1').show();
+                    this.$el.find('.stat.percent-population-icv1 .number .variable').html(
+                        this.numberWithCommas(Math.round(stats.POP_PVTY1 * 100))
+                    );
+                } else {
+                    this.$el.find('.stat.percent-population-icv1').hide();
+                }
+
+                if(stats.POP_PVTY2 != null) {
+                    this.$el.find('.stat.percent-population-icv2').show();
+                    this.$el.find('.stat.percent-population-icv2 .number .variable').html(
+                        this.numberWithCommas(Math.round(stats.POP_PVTY2 * 100))
+                    );
+                } else {
+                    this.$el.find('.stat.percent-population-icv2').hide();
+                }
+
+                if(stats.POP_ILLT != null) {
+                    this.$el.find('.stat.percent-population-illiterate').show();
+                    this.$el.find('.stat.percent-population-illiterate .number .variable').html(
+                        this.numberWithCommas(Math.round(stats.POP_ILLT * 100))
+                    );
+                } else {
+                    this.$el.find('.stat.percent-population-illiterate').hide();
+                }
+
+                if(stats.POP_AGE != null) {
+                    this.$el.find('.stat.percent-vulnerable-population').show();
+                    this.$el.find('.stat.percent-vulnerable-population .number .variable').html(
+                        this.numberWithCommas(Math.round(stats.POP_AGE * 100))
+                    );
+                } else {
+                    this.$el.find('.stat.percent-vulnerable-population').hide();
+                }
+
+                if(stats.INFRA_RDS != null) {
+                    this.$el.find('.stat.infra-roads').show();
+                    this.$el.find('.stat.infra-roads .number .variable').html(
+                        this.numberWithCommas(Math.round(stats.INFRA_RDS))
+                    );
+                } else {
+                    this.$el.find('.stat.infra-roads').hide();
+                }
+
+                if(stats.INFRA_FACIL != null) {
+                    this.$el.find('.stat.infra-facilities').show();
+                    this.$el.find('.stat.infra-facilities .number .variable').html(
+                        this.numberWithCommas(Math.round(stats.INFRA_FACIL * 100))
+                    );
+                } else {
+                    this.$el.find('.stat.infra-facilities').hide();
+                }
+
+                if(stats.INFRA_EMERG != null) {
+                    this.$el.find('.stat.infra-emergency').show();
+                    this.$el.find('.stat.infra-emergency .number .variable').html(
+                        this.numberWithCommas(Math.round(stats.INFRA_EMERG * 100))
+                    );
+                } else {
+                    this.$el.find('.stat.infra-emergency').hide();
+                }
+
+                if(stats.INFRA_COMM != null) {
+                    this.$el.find('.stat.infra-community').show();
+                    this.$el.find('.stat.infra-community .number .variable').html(
+                        this.numberWithCommas(Math.round(stats.INFRA_COMM))
+                    );
+                } else {
+                    this.$el.find('.stat.infra-community').hide();
+                }
+
+                if(stats.CLIMATE_VUL != null) {
+                    this.$el.find('.stat.climate-vulnerability').show();
+                    this.$el.find('.stat.climate-vulnerability .number .variable').html(
+                        this.numberWithCommas(Math.round(stats.CLIMATE_VUL * 100))
+                    );
+                } else {
+                    this.$el.find('.stat.climate-vulnerability').hide();
+                }
+
+                if(stats.HOUSE_DENS != null) {
+                    this.$el.find('.stat.house-density').show();
+                    this.$el.find('.stat.house-density .number .variable').html(
+                        this.numberWithCommas(Math.round(stats.HOUSE_DENS * 100))
+                    );
+                } else {
+                    this.$el.find('.stat.house-density').hide();
+                }
+
+                if(stats.REEF_AREA != null) {
+                    this.$el.find('.stat.reef-area').show();
+                    this.$el.find('.stat.reef-area .number .variable').html(
+                        this.numberWithCommas(Math.round(stats.REEF_AREA * 100))
+                    );
+                } else {
+                    this.$el.find('.stat.reef-area').hide();
+                }
+
+                if(stats.MANG_AREA != null) {
+                    this.$el.find('.stat.mangrove-area').show();
+                    this.$el.find('.stat.mangrove-area .number .variable').html(
+                        this.numberWithCommas(Math.round(stats.MANG_AREA))
+                    );
+                } else {
+                    this.$el.find('.stat.mangrove-area').hide();
+                }
+
+                if(stats.GRASS_AREA != null) {
+                    this.$el.find('.stat.grass-area').show();
+                    this.$el.find('.stat.grass-area .number .variable').html(
+                        this.numberWithCommas(Math.round(stats.GRASS_AREA * 100))
+                    );
+                } else {
+                    this.$el.find('.stat.grass-area').hide();
+                }
+
+                if(stats.MANG_CHNG != null) {
+                    this.$el.find('.stat.mangrove-change').show();
+                    this.$el.find('.stat.mangrove-change .number .variable').html(
+                        this.numberWithCommas(Math.round(stats.MANG_CHNG * 100))
+                    );
+                } else {
+                    this.$el.find('.stat.mangrove-change').hide();
+                }
+
+            },
+
+            changeAdminScenarioClick: function(e) {
+                var self = this;
+
+                // change active state of stats and get the layer id to turn on
+                var layer = $(e.currentTarget).closest('.stat').data('layer');
+                this.$el.find('#admin-pane .stat.active').removeClass('active');
+                $(e.currentTarget).closest('.stat').addClass('active');
+
+                // set visible layer to new state - refresh layer to update
+                this.adminVisualizationLayer.setVisibleLayers([layer]);
+                this.adminVisualizationLayer.refresh();
+
+                // update state with newly selected stat
+                var classList = $(e.currentTarget).closest('.stat').attr('class').split(/\s+/);
+                $.each(classList, function(index, item) {
+                    if(item != 'stat' && item != 'active') {
+                        self.state = self.state.setAdminVariable(item);
+                    }
+                });
+            },
+
             // Change the storm return period and update the facts to match
             changePeriod: function() {
                 //http://stackoverflow.com/a/2901298
@@ -381,6 +818,11 @@ define([
             // countries
             changeRegion: function(e) {
                 this.region = this.$el.find('#ncp-select-region').val();
+                if(!this.region) {
+                    this.region = this.regionJSON.defaultRegion;
+                }
+                console.log(this.region);
+
                 // Show/hide the download country summary button
                 if (this.region === 'Global') {
                     this.$el.find('.js-getSnapshot').hide();
@@ -388,6 +830,11 @@ define([
                 } else {
                     this.$el.find('.js-getSnapshot').show();
                     this.$el.find('.js-getdata').hide();
+                }
+
+                if(this.adminUnitsLayer) {
+                    this.$el.find('.admin-name').html(this.region);
+                    this.adminUnitsLayer.clearSelection();
                 }
 
                 var regionExtent;
@@ -401,14 +848,14 @@ define([
                 // Set the zoom extent
                 if (this.region === 'Global' && this.provider === 'coral') {
                     var initialExtent = this.app.regionConfig.initialExtent;
-                    extent = new esri.geometry.Extent(
+                    extent = new Extent(
                         initialExtent[0],
                         initialExtent[1],
                         initialExtent[2],
                         initialExtent[3]
                     );
                 } else {
-                    extent = new esri.geometry.Extent(
+                    extent = new Extent(
                         regionExtent[0],
                         regionExtent[1],
                         regionExtent[2],
@@ -424,8 +871,9 @@ define([
                     eventLabel: this.region
                 });
 
-                this.updateLayers();
-
+                if(this.regionJSON.hasNCP) {
+                    this.updateLayers();
+                }
             },
 
             updateLayers: function(e) {
@@ -484,14 +932,23 @@ define([
                 // Get html from content.html, prepend appDiv.id to html element id's,
                 // and add to appDiv
                 var idUpdate = this.pluginTmpl({
-                    global: this.data.Global,
+                    global: this.data[this.region],
+                    referenceLayers: this.referenceLayers,
                     regionsCoral: this.data,
                     regionsMangrove: this.dataMangrove,
+                    region: this.region,
+                    hasAdmin: this.regionJSON.hasAdmin,
+                    hasNCP: this.regionJSON.hasNCP,
                     pane: this.app.paneNumber}).replace(/id='/g, "id='" + this.id);
                 this.$el.find('#' + this.id).html(idUpdate);
 
                 this.$el.find('#ncp-select-region').chosen({
                     disable_search_threshold: 20,
+                    width: '100%'
+                });
+
+                this.$el.find('#chosen-ref-layers').chosen({
+                    max_selected_options: 3,
                     width: '100%'
                 });
 
@@ -505,10 +962,20 @@ define([
                     });
                 });
 
-                $(this.container).find('.info-button').on('click', function(c) {
+                $(this.container).find('#ncp-pane .info-button').on('click', function(c) {
                     TINY.box.show({
                         animate: true,
                         url: self.provider === 'mangroves' ? 'plugins/natural_coastal_protection/tooltip_mangroves.html' : 'plugins/natural_coastal_protection/tooltip_corals.html',
+                        boxid: 'plugin-tiny-box',
+                        width: 640,
+                        height: 500
+                    });
+                });
+
+                $(this.container).find('#admin-pane .info-button').on('click', function(c) {
+                    TINY.box.show({
+                        animate: true,
+                        url: 'plugins/natural_coastal_protection/test.html',
                         boxid: 'plugin-tiny-box',
                         width: 640,
                         height: 500

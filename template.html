@@ -38,9 +38,9 @@
 		letter-spacing: 0;
 	}
 
-	section.header .toggle-controls-container {
+	section.stats .toggle-controls-container {
 		text-align: center;
-	    margin-bottom: 10px;
+		margin: 10px auto;
 	}
 
 	.tab-link {
@@ -233,7 +233,7 @@
 	}
 
 	.ncp-plugin .chosen-results li {
-		display: block !important;
+		display: block;
 	}
 
 	/* End Checkboxes */
@@ -275,7 +275,7 @@
 		width: 48px;
 		position: absolute;
 		top: -22px;
-		right: 75px;
+		right: 25px;
 		cursor: pointer;
 	}
 
@@ -296,7 +296,7 @@
 		width: 48px;
 		position: absolute;
 		top: -22px;
-		right: 25px;
+		right: 75px;
 		cursor: pointer;
 	}
 
@@ -413,6 +413,7 @@
 		width: 32%;
 		display: inline-block;
 		text-align: center;
+		margin: 10px 0;
 	}
 
 	.ncp-plugin .stat .description,
@@ -429,7 +430,7 @@
 	}
 
 	.ncp-plugin .stat .number {
-		font-size: 24px;
+		font-size: 22px;
 		font-weight: bold;
 		color: #555555;
 	}
@@ -656,6 +657,25 @@
 	  border-radius: 50%;
 	}
 
+	/* ADMIN UNIT SPECIFIC STYLES */
+	.ncp-plugin #admin-pane .admin-title {
+		width: 100%;
+		margin: 0 0 15px 0;
+	}
+
+	.ncp-plugin #admin-pane .admin-name {
+		display: inline-block;
+		margin-top: 1rem;
+	}
+
+	.ncp-plugin #admin-pane #cancel-admin-select {
+		cursor: pointer;
+		float: right;
+	}
+
+	.ncp-plugin section.ref-layers {
+
+	}
 </style>
 
 	<div class="ncp-plugin">
@@ -663,15 +683,24 @@
 			<h3 class="ncp-title">Flood Protection Analysis</h3>
 		</section>
 		<ul class="nav nav-tabs" role="tablist">
-			<li role="presentation" id="coral-tab" class="tab-item active"><a href="#tab" class="tab-link" aria-controls="coral" role="tab" data-toggle="tab" aria-expanded="true">Coral Reefs</a></li>
-			<li role="presentation" id="mangrove-tab" class="tab-item"><a href="#tab" class="tab-link" aria-controls="mangroves" role="tab" data-toggle="tab" aria-expanded="false">Mangroves</a></li>
+			<li role="presentation" id="ncp-tab" class="original tab-item active" <% if (!hasNCP) { %> style="display: none;" <% } %> ><a href="#ncp-pane" class="tab-link" aria-controls="ncp-pane" role="tab" data-toggle="tab" aria-expanded="true">Coastal Protection</a></li>
+			<li role="presentation" id="admin-tab" class="original tab-item" <% if (!hasAdmin) { %> style="display: none;" <% } %> ><a href="#admin-pane" class="tab-link" aria-controls="admin-pane" role="tab" data-toggle="tab" aria-expanded="false">Admin Units</a></li>
 		</ul>
 		<div class="tab-content">
-			<div class="tab-pane active" id="tab">
+			<div role="tabpanel" class="tab-pane active" id="ncp-pane" <% if (!hasNCP) { %> style="display: none;" <% } %> >
 
 				<section class="stats">
 
 					<section class="stats-description">
+						<div class="toggle-controls-container">
+							<span class="toggle-option">Coral Reefs</span>
+							<label class="switch">
+								<input id="ncp-provider" type="checkbox">
+								<span class="slider round"></span>
+							</label>
+								<span class="toggle-option">Mangroves</span>
+						</div>
+
 						The people and property protected by <span class="coral-only">coral reefs</span><span class="mangrove-only" style="display: none;">mangroves</span> (values represent predicted losses avoided by keeping <span class="coral-only">coral</span><span class="mangrove-only" style="display: none;">mangroves</span> intact). <br /><br />
 						Statistics in blue are currently displayed on the map and graph. Choose another variable to change the data shown.
 					</section>
@@ -708,16 +737,16 @@
 					<div class="ncp-description">
 						Estimates of the benefits provided by <span class="coral-only">coral reefs</span><span class="mangrove-only" style="display: none;">mangroves</span> in flood protection annually and from catastrophic storms
 					</div>
-					<div class="chosen-wrap" style="max-width: 160px; margin-bottom:10px;">
-						<select id="ncp-select-region" class="chosen">
-							<% _.each(regionsCoral, function(val, key) { %>
-								<option class="coral" value="<%= key %>" <% if (key === "Global") { %> selected <% } %>><%= key %></option>
-							<% }); %>
-							<% _.each(regionsMangrove, function(val, key) { %>
-								<option style="display: none;" class="mangrove" value="<%= key %>" <% if (key === "Global") { %> selected <% } %>><%= key %></option>
-							<% }); %>
-						</select>
-					</div>
+					<div class="chosen-wrap" style="width: 160px; margin-bottom:10px;">
+							<select id="ncp-select-region" class="chosen">
+								<% _.each(regionsCoral, function(val, key) { %>
+										<option class="coral" value="<%= key %>" <% if (key === region) { %> selected <% } %>><%= key %></option>
+									<% }); %>
+									<% _.each(regionsMangrove, function(val, key) { %>
+										<option style="display: none;" class="mangrove" value="<%= key %>" <% if (key === region) { %> selected <% } %>><%= key %></option>
+									<% }); %>
+							</select>
+						</div>
 
 					<section class="country">
 
@@ -790,7 +819,148 @@
 				</div>
 
 			</div>
+			<div role="tabpanel" class="tab-pane" id="admin-pane" <% if (!hasAdmin) { %> style="display: none;" <% } %> >
+				<section class="stats">
+					<section class="stats-description">
+						<button class="button button-default" id="cancel-admin-select"><i class="icon-cancel"></i> Clear Selection</button>
+						<h3 class="admin-title"><span class="admin-name"><%= region %></span></h3>
+
+						<section class="ref-layers">
+							<h4>Reference Layers</h4>
+							<div class="chosen-wrap">
+								<select data-placeholder="Select up to three" id="chosen-ref-layers" multiple="true" class="chosen">
+										<% _.each(referenceLayers, function(val, key) { %>
+											<option class="ref-layer-option" value="<%= val %>"><%= key %></option>
+										<% }); %>
+								</select>
+							</div>
+						</section>
+						
+						<h4>Census Statistics</h4>
+						Select an administrative unit on the map to view census-based demographics and other statistics about that unit.<br /><br />
+						Select an individual statistic to visualize it's spatial distribution on the map
+					</section>
+					<img class="info-button" src="plugins/natural_coastal_protection/infoIcon.svg" alt="info icon" />
+
+					<div class="stats-container">
+
+						<div class="stat population-flood" data-layer="3">
+							<div class="number"><span class="variable"></span><span class="units"></span></div>
+							<div class="description">
+								<span class="description-text">Population Within Flood Extent</span>
+							</div>
+						</div>
+
+						<div class="stat percent-population-flood" data-layer="4">
+							<div class="number"><span class="variable"></span><span class="units">%</span></div>
+							<div class="description"> 
+								<span class="description-text">% Population Within Flood Extent</span>
+							</div>
+						</div>
+
+						<div class="stat percent-population-icv1" data-layer="5">
+							<div class="number"><span class="variable"></span><span class="units">%</span></div>
+							<div class="description">
+								<span class="description-text">Population in Poverty (ICV1)</span>
+							</div>
+						</div>
+
+						<div class="stat percent-population-icv2" data-layer="6">
+							<div class="number"><span class="variable"></span><span class="units">%</span></div>
+							<div class="description">
+								<span class="description-text">Population in Poverty (ICV2)</span>
+							</div>
+						</div>
+
+						<div class="stat percent-population-illiterate" data-layer="7">
+							<div class="number"><span class="variable"></span><span class="units">%</span></div>
+							<div class="description">
+								<span class="description-text">Illiteracy Rate</span>
+							</div>
+						</div>
+
+						<div class="stat percent-vulnerable-population" data-layer="8">
+							<div class="number"><span class="variable"></span><span class="units">%</span></div>
+							<div class="description"> 
+								<span class="description-text">Vulnerable Population</span>
+							</div>
+						</div>
+
+						<div class="stat infra-roads" data-layer="9">
+							<div class="number"><span class="variable"></span><span class="units">km</span></div>
+							<div class="description"> 
+								<span class="description-text">Roads</span>
+							</div>
+						</div>
+
+						<div class="stat infra-facilities" data-layer="10">
+							<div class="number"><span class="variable"></span><span class="units"></span></div>
+							<div class="description"> 
+								<span class="description-text">Critical Facilities Within Flood Extent</span>
+							</div>
+						</div>
+
+						<div class="stat infra-emergency" data-layer="11">
+							<div class="number"><span class="variable"></span><span class="units"></span></div>
+							<div class="description"> 
+								<span class="description-text">Emergency Facilities Within Flood Extent</span>
+							</div>
+						</div>
+
+						<div class="stat infra-community" data-layer="12">
+							<div class="number"><span class="variable"></span><span class="units"></span></div>
+							<div class="description"> 
+								<span class="description-text">Community Facilities Within Flood Extent</span>
+							</div>
+						</div>
+
+						<div class="stat house-density" data-layer="13">
+							<div class="number"><span class="variable"></span><span class="units">per km<sup>2</sup></span></div>
+							<div class="description"> 
+								<span class="description-text">Housing Density</span>
+							</div>
+						</div>
+
+						<div class="stat climate-vulnerability" data-layer="14">
+							<div class="number"><span class="variable"></span><span class="units">%</span></div>
+							<div class="description"> 
+								<span class="description-text">Households Vulnerable to Coastal Hazards</span>
+							</div>
+						</div>
+
+						<div class="stat reef-area" data-layer="15">
+							<div class="number"><span class="variable"></span><span class="units">km<sup>2</sup></span></div>
+							<div class="description"> 
+								<span class="description-text">Coral Reef Area</span>
+							</div>
+						</div>
+
+						<div class="stat mangrove-area" data-layer="16">
+							<div class="number"><span class="variable"></span><span class="units">km<sup>2</sup></span></div>
+							<div class="description"> 
+								<span class="description-text">Mangrove Area</span>
+							</div>
+						</div>
+
+						<div class="stat grass-area" data-layer="17">
+							<div class="number"><span class="variable"></span><span class="units">km<sup>2</sup></span></div>
+							<div class="description"> 
+								<span class="description-text">Sea Grass Area</span>
+							</div>
+						</div>
+
+						<div class="stat mangrove-change" data-layer="18">
+							<div class="number"><span class="variable"></span><span class="units">%</span></div>
+							<div class="description"> 
+								<span class="description-text">Change in Mangroves</span>
+							</div>
+						</div>
+
+					</div>
+				</section>
+			</div>
 		</div>
+
 		<section class="documents">
 			<span class="control-title" style="margin-bottom: 1rem;">Documents:</span>
 			<button class="button button-default js-getSnapshot" target="_blank" style="display: none"><img class="download-icon" src="plugins/natural_coastal_protection/downloadIcon.svg" alt="download" />Print<br>Country Summary</button>

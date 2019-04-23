@@ -13,8 +13,12 @@ define([
                     period: 'ANN',
                     layer: 'people',
                     variable: 'PF',
+                    adminReferenceLayers: [],
+                    adminUnit: false,
+                    adminVariable: 'population-flood',
                     coralVisibility: false,
                     mangroveVisibility: false,
+                    adminVisibility: false
                 });
             },
 
@@ -72,6 +76,36 @@ define([
                 return this.savedState.variable;
             },
 
+            setAdminReferenceLayers: function(layers) {
+                return this.clone({
+                    adminReferenceLayers: layers
+                });
+            },
+
+            getAdminReferenceLayers: function() {
+                return this.savedState.adminReferenceLayers;
+            },
+
+            setAdminUnit: function(unit) {
+                return this.clone({
+                    adminUnit: unit
+                });
+            },
+
+            getAdminUnit: function() {
+                return this.savedState.adminUnit;
+            },
+
+            setAdminVariable: function(variable) {
+                return this.clone({
+                    adminVariable: variable
+                });
+            },
+
+            getAdminVariable: function() {
+                return this.savedState.adminVariable;
+            },
+
             setCoralVisibility: function(coralVisibility) {
                 return this.clone({
                     coralVisibility: coralVisibility
@@ -90,6 +124,16 @@ define([
 
             getMangroveVisibility: function() {
                 return this.savedState.mangroveVisibility;
+            },
+
+            setAdminVisibility: function(adminVisibility) {
+                return this.clone({
+                    adminVisibility: adminVisibility
+                });
+            },
+
+            getAdminVisibility: function() {
+                return this.savedState.adminVisibility;
             },
 
             // Return new State combined with `data`.

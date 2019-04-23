@@ -1,9 +1,3 @@
-<script type="text/template" id="info-button-template">
-	<button title="View infographic" class="button button-default ig-icon viewCrsInfoGraphicIcon">
-		<img src="plugins/natural_coastal_protection/InfographicIcon_v1_23x23.png" alt="show overview graphic">
-	</button>
-</script>
-
 <script type="text/template" id="plugin">
 
 <style>
@@ -37,40 +31,112 @@
 	section.header h3 {
 		text-align: center;
 		line-height: 2;
+		margin-top: 1rem;
+		margin-bottom: 0;
+		font-size: 18px;
+		color: #555555;
+		letter-spacing: 0;
 	}
 
-	section.header .toggle-controls-container {
+	section.stats .toggle-controls-container {
 		text-align: center;
-	    margin-bottom: 10px;
+		margin: 10px auto;
+	}
+
+	.tab-link {
+		font-size: 14px;
+		font-weight: 600;
+	}
+
+	.ncp-description {
+		margin-bottom: 2rem;
+		text-align: center;
+		line-height: 18px;
 	}
 
 	section.country {
-		float: left;
 		width: 65%;
-		height: 196px;
-		padding: 10px;
-		background-color: #ececec;
+		height: 100%;
+		display: inline-block;
 	}
 
 	section.documents {
-		float: left;
-		width: 35%;
-		height: 196px;
+		width: 100%;
 		padding: 10px;
-		background-color: #cdd5d5;
+		/* background-color: #cdd5d5; */
+		display: inline-block;
+	}
+
+	section.documents .control-title {
+		display: block;
+	}
+
+	@media screen and (min-width: 740px) {
+		section.documents {
+			width: 425px;
+			padding: 0;
+			position: fixed;
+			bottom: 0;
+			background: #ffffff;
+			border-top: 1px solid #cccccc;
+		}
+
+		section.documents button {
+			color: #000000;
+			padding: 6px 16px !important;
+			text-align: center;
+			width: 49.5%;
+			border-radius: 0px !important;
+			margin-bottom: 0px !important;
+			cursor: pointer;
+			box-shadow: 0 0px 0px rgba(16,22,26,.2) !important;
+			border: 0px !important;
+			border-left: 1px solid #F4F7F9 !important;
+
+		}
+
+		section.documents .control-title {
+			display: none;
+		}
+
+		.chartContainer {
+			padding-bottom: 40px;
+		}
+	}
+
+
+
+	.country-docs-wrap {
+		padding-bottom: 0px;
+		position: relative;
 	}
 
 	section.documents button {
 		position: relative;
-		width: 131px;
-		padding-left: 8px;
-	    padding-right: 8px;
-	    font-size: 12px;
-	    text-align: center;
+		width: 49%;
+		padding: 8px 12px;
+		font-size: 12px;
+		text-align: left;
+		display: inline-block;
+	}
+
+	section.documents button img.download-icon {
+		display: block;
+		margin-right: 7px;
+		margin-top: 2px;
+		float: left;
 	}
 
 	section.country button {
 		text-align: left;
+	}
+
+	.ncp-plugin .tab-content > section, .ncp-plugin .tab-content .country-docs-wrap {
+		padding: 10px;
+	}
+
+	.ncp-plugin .tab-content {
+		padding: 3px 0 0 0;
 	}
 
 	/* Checkboxes */
@@ -97,7 +163,7 @@
 	}
 
 	.ncp-plugin .storm-buttons-container .check-group.annual label {
-		width: 140px;
+		max-width: 140px;
 	}
 
 	.ncp-plugin .check-group:hover label {
@@ -120,6 +186,24 @@
 
 	.ncp-plugin .storm-buttons-container .annual .radio-select {
 		top: -2px;
+	}
+
+	.ncp-plugin .select-containers .form-text {
+		display: block;
+		float: right;
+		max-width: 80%;
+	}	
+
+	@media screen and (max-width: 450px) {
+		.ncp-plugin .select-containers .form-text {
+			max-width: 78%;
+		}
+	}
+
+	@media screen and (max-width: 350px) {
+		.ncp-plugin .select-containers .form-text {
+			max-width: 74%;
+		}
 	}
 
 	.ncp-plugin .radio-select::before {
@@ -148,6 +232,10 @@
 	  color: #306692;
 	}
 
+	.ncp-plugin .chosen-results li {
+		display: block;
+	}
+
 	/* End Checkboxes */
 
 	.ncp-plugin .clearfix {
@@ -161,8 +249,12 @@
 	}
 
 	.ncp-plugin .storm-buttons-container {
-		float: left;
-		width: 250px;
+		max-width: 260px;
+	}
+
+	.ncp-plugin .description-text {
+		display: inline-block;
+		font-size: 11px;
 	}
 
 	.ncp-plugin .info-tooltip {
@@ -173,10 +265,39 @@
 
 	.ncp-plugin .stat .info-tooltip {
 		float: right;
-		padding-left: 2px;
-		margin-top: -4px;
+    	padding-right: 14px;
 		background-color:  #fff;
 		z-index: 101;
+	}
+
+	.ncp-plugin .info-button {
+		height: 48px;
+		width: 48px;
+		position: absolute;
+		top: -22px;
+		right: 25px;
+		cursor: pointer;
+	}
+
+	@media screen and (min-width: 740px) {
+		.ncp-plugin .mobile-only {
+			display: none;
+		}
+	}
+
+	@media screen and (max-width: 740px) {
+		.ncp-plugin .desktop-only {
+			display: none;
+		}
+	}
+
+	.ncp-plugin .viewCrsInfoGraphicIcon {
+		height: 48px;
+		width: 48px;
+		position: absolute;
+		top: -22px;
+		right: 75px;
+		cursor: pointer;
 	}
 
 	.ncp-plugin .styled-select {
@@ -262,28 +383,44 @@
 		-o-transition: all 0.05s ease;
 		transition: all 0.05s ease;
 	}
+
     .ncp-plugin .stats-description {
-    	padding: 8px;
-    	clear: both;
+    	padding: 25px 8px 8px 8px;
+			clear: both;
+			line-height: 18px;
+			background-color: #F4F7F9;
     }
 
+	@media screen and (max-width: 740px) {
+		.ncp-plugin .stats-description {
+			padding: 25px 10px 10px 10px !important;
+			text-align: center;
+		}
+	}
 
+	.ncp-plugin .stats {
+		position: relative;
+	}
 
-    .ncp-plugin .stats-container {
+  .ncp-plugin .stats-container {
 		margin: auto;
+		padding: 10px;
+		background-color: #F4F7F9;
 	}
 
 	.ncp-plugin .stat {
-		height: 45px;
-    	padding-top: 15px;
-		border-bottom: 1px solid #ccc;
+		vertical-align: top;
+		width: 32%;
+		display: inline-block;
+		text-align: center;
+		margin: 10px 0;
 	}
 
 	.ncp-plugin .stat .description,
 	.ncp-plugin .stat .number {
-		display: inline-block;
+		display: block;
 		cursor: pointer;
-		text-align: left;
+		text-align: center;
 		transition: color 0.35s linear;
 		vertical-align: middle;
 	}
@@ -293,39 +430,45 @@
 	}
 
 	.ncp-plugin .stat .number {
-		width: 160px;
-		padding-left: 14px;
-		font-size: 30px;
-	    font-weight: bold;
-	    color: #d8d8d8;
+		font-size: 22px;
+		font-weight: bold;
+		color: #555555;
 	}
 
 	.ncp-plugin .stat .units {
-		font-size: 22px;
+		font-size: 18px;
 	}
 
 	.ncp-plugin .stat.active .description,
 	.ncp-plugin .stat.active .number,
 	.ncp-plugin .stat:hover .description,
 	.ncp-plugin .stat:hover .number {
-		color: #438c9d;
+		color: #0096d6;
 	}
 
 	.ncp-plugin .stat .description {
-	    padding-left: 10px;
-		color: #d8d8d8;
-	    font-size: 18px;
-	    transition: color 0.35s linear;
-	    width: calc(100% - 174px);
+			color: #555555;
+	    font-size: 12px;
+			transition: color 0.35s linear;
+			margin-top: 5px;
+	}
+
+	@media screen and (max-width: 740px) {
+		.ncp-plugin .stat .description {
+			font-size: 10px;
+		}
+	}
+
+	.ncp-plugin .select-containers {
+		float: right;
+		width: 35%;
+		height: 100%;
+		display: inline-block;
 	}
 
 	.ncp-plugin .coral-select-container,
 	.ncp-plugin .mangrove-select-container {
-		float: left;
-	    width: 250px;
-	    text-align: left;
-	    margin-top: 6px;
-	    clear: left;
+
 	}
 
 	.ncp-plugin .coral-select-container input[type=checkbox],
@@ -342,7 +485,6 @@
 	.ncp-plugin .coral-select-container span,
 	.ncp-plugin .mangrove-select-container span {
 		margin-left: 8px;
-		font-weight: 600;
 	}
 
 	.ncp-tooltip {
@@ -356,12 +498,18 @@
 	/* Chart SVG Styles */
 
 	.ncp-plugin .chartContainer {
-		background: #f3f4f3;
 		text-align: center;
+		max-width: 425px;
+		margin: auto;
+		background-color: #F4F7F9;
+	}
+
+	.ncp-plugin .chartWrapper {
+		background: #f3f4f3;
 	}
 
 	.ncp-plugin path {
-		stroke: #3e6f6a;
+		stroke: #31B91B;
 		stroke-width: 2px;
 		fill: none;
 	}
@@ -379,7 +527,7 @@
 	}
 
 	.ncp-plugin path.scenario {
-		stroke: #8e1212;
+		stroke: #8465E6;
 	}
 
 	.ncp-plugin .points-scenario circle {
@@ -387,17 +535,17 @@
 	}
 
 	.ncp-plugin .area-current {
-	    fill: #30928D;
+	    fill: #31B91B;
 	    stroke-width: 0;
 	}
 
 	.ncp-plugin .area-scenario {
-	    fill: #923034;
+	    fill: #8465E6;
 	    stroke-width: 0;
 	}
 
 	.ncp-plugin .area.scenario {
-	    fill: #923034;
+	    fill: #8465E6;
 	    stroke-width: 0;
 	}
 
@@ -414,12 +562,12 @@
 	}
 
 	.ncp-plugin .bar {
-		fill: #923034;
+		fill: #8465E6;
 	}
 
 	.ncp-plugin .bar[data-layer="Present"],
-	.ncp-plugin .bar[data-layer="Current (2010) Mangroves"] {
-		fill: #30928D;
+	.ncp-plugin .bar[data-layer="2010 Mangroves"] {
+		fill: #31B91B;
 	}
 
 	.ncp-plugin .world-bank-report {
@@ -509,137 +657,346 @@
 	  border-radius: 50%;
 	}
 
+	/* ADMIN UNIT SPECIFIC STYLES */
+	.ncp-plugin #admin-pane .admin-title {
+		width: 100%;
+		margin: 0 0 15px 0;
+	}
+
+	.ncp-plugin #admin-pane .admin-name {
+		display: inline-block;
+		margin-top: 1rem;
+	}
+
+	.ncp-plugin #admin-pane #cancel-admin-select {
+		cursor: pointer;
+		float: right;
+	}
+
+	.ncp-plugin #admin-pane .ref-layers {
+		padding: 10px;
+		overflow: visible;
+		margin-bottom: 10rem;
+	}
+
+	.ncp-plugin #admin-pane .admin-stats-description {
+		padding: 25px 10px 10px 10px;
+	}
+
+	.ncp-plugin #admin-pane {
+		margin-bottom: 3rem;
+	}
+
+	.ncp-plugin #admin-pane .ui-dialog{
+		overflow: visible !important;
+	}
 </style>
 
 	<div class="ncp-plugin">
 		<section class="header">
-	    	<h3>Flood Protection</h3>
-	    	<div class="toggle-controls-container">
-	    		<span class="toggle-option">Coral Reefs</span>
-	    		<label class="switch">
-				  	<input id="ncp-provider" type="checkbox">
-				  	<span class="slider round"></span>
-				</label>
-	    		<span class="toggle-option">Mangroves</span>
-	    	</div>
+			<h3 class="ncp-title">Flood Protection Analysis</h3>
+		</section>
+		<ul class="nav nav-tabs" role="tablist">
+			<li role="presentation" id="ncp-tab" class="original tab-item active" <% if (!hasNCP) { %> style="display: none;" <% } %> ><a href="#ncp-pane" class="tab-link" aria-controls="ncp-pane" role="tab" data-toggle="tab" aria-expanded="true">Coastal Protection</a></li>
+			<li role="presentation" id="admin-tab" class="original tab-item" <% if (!hasAdmin) { %> style="display: none;" <% } %> ><a href="#admin-pane" class="tab-link" aria-controls="admin-pane" role="tab" data-toggle="tab" aria-expanded="false">Admin Units</a></li>
+		</ul>
+		<div class="tab-content">
+			<div role="tabpanel" class="tab-pane active" id="ncp-pane" <% if (!hasNCP) { %> style="display: none;" <% } %> >
 
-		    <div>
-		    	Estimates of the benefits provided by <span class="coral-only">coral reefs</span><span class="mangrove-only" style="display: none;">mangroves</span> in flood protection annually and from catastrophic storms
-		    </div>
-	    </section>
-	    <section class="country">
+				<section class="stats">
 
-		    <div class="chosen-wrap" style="width: 160px; margin-bottom:10px;">
-				<select id="ncp-select-region" class="chosen">
-					<% _.each(regionsCoral, function(val, key) { %>
-	    				<option class="coral" value="<%= key %>" <% if (key === "Global") { %> selected <% } %>><%= key %></option>
-	    			<% }); %>
-	    			<% _.each(regionsMangrove, function(val, key) { %>
-	    				<option style="display: none;" class="mangrove" value="<%= key %>" <% if (key === "Global") { %> selected <% } %>><%= key %></option>
-	    			<% }); %>
-				</select>
+					<section class="stats-description">
+						<div class="toggle-controls-container">
+							<span class="toggle-option">Coral Reefs</span>
+							<label class="switch">
+								<input id="ncp-provider" type="checkbox">
+								<span class="slider round"></span>
+							</label>
+								<span class="toggle-option">Mangroves</span>
+						</div>
+
+						The people and property protected by <span class="coral-only">coral reefs</span><span class="mangrove-only" style="display: none;">mangroves</span> (values represent predicted losses avoided by keeping <span class="coral-only">coral</span><span class="mangrove-only" style="display: none;">mangroves</span> intact). <br /><br />
+						Statistics in blue are currently displayed on the map and graph. Choose another variable to change the data shown.
+					</section>
+					<img class="info-button" src="plugins/natural_coastal_protection/infoIcon.svg" alt="info icon" />
+					<img class="viewCrsInfoGraphicIcon" src="plugins/natural_coastal_protection/infoGraphic.svg" alt="show overview graphic">
+
+					<div class="stats-container">
+
+						<div class="stat people active" data-layer="people">
+							<div class="number"><span class="variable"><%= global.E2E1_DIF_ANN_PF %></span></div>
+							<div class="description">
+								<span class="description-text">People Protected</span>
+							</div>
+						</div>
+
+						<div class="stat capital" data-layer="capital">
+							<div class="number">$<span class="variable"><%= global.E2E1_DIF_ANN_BCF %></span><span class="units">M</span></div>
+							<div class="description"> 
+								<span class="description-text">Built Capital Protected</span>
+							</div>
+						</div>
+
+						<div class="stat area" data-layer="area">
+							<div class="number"><span class="variable"><%= global.E2E1_DIFF_ANN_AF %></span><span class="units">km<sup>2</sup></span></div>
+							<div class="description">
+								<span class="description-text">Area Protected</span>
+							</div>
+						</div>
+
+					</div>
+				</section>
+
+				<div class="country-docs-wrap">
+					<div class="ncp-description">
+						Estimates of the benefits provided by <span class="coral-only">coral reefs</span><span class="mangrove-only" style="display: none;">mangroves</span> in flood protection annually and from catastrophic storms
+					</div>
+					<div class="chosen-wrap" style="width: 160px; margin-bottom:10px;">
+							<select id="ncp-select-region" class="chosen">
+								<% _.each(regionsCoral, function(val, key) { %>
+										<option class="coral" value="<%= key %>" <% if (key === region) { %> selected <% } %>><%= key %></option>
+									<% }); %>
+									<% _.each(regionsMangrove, function(val, key) { %>
+										<option style="display: none;" class="mangrove" value="<%= key %>" <% if (key === region) { %> selected <% } %>><%= key %></option>
+									<% }); %>
+							</select>
+						</div>
+
+					<section class="country">
+
+						<div class="storm-buttons-container">
+
+							<label class="form-component ann-exp-benefit" for="ANN-option">
+								<input checked="checked" type="radio" id="ANN-option" value="ANN" name="storm<%=pane%>">
+								<div class="check"></div>
+								<span class="form-text">Annual Expected Benefit </span>
+							</label>
+
+							<div class="benefits-from-storm" style="padding-left: 1px;">
+								<label class="form-component benefit-from-storm" for="BCS-option">
+									<input type="radio" id="BCS-option" value="BCS" name="storm2<%=pane%>">
+									<div class="check"></div>
+									<span class="form-text">
+										Benefits from Catastrophic Storms
+									</span>
+								</label>
+
+								<div class="nested-benefits" style="padding-left: 20px;">
+									<label id="rp25" class="form-component" for="RP25-option">
+										<input checked="checked" type="radio" id="RP25-option" class="RP" value="25RP" name="storm<%=pane%>">
+										<div class="check"></div>
+										<span class="form-text">1 in 25-year storm</span>
+									</label>
+
+									<label id="rp50" style="display: none" class="form-component" for="RP50-option">
+										<input checked="checked" type="radio" id="RP50-option" class="RP" value="50RP" name="storm<%=pane%>">
+										<div class="check"></div>
+										<span class="form-text">1 in 50-year storm</span>
+									</label>
+
+									<label id="rp100" class="form-component" for="RP100-option">
+										<input checked="checked" type="radio" id="RP100-option"  class="RP" value="100RP" name="storm<%=pane%>">
+										<div class="check"></div>
+										<span class="form-text">1 in 100-year storm</span>
+									</label>
+								</div>
+							</div>
+						</div>
+
+					</section>
+
+					<section class="select-containers">
+
+						<div class="coral-select-container">
+							<label class="form-component" for="coral-option">
+								<input type="checkbox" id="coral-option">
+								<div class="check"></div>
+								<span class="form-text">View Coral Reef Habitats</span>
+							</label>
+						</div>
+
+						<div style="display: none;" class="mangrove-select-container">
+							<label class="form-component" for="mangrove-option">
+								<input type="checkbox" id="mangrove-option">
+								<div class="check"></div>
+								<span class="form-text">View Mangrove Habitats</span>
+							</label>
+						</div>
+
+					</section>
+				</div>
+
+				<div class="chartWrapper">
+					<section class="chartContainer">
+
+					</section>
+				</div>
+
 			</div>
+			<div role="tabpanel" class="tab-pane" id="admin-pane" <% if (!hasAdmin) { %> style="display: none;" <% } %> >
+				<section class="stats">
+					<section class="admin-stats-description">
+						<button class="button button-default" id="cancel-admin-select"><i class="icon-cancel"></i> Clear Selection</button>
+						<h3 class="admin-title"><span class="admin-name"><%= region %></span></h3>
+						
+						<h4>Census Statistics</h4>
+						Select an administrative unit on the map to view census-based demographics and other statistics about that unit.<br /><br />
+						Select an individual statistic to visualize it's spatial distribution on the map
+					</section>
+					<img class="info-button" src="plugins/natural_coastal_protection/infoIcon.svg" alt="info icon" />
 
+					<div class="stats-container">
 
-	    	<div class="storm-buttons-container">
+						<h4>Demographics</h4>
 
-	    		<label class="form-component ann-exp-benefit" for="ANN-option">
-                    <input checked="checked" type="radio" id="ANN-option" value="ANN" name="storm<%=pane%>">
-                    <div class="check"></div>
-                    <span class="form-text">Annual Expected Benefit <i title="Annual expected benefits from reefs for flood protection  represents the predicted flooding avoided to land, people, and infrastructure by keeping coral reefs intact. It is an annualized benefit of the role of reefs in flood reduction that considers local factors such as reef condition, asset distribution, and storm frequency." class="fa fa-info-circle info-annual info-tooltip"></i></span>
-                </label>
+						<div class="stat population-flood" data-layer="3">
+							<div class="number"><span class="variable"></span><span class="units"></span></div>
+							<div class="description">
+								<span class="description-text">Population Within Flood Extent</span>
+							</div>
+						</div>
 
-	    		<div class="benefits-from-storm" style="padding-left: 1px;">
-					<span class="control-title" style="margin-bottom: 4px; display: inline-block;">
-						Benefits from Catastrophic Storms
-						<i title="30 years of historical data on regional sea level and wave conditions were used to develop a frequency distribution of storm sea levels and their intensity to estimate flooding for 1 in 10, 25, 50, and 100 year storm events." class="fa fa-info-circle info-period info-tooltip"></i>
-					</span>
+						<div class="stat percent-population-flood" data-layer="4">
+							<div class="number"><span class="variable"></span><span class="units">%</span></div>
+							<div class="description"> 
+								<span class="description-text">% Population Within Flood Extent</span>
+							</div>
+						</div>
 
-					<label id="rp25" class="form-component" for="RP25-option">
-	                    <input checked="checked" type="radio" id="RP25-option" value="25RP" name="storm<%=pane%>">
-	                    <div class="check"></div>
-	                    <span class="form-text">1 in 25-year storm</span>
-	                </label>
+						<div class="stat percent-population-icv1" data-layer="5">
+							<div class="number"><span class="variable"></span><span class="units">%</span></div>
+							<div class="description">
+								<span class="description-text">Population in Poverty (ICV1)</span>
+							</div>
+						</div>
 
-	                <label id="rp50" style="display: none" class="form-component" for="RP50-option">
-	                    <input checked="checked" type="radio" id="RP50-option" value="50RP" name="storm<%=pane%>">
-	                    <div class="check"></div>
-	                    <span class="form-text">1 in 50-year storm</span>
-	                </label>
+						<div class="stat percent-population-icv2" data-layer="6">
+							<div class="number"><span class="variable"></span><span class="units">%</span></div>
+							<div class="description">
+								<span class="description-text">Population in Poverty (ICV2)</span>
+							</div>
+						</div>
 
-	    			<label id="rp100" class="form-component" for="RP100-option">
-	                    <input checked="checked" type="radio" id="RP100-option" value="100RP" name="storm<%=pane%>">
-	                    <div class="check"></div>
-	                    <span class="form-text">1 in 100-year storm</span>
-	                </label>
-		    	</div>
-	    	</div>
+						<div class="stat percent-population-illiterate" data-layer="7">
+							<div class="number"><span class="variable"></span><span class="units">%</span></div>
+							<div class="description">
+								<span class="description-text">Illiteracy Rate</span>
+							</div>
+						</div>
 
-	    	<div class="coral-select-container">
-		    	<label class="form-component" for="coral-option">
-                    <input type="checkbox" id="coral-option">
-                    <div class="check"></div>
-                    <span class="form-text">View Coral Reef Habitats</span>
-                </label>
-		    </div>
+						<div class="stat percent-vulnerable-population" data-layer="8">
+							<div class="number"><span class="variable"></span><span class="units">%</span></div>
+							<div class="description"> 
+								<span class="description-text">Vulnerable Population</span>
+							</div>
+						</div>
 
-		    <div style="display: none;" class="mangrove-select-container">
-		    	<label class="form-component" for="mangrove-option">
-                    <input type="checkbox" id="mangrove-option">
-                    <div class="check"></div>
-                    <span class="form-text">View Mangrove Habitats</span>
-                </label>
-		    </div>
+						<h4>Infrastructure</h4>
 
-    	</section>
+						<div class="stat infra-roads" data-layer="9">
+							<div class="number"><span class="variable"></span><span class="units">km</span></div>
+							<div class="description"> 
+								<span class="description-text">Roads</span>
+							</div>
+						</div>
 
-    	<section class="documents">
-    		<span class="control-title" style="display: block; margin-bottom: 3px;">Documents:</span>
-    		<button class="button button-default js-getSnapshot" target="_blank" style="display: none">Print<br>Country Summary</button>
-    		
-    		<a class="coral-only" href="http://media.coastalresilience.org/MOW/Gobal_Flood_Protection_by_Coral_Reefs.pdf" target="_blank">
-				<button class="button button-default">Download<br>Published</span> Paper</button>
+						<div class="stat infra-facilities" data-layer="10">
+							<div class="number"><span class="variable"></span><span class="units"></span></div>
+							<div class="description"> 
+								<span class="description-text">Critical Facilities Within Flood Extent</span>
+							</div>
+						</div>
+
+						<div class="stat infra-emergency" data-layer="11">
+							<div class="number"><span class="variable"></span><span class="units"></span></div>
+							<div class="description"> 
+								<span class="description-text">Emergency Facilities Within Flood Extent</span>
+							</div>
+						</div>
+
+						<div class="stat infra-community" data-layer="12">
+							<div class="number"><span class="variable"></span><span class="units"></span></div>
+							<div class="description"> 
+								<span class="description-text">Community Facilities Within Flood Extent</span>
+							</div>
+						</div>
+
+						<div class="stat house-density" data-layer="13">
+							<div class="number"><span class="variable"></span><span class="units">per km<sup>2</sup></span></div>
+							<div class="description"> 
+								<span class="description-text">Housing Density</span>
+							</div>
+						</div>
+
+						<div class="stat climate-vulnerability" data-layer="14">
+							<div class="number"><span class="variable"></span><span class="units">%</span></div>
+							<div class="description"> 
+								<span class="description-text">Households Vulnerable to Coastal Hazards</span>
+							</div>
+						</div>
+
+						<h4>Natural Areas</h4>
+
+						<div class="stat reef-area" data-layer="15">
+							<div class="number"><span class="variable"></span><span class="units">km<sup>2</sup></span></div>
+							<div class="description"> 
+								<span class="description-text">Coral Reef Area</span>
+							</div>
+						</div>
+
+						<div class="stat mangrove-area" data-layer="16">
+							<div class="number"><span class="variable"></span><span class="units">km<sup>2</sup></span></div>
+							<div class="description"> 
+								<span class="description-text">Mangrove Area</span>
+							</div>
+						</div>
+
+						<div class="stat grass-area" data-layer="17">
+							<div class="number"><span class="variable"></span><span class="units">km<sup>2</sup></span></div>
+							<div class="description"> 
+								<span class="description-text">Sea Grass Area</span>
+							</div>
+						</div>
+
+						<div class="stat mangrove-change" data-layer="18">
+							<div class="number"><span class="variable"></span><span class="units"></span></div>
+							<div class="description"> 
+								<span class="description-text">in Mangroves</span>
+							</div>
+						</div>
+
+					</div>
+
+					<section class="ref-layers">
+						<h4>Reference Layers</h4>
+						<div class="chosen-wrap">
+							<select data-placeholder="Select up to three" id="chosen-ref-layers" multiple="true" class="chosen">
+									<% _.each(referenceLayers, function(val, key) { %>
+										<option class="ref-layer-option" value="<%= val %>"><%= key %></option>
+									<% }); %>
+							</select>
+						</div>
+					</section>
+
+				</section>
+			</div>
+		</div>
+
+		<section class="documents">
+			<span class="control-title" style="margin-bottom: 1rem;">Documents:</span>
+			<button class="button button-default js-getSnapshot" target="_blank" style="display: none"><img class="download-icon" src="plugins/natural_coastal_protection/downloadIcon.svg" alt="download" />Print<br>Country Summary</button>
+			
+			<a class="coral-only" href="http://media.coastalresilience.org/MOW/Gobal_Flood_Protection_by_Coral_Reefs.pdf" target="_blank">
+				<button class="button button-default"><img class="download-icon" src="plugins/natural_coastal_protection/downloadIcon.svg" alt="download" />Download<br>Published</span> Paper</button>
 			</a>
 			<a class="coral-only js-getdata" href="http://data.coastalresilience.org/MOW_Global/NCP_Annual_Expected_Benefit.zip" target="_blank">
-				<button class="button button-default">Download Global Point Data</button>
+				<button class="button button-default"><img class="download-icon" src="plugins/natural_coastal_protection/downloadIcon.svg" alt="download" />Download Global <br/>Point Data</button>
 			</a>
 			<a class="mangrove-only" style="display: none;" href="http://conservationgateway.org/ConservationPractices/Marine/crr/library/Documents/CoastalProtectionServicesMangrovesPhilippinesReport-3.pdf" target="_blank">
-				<button class="button button-default">Download<br>Mangroves Waves</span> Report</button>
+				<button class="button button-default"><img class="download-icon" src="plugins/natural_coastal_protection/downloadIcon.svg" alt="download" />Download<br>Mangroves</span> Report</button>
 			</a>
-
-    	</section>
-
-	    <section class="stats-description">The people and property protected by <span class="coral-only">coral reefs</span><span class="mangrove-only" style="display: none;">mangroves</span> (values represent predicted losses avoided by keeping <span class="coral-only">coral</span><span class="mangrove-only" style="display: none;">mangroves</span> intact)</section>
-
-	    <div class="stats-container">
-
-	    	<div class="stat people active" data-layer="people">
-	    		<div class="number"><span class="variable"><%= global.E2E1_DIF_ANN_PF %></span></div>
-	    		<div class="description">People Protected
-	    			<i title="This value represents the difference of flooding impacts on people when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data." class="fa fa-info-circle info-people info-tooltip"></i></div>
-	    	</div>
-
-	    	<div class="stat capital" data-layer="capital">
-	    		<div class="number">$<span class="variable"><%= global.E2E1_DIF_ANN_BCF %></span><span class="units">M</span></div>
-	    		<div class="description"> Built Capital Protected
-	    			<i title="This value represents the difference of flooding impacts on built capital when coral reefs are present and 
-					when there is 1 meter of reef loss. This value is aggregated
-					to the country scale from 90m resolution data." class="fa fa-info-circle info-capital info-tooltip"></i></div>
-	    		
-	    	</div>
-
-	    	<div class="stat area" data-layer="area">
-	    		<div class="number"><span class="variable"><%= global.E2E1_DIFF_ANN_AF %></span><span class="units">km<sup>2</sup></span></div>
-	    		<div class="description">Area Protected
-	    			<i title="This value represents the difference of flooding impacts on land area when coral reefs are present and when there is 1 meter of reef loss. This value is aggregated to the country scale from 90m resolution data. " class="fa fa-info-circle info-area info-tooltip"></i></div>
-
-	    	</div>
-
-	    </div>
-
-	    <section class="chartContainer">
-
-	    </section>
+		</section>
+		
 	</div>
 
 </script>

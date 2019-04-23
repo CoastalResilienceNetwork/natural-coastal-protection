@@ -399,6 +399,9 @@ define([
                         this.adminUnitsLayer.setVisibility(true);
                         this.adminVisualizationLayer.setVisibility(true);
                         this.adminReferenceLayers.setVisibility(true);
+                        this.coastalProtectionLayer.setVisibility(false);
+                        this.coralReefLayer.setVisibility(false);
+                        this.mangroveLayer.setVisibility(false);
                         this.state = this.state.setAdminVisibility(true);
                         if(this.state.getAdminUnit()) {
                             this.changeAdminClick(this.state.getAdminUnit(), null);
@@ -410,10 +413,12 @@ define([
                         }
                         this.$el.find('.' + this.state.getAdminVariable() + '.stat').click();
                     } else {
-                        console.log('foucs change');
                         this.adminUnitsLayer.setVisibility(false);
                         this.adminVisualizationLayer.setVisibility(false);
                         this.adminReferenceLayers.setVisibility(false);
+                        this.coastalProtectionLayer.setVisibility(true);
+                        this.coralReefLayer.setVisibility(this.state.getCoralVisibility());
+                        this.mangroveLayer.setVisibility(this.state.getMangroveVisibility());
                         this.state = this.state.setAdminVisibility(false);
                         this.changeRegion();
                         this.changePeriod();
@@ -724,7 +729,7 @@ define([
                 if(stats.REEF_AREA != null) {
                     this.$el.find('.stat.reef-area').show();
                     this.$el.find('.stat.reef-area .number .variable').html(
-                        this.numberWithCommas(Math.round(stats.REEF_AREA * 100))
+                        this.numberWithCommas(Math.round(stats.REEF_AREA))
                     );
                 } else {
                     this.$el.find('.stat.reef-area').hide();
@@ -742,7 +747,7 @@ define([
                 if(stats.GRASS_AREA != null) {
                     this.$el.find('.stat.grass-area').show();
                     this.$el.find('.stat.grass-area .number .variable').html(
-                        this.numberWithCommas(Math.round(stats.GRASS_AREA * 100))
+                        this.numberWithCommas(Math.round(stats.GRASS_AREA))
                     );
                 } else {
                     this.$el.find('.stat.grass-area').hide();
@@ -750,8 +755,16 @@ define([
 
                 if(stats.MANG_CHNG != null) {
                     this.$el.find('.stat.mangrove-change').show();
+                    var changeText;
+                    if(stats.MANG_CHNG < 0) {
+                        changeText = "Net Loss";
+                    } else if(stats.MANG_CHNG > 0) {
+                        changeText = "Net Gain"
+                    } else {
+                        changeText = "No Change"
+                    }
                     this.$el.find('.stat.mangrove-change .number .variable').html(
-                        this.numberWithCommas(Math.round(stats.MANG_CHNG * 100))
+                        changeText
                     );
                 } else {
                     this.$el.find('.stat.mangrove-change').hide();
@@ -975,7 +988,7 @@ define([
                 $(this.container).find('#admin-pane .info-button').on('click', function(c) {
                     TINY.box.show({
                         animate: true,
-                        url: 'plugins/natural_coastal_protection/test.html',
+                        url: 'plugins/natural_coastal_protection/tooltip_admin.html',
                         boxid: 'plugin-tiny-box',
                         width: 640,
                         height: 500

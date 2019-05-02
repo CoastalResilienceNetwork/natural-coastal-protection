@@ -403,6 +403,8 @@ define([
                         this.coralReefLayer.setVisibility(false);
                         this.mangroveLayer.setVisibility(false);
                         this.state = this.state.setAdminVisibility(true);
+
+                        $('.ncp-plugin .documents').hide();
                         if(this.state.getAdminUnit()) {
                             this.changeAdminClick(this.state.getAdminUnit(), null);
                         } else {
@@ -420,6 +422,7 @@ define([
                         this.coralReefLayer.setVisibility(this.state.getCoralVisibility());
                         this.mangroveLayer.setVisibility(this.state.getMangroveVisibility());
                         this.state = this.state.setAdminVisibility(false);
+                        $('.ncp-plugin .documents').show();
                         this.changeRegion();
                         this.changePeriod();
                         this.updateLayers();
@@ -429,6 +432,7 @@ define([
                     this.adminVisualizationLayer.setVisibility(true);
                     this.adminReferenceLayers.setVisibility(true);
                     this.state = this.state.setAdminVisibility(true);
+                    $('.ncp-plugin .documents').hide();
                     if(this.state.getAdminUnit()) {
                         this.changeAdminClick(this.state.getAdminUnit(), null);
                     } else {
@@ -710,9 +714,17 @@ define([
 
                 if(stats.CLIMATE_VUL != null) {
                     this.$el.find('.stat.climate-vulnerability').show();
-                    this.$el.find('.stat.climate-vulnerability .number .variable').html(
-                        this.numberWithCommas(Math.round(stats.CLIMATE_VUL * 100))
-                    );
+                    if(this.regionJSON.climateIsPercent) {
+                        this.$el.find('.stat.climate-vulnerability .number .variable').html(
+                            this.numberWithCommas(Math.round(stats.CLIMATE_VUL * 100))
+                        );
+                        this.$el.find('.stat.climate-vulnerability .number .units').html('%');
+                    } else {
+                        this.$el.find('.stat.climate-vulnerability .number .variable').html(
+                            this.numberWithCommas(Math.round(stats.CLIMATE_VUL))
+                        );
+                        this.$el.find('.stat.climate-vulnerability .number .units').html('');
+                    }
                 } else {
                     this.$el.find('.stat.climate-vulnerability').hide();
                 }

@@ -154,7 +154,7 @@
   },
   "hasAdmin": true,
   "hasNCP": false,
-  "climateIsPercent": true,
+  "climateIsPercent": false,
   "referenceLayers": {
     "Transportation Terminal": 20,
     "Port": 21,
@@ -186,6 +186,8 @@
       "POP_FLDRISK_NO", 
       "POP_FLDRISK", 
       "POP_PVTY1",
+      "POP_PVTY2",
+      "POP_ILLT", 
       "POP_AGE",
       "INFRA_RDS", 
       "INFRA_FACIL", 

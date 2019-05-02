@@ -150,6 +150,7 @@
   },
   "hasAdmin": true,
   "hasNCP": true,
+  "climateIsPercent": true,
   "referenceLayers": {
     "Arrecifes de Coral": 20,
     "Costa Rocosa": 21,

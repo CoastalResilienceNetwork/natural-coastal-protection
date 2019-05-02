@@ -150,6 +150,7 @@
   },
   "hasAdmin": true,
   "hasNCP": true,
+  "climateIsPercent": false,
   "referenceLayers": {
     "Wetlands 2006": 20,
     "Springs 2006": 21,

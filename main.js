@@ -178,6 +178,8 @@ define([
                         $.proxy(this.toggleCoral, this));
                 this.$el.on('change', '.mangrove-select-container input',
                         $.proxy(this.toggleMangrove, this));
+                this.$el.on('change', '.flood-select-container input',
+                        $.proxy(this.toggleFlood, this));
 
                 this.$el.on('click', '.js-getSnapshot', $.proxy(this.printReport, this));
             },
@@ -259,6 +261,12 @@ define([
                             new Color([0, 0, 0, 0.1])
                         )
                     );
+
+                    this.floodExtentLayer = new ArcGISDynamicMapServiceLayer(this.serviceURL, {
+                        visible: this.state.getFloodExtentVisibility(),
+                        opacity: 0.5
+                    });
+                    this.floodExtentLayer.setVisibleLayers([2]);
     
                     this.adminUnitsLayer.on("click", function(e) {
                         self.changeAdminClick(e.graphic.attributes.ADMIN_ID, new Extent(e.graphic._extent).expand(1.5));
@@ -279,6 +287,7 @@ define([
                     this.map.addLayer(this.adminUnitsLayer);
                     this.map.addLayer(this.adminVisualizationLayer);
                     this.map.addLayer(this.adminReferenceLayers);
+                    this.map.addLayer(this.floodExtentLayer);
                 }
             },
 
@@ -347,6 +356,7 @@ define([
                         this.adminUnitsLayer.refresh();
                         this.adminVisualizationLayer.refresh();
                         this.adminReferenceLayers.refresh();
+                        this.floodExtentLayer.refresh();
                     }
                 }
             },
@@ -362,6 +372,7 @@ define([
                         this.adminUnitsLayer.hide();
                         this.adminVisualizationLayer.hide();
                         this.adminReferenceLayers.hide();
+                        this.floodExtentLayer.hide();
                     }
                     $(this.legendContainer).hide().html();
                 }
@@ -380,6 +391,7 @@ define([
                         this.adminUnitsLayer.hide();
                         this.adminVisualizationLayer.hide();
                         this.adminReferenceLayers.hide();
+                        this.floodExtentLayer.hide();
                     }
                     $(this.legendContainer).hide().html();
                 }
@@ -399,6 +411,7 @@ define([
                         this.adminUnitsLayer.setVisibility(true);
                         this.adminVisualizationLayer.setVisibility(true);
                         this.adminReferenceLayers.setVisibility(true);
+                        this.floodExtentLayer.setVisibility(this.state.getFloodExtentVisibility());
                         this.coastalProtectionLayer.setVisibility(false);
                         this.coralReefLayer.setVisibility(false);
                         this.mangroveLayer.setVisibility(false);
@@ -418,6 +431,7 @@ define([
                         this.adminUnitsLayer.setVisibility(false);
                         this.adminVisualizationLayer.setVisibility(false);
                         this.adminReferenceLayers.setVisibility(false);
+                        this.floodExtentLayer.setVisibility(false);
                         this.coastalProtectionLayer.setVisibility(true);
                         this.coralReefLayer.setVisibility(this.state.getCoralVisibility());
                         this.mangroveLayer.setVisibility(this.state.getMangroveVisibility());
@@ -514,6 +528,16 @@ define([
                 } else {
                     this.mangroveLayer.setVisibility();
                     this.state = this.state.setMangroveVisibility(false);
+                }
+            },
+
+            toggleFlood: function() {
+                if (this.$el.find('.flood-select-container input').is(':checked')) {
+                    this.floodExtentLayer.setVisibility(true);
+                    this.state = this.state.setFloodExtentVisibility(true);
+                } else {
+                    this.floodExtentLayer.setVisibility(false);
+                    this.state = this.state.setFloodExtentVisibility(false);
                 }
             },
 
@@ -688,7 +712,7 @@ define([
                 if(stats.INFRA_FACIL != null) {
                     this.$el.find('.stat.infra-facilities').show();
                     this.$el.find('.stat.infra-facilities .number .variable').html(
-                        this.numberWithCommas(Math.round(stats.INFRA_FACIL * 100))
+                        this.numberWithCommas(Math.round(stats.INFRA_FACIL))
                     );
                 } else {
                     this.$el.find('.stat.infra-facilities').hide();
@@ -697,7 +721,7 @@ define([
                 if(stats.INFRA_EMERG != null) {
                     this.$el.find('.stat.infra-emergency').show();
                     this.$el.find('.stat.infra-emergency .number .variable').html(
-                        this.numberWithCommas(Math.round(stats.INFRA_EMERG * 100))
+                        this.numberWithCommas(Math.round(stats.INFRA_EMERG))
                     );
                 } else {
                     this.$el.find('.stat.infra-emergency').hide();
@@ -732,7 +756,7 @@ define([
                 if(stats.HOUSE_DENS != null) {
                     this.$el.find('.stat.house-density').show();
                     this.$el.find('.stat.house-density .number .variable').html(
-                        this.numberWithCommas(Math.round(stats.HOUSE_DENS * 100))
+                        this.numberWithCommas(Math.round(stats.HOUSE_DENS))
                     );
                 } else {
                     this.$el.find('.stat.house-density').hide();

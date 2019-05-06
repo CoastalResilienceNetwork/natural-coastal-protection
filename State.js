@@ -18,7 +18,8 @@ define([
                     adminVariable: 'population-flood',
                     coralVisibility: false,
                     mangroveVisibility: false,
-                    adminVisibility: false
+                    adminVisibility: false,
+                    floodExtentVisibility: false
                 });
             },
 
@@ -132,8 +133,19 @@ define([
                 });
             },
 
+
             getAdminVisibility: function() {
                 return this.savedState.adminVisibility;
+            },
+
+            getFloodExtentVisibility: function() {
+                return this.savedState.floodExtentVisibility;
+            },
+
+            setFloodExtentVisibility: function(floodExtentVisibility) {
+                return this.clone({
+                    floodExtentVisibility: floodExtentVisibility
+                });
             },
 
             // Return new State combined with `data`.

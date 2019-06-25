@@ -174,6 +174,7 @@ define([
                 this.$el.on('click', '#ncp-pane .stat', function(e) {self.changeScenarioClick(e);});
                 this.$el.on('click', '#admin-pane .stat', function(e) {self.changeAdminScenarioClick(e);});
                 this.$el.on('click', '#cancel-admin-select', function(e) {self.clearAdminSelection()});
+                this.$el.on('slidechange', '#admin-pane #slider', function(e, ui) {self.changeAdminOpacity(e, ui)});
                 this.$el.on('change', '.coral-select-container input',
                         $.proxy(this.toggleCoral, this));
                 this.$el.on('change', '.mangrove-select-container input',
@@ -259,14 +260,14 @@ define([
                             new Color([0, 0, 0, 0.1])
                         )
                     );
-    
+                        
                     this.adminUnitsLayer.on("click", function(e) {
                         self.changeAdminClick(e.graphic.attributes.ADMIN_ID, new Extent(e.graphic._extent).expand(1.5));
                     });
     
                     this.adminVisualizationLayer = new ArcGISDynamicMapServiceLayer(this.serviceURL, {
                         visible: this.state.getAdminVisibility(),
-                        opacity: 0.5
+                        opacity: 1
                     });
     
                     this.adminReferenceLayers = new ArcGISDynamicMapServiceLayer(this.serviceURL, {
@@ -546,6 +547,11 @@ define([
                     this.adminReferenceLayers.setVisibleLayers([]);
                     this.state = this.state.setAdminReferenceLayers([]);
                 }
+            },
+
+            changeAdminOpacity: function(e, ui) {
+                console.log(e);
+                this.adminVisualizationLayer.setOpacity(ui.value / 100);
             },
 
             clearAdminSelection: function() {
@@ -957,6 +963,14 @@ define([
                 this.$el.find('#chosen-ref-layers').chosen({
                     max_selected_options: 3,
                     width: '100%'
+                });
+
+                this.adminOpacitySlider = this.$el.find("#admin-pane #slider").slider({
+                    min: 0, 
+                    max: 100, 
+                    range: "min",
+                    animate: true,
+                    value: 100
                 });
 
                 $(this.container).find('.viewCrsInfoGraphicIcon').on('click', function(c) {

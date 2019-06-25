@@ -694,6 +694,12 @@
 	.ncp-plugin #admin-pane .ui-dialog{
 		overflow: visible !important;
 	}
+
+	.ncp-plugin #admin-pane .slider-container {
+		width: 100%;
+		padding: 1rem;
+		margin: 0px;
+	}
 </style>
 
 	<div class="ncp-plugin">
@@ -846,6 +852,7 @@
 						<h4>Census Statistics</h4>
 						Select an administrative unit on the map to view census-based demographics and other statistics about that unit.<br /><br />
 						Select an individual statistic to visualize it's spatial distribution on the map
+
 					</section>
 					<img class="info-button" src="plugins/natural_coastal_protection/infoIcon.svg" alt="info icon" />
 
@@ -966,6 +973,12 @@
 							<div class="number"><span class="variable"></span><span class="units"></span></div>
 							<div class="description"> 
 								<span class="description-text">in Mangroves</span>
+							</div>
+						</div>
+
+						<h4>Layer Opacity<h4>
+						<div class="slider-container">
+							<div id="slider">
 							</div>
 						</div>
 

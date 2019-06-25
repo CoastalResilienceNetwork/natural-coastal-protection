@@ -16,6 +16,7 @@ define([
                     adminReferenceLayers: [],
                     adminUnit: false,
                     adminVariable: 'population-flood',
+                    adminOpacity: 100,
                     coralVisibility: false,
                     mangroveVisibility: false,
                     adminVisibility: false
@@ -134,6 +135,16 @@ define([
 
             getAdminVisibility: function() {
                 return this.savedState.adminVisibility;
+            },
+
+            setAdminOpacity: function(adminOpacity) {
+                return this.clone({
+                    adminOpacity: adminOpacity
+                });
+            },
+
+            getAdminOpacity: function() {
+                return this.savedState.adminOpacity;
             },
 
             // Return new State combined with `data`.

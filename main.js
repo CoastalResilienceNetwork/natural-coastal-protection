@@ -83,6 +83,7 @@ define([
                 this.serviceURL = this.regionJSON.serviceURL;
                 this.adminUnitsIndex = this.regionJSON.adminUnitsIndex;
                 this.adminTableIndex = this.regionJSON.adminTableIndex;
+                this.loaded = false;
 
                 this.$el = $(this.container);
 
@@ -97,6 +98,7 @@ define([
                 this.layer = this.state.getLayer();
                 this.adminUnit = this.state.getAdminUnit();
                 this.adminVariable = this.state.getAdminVariable();
+                this.adminOpacity = this.state.getAdminOpacity();
                 this.variable = this.state.getVariable();
                 this.coralVisibility = this.state.getCoralVisibility();
                 this.mangroveVisibility = this.state.getMangroveVisibility();
@@ -195,6 +197,7 @@ define([
                 this.mangroveVisibility = data.mangroveVisibility;
                 this.adminVisibility = data.adminVisibility;
                 this.adminReferenceLayers = data.adminReferenceLayers;
+                this.adminOpacity = data.adminOpacity;
             },
 
             getState: function() {
@@ -208,6 +211,7 @@ define([
                     coralVisibility: this.state.getCoralVisibility(),
                     mangroveVisibility: this.state.getMangroveVisibility(),
                     adminVisibility: this.state.getAdminVisibility(),
+                    adminOpacity: this.state.getAdminOpacity(),
                     adminReferenceLayers: this.state.getAdminReferenceLayers()
                 };
             },
@@ -217,6 +221,8 @@ define([
 
             firstLoad: function() {
                 var self = this;
+
+                this.loaded = true;
 
                 if(this.regionJSON.hasNCP) {
                     this.coralReefLayer = new ArcGISDynamicMapServiceLayer('https://services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {
@@ -234,6 +240,10 @@ define([
                     this.coastalProtectionLayer = new ArcGISDynamicMapServiceLayer('https://services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer', {});
                     this.coastalProtectionLayer.setVisibleLayers([17]);
     
+                    this.map.removeLayer(this.coastalProtectionLayer);
+                    this.map.removeLayer(this.coralReefLayer);
+                    this.map.removeLayer(this.mangroveLayer);
+
                     this.map.addLayer(this.coastalProtectionLayer);
                     this.map.addLayer(this.coralReefLayer);
                     this.map.addLayer(this.mangroveLayer);
@@ -267,7 +277,7 @@ define([
     
                     this.adminVisualizationLayer = new ArcGISDynamicMapServiceLayer(this.serviceURL, {
                         visible: this.state.getAdminVisibility(),
-                        opacity: 1
+                        opacity: (this.state.getAdminOpacity() / 100)
                     });
     
                     this.adminReferenceLayers = new ArcGISDynamicMapServiceLayer(this.serviceURL, {
@@ -277,6 +287,10 @@ define([
     
                     this.adminLookupTable = new QueryTask(this.serviceURL + "/" + this.adminTableIndex);
     
+                    this.map.removeLayer(this.adminUnitsLayer);
+                    this.map.removeLayer(this.adminVisualizationLayer);
+                    this.map.removeLayer(this.adminReferenceLayers);
+
                     this.map.addLayer(this.adminUnitsLayer);
                     this.map.addLayer(this.adminVisualizationLayer);
                     this.map.addLayer(this.adminReferenceLayers);
@@ -292,7 +306,7 @@ define([
 
                 // If the plugin hasn't been opened, or if it was closed (not-minimized)
                 // run the firstLoad function and reset the default variables
-                if (!this.coastalProtectionLayer || !this.coastalProtectionLayer.visible || !this.adminUnitsLayer || !this.adminUnitsLayer.visible) {
+                if (!this.loaded) {
                     this.firstLoad();
                 }
 
@@ -436,7 +450,6 @@ define([
                         this.calcAdminByCountry();
                     }
                     if(this.state.getAdminReferenceLayers()) {
-                        console.log(this.state.getAdminReferenceLayers());
                         this.$el.find('#chosen-ref-layers').val(this.state.getAdminReferenceLayers()).trigger('chosen:updated').trigger('change');
                     }
                     this.$el.find('.' + this.state.getAdminVariable() + '.stat').click();
@@ -550,8 +563,9 @@ define([
             },
 
             changeAdminOpacity: function(e, ui) {
-                console.log(e);
                 this.adminVisualizationLayer.setOpacity(ui.value / 100);
+                this.state = this.state.setAdminOpacity(ui.value);
+                console.log(this.state);
             },
 
             clearAdminSelection: function() {
@@ -962,6 +976,7 @@ define([
 
                 this.$el.find('#chosen-ref-layers').chosen({
                     max_selected_options: 3,
+                    hide_results_on_select: false,
                     width: '100%'
                 });
 
@@ -970,7 +985,7 @@ define([
                     max: 100, 
                     range: "min",
                     animate: true,
-                    value: 100
+                    value: this.state.getAdminOpacity()
                 });
 
                 $(this.container).find('.viewCrsInfoGraphicIcon').on('click', function(c) {

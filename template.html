@@ -675,8 +675,12 @@
 
 	.ncp-plugin #admin-pane .ref-layers {
 		padding: 10px;
-		overflow: visible;
-		margin-bottom: 10rem;
+		overflow: auto;
+		min-height: 250px;
+	}
+
+	.ncp-plugin #admin-pane .ref-layers .chosen-results {
+		max-height: 150px !important;
 	}
 
 	.ncp-plugin #admin-pane .admin-stats-description {

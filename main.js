@@ -878,12 +878,6 @@ define([
 
                 this.map.setExtent(extent, true);
 
-                ga('send', 'event', {
-                    eventCategory: 'NCP',
-                    eventAction: 'change region',
-                    eventLabel: this.region
-                });
-
                 if(this.regionJSON.hasNCP) {
                     this.updateLayers();
                 }

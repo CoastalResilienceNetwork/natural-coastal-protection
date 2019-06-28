@@ -364,6 +364,11 @@ define([
                         this.adminReferenceLayers.refresh();
                     }
                 }
+
+                if(this.regionJSON.getStarted) {
+                    $('#show-single-plugin-mode-help').click();
+                    $('body').removeClass('pushy-open-left').removeClass('pushy-open-right');
+                }
             },
 
             deactivate: function() {
@@ -565,7 +570,6 @@ define([
             changeAdminOpacity: function(e, ui) {
                 this.adminVisualizationLayer.setOpacity(ui.value / 100);
                 this.state = this.state.setAdminOpacity(ui.value);
-                console.log(this.state);
             },
 
             clearAdminSelection: function() {

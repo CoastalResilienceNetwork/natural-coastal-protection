@@ -1100,6 +1100,12 @@ define([
             renderChart: function() {
                 var self = this;
 
+                if(this.regionJSON.hasNewMangroves && this.provider == 'mangroves') {
+                    this.xPoints = [10, 25, 50, 100, 500];
+                } else {
+                    this.xPoints = [0, 10, 25, 50, 100];
+                }
+
                 var $chartContainer = this.$el.find('.chartContainer');
 
                 // handle mobile wrapper being larger
@@ -1113,7 +1119,7 @@ define([
 
                 // Our x values are always the same.  Treat them as ordinal and hard code them here
                 this.chart.x = d3.scale.ordinal()
-                    .domain([0, 10, 25, 50, 100])
+                    .domain(this.xPoints)
                     .rangePoints([0, this.chart.position.width]);
 
                 // The x-axis for the bar chart is also ordinal with two values
@@ -1368,6 +1374,17 @@ define([
             // Set the chart data to match the current variable
             updateChart: function() {
                 var self = this;
+
+                if(this.regionJSON.hasNewMangroves && this.provider == 'mangroves') {
+                    this.xPoints = [10, 25, 50, 100, 500];
+                    this.chart.data.current.x = [10, 25, 50, 100, 500];
+                    this.chart.data.scenario.x = [10, 25, 50, 100, 500];
+                } else {
+                    this.xPoints = [0, 10, 25, 50, 100];
+                    this.chart.data.current.x = [0, 10, 25, 50, 100];
+                    this.chart.data.scenario.x = [0, 10, 25, 50, 100];
+                }
+
                 // Built Capital should be divided by 1 million
                 var division = 1;
                 if (this.variable === 'BCF') {
@@ -1378,6 +1395,24 @@ define([
                 if (this.period === 'ANN') {
                     annual = true;
                 }
+
+                this.chart.x = d3.scale.ordinal()
+                    .domain(this.xPoints)
+                    .rangePoints([0, this.chart.position.width]);
+
+                this.chart.xAxis = d3.svg.axis()
+                    .scale(this.chart.x)
+                    .orient('bottom');
+                
+                this.chart.svg.selectAll("g.xaxis").remove();
+
+                // Add the xaxis
+                this.chart.svg.append('g')
+                    .attr('opacity', 0)
+                    .attr('class', 'xaxis')
+                    .attr('transform', 'translate(0,' +
+                            (this.chart.position.height - 20) + ')')
+                    .call(this.chart.xAxis);
 
                 if (this.provider === 'mangroves') {
                     this.chart.barx.domain(['2010 Mangroves', 'No Mangroves']);
@@ -1436,13 +1471,23 @@ define([
                 // into the correct units if specified.  Default is 1
                 this.chart.data.current.xy = [];
                 var data = this.provider === 'coral' ? this.data[this.region] : this.dataMangrove[this.region];
-                this.chart.data.current.y = [
-                    data['E1_ANN_' + this.variable] / division,
-                    data['E1_10RP_' + this.variable] / division,
-                    data['E1_25RP_' + this.variable] / division,
-                    data['E1_50RP_' + this.variable] / division,
-                    data['E1_100RP_' + this.variable] / division
-                ];
+                if(this.provider === 'mangroves' && this.regionJSON.hasNewMangroves) {
+                    this.chart.data.current.y = [
+                        data['E1_10RP_' + this.variable] / division,
+                        data['E1_25RP_' + this.variable] / division,
+                        data['E1_50RP_' + this.variable] / division,
+                        data['E1_100RP_' + this.variable] / division,
+                        data['E1_500RP_' + this.variable] / division
+                    ];
+                } else {
+                    this.chart.data.current.y = [
+                        data['E1_ANN_' + this.variable] / division,
+                        data['E1_10RP_' + this.variable] / division,
+                        data['E1_25RP_' + this.variable] / division,
+                        data['E1_50RP_' + this.variable] / division,
+                        data['E1_100RP_' + this.variable] / division
+                    ];
+                }
 
                 // Create array of xy values for drawing chart points
                 for (var i = 0; i < this.chart.data.current.x.length; i++) {
@@ -1455,13 +1500,23 @@ define([
                 }
 
                 this.chart.data.scenario.xy = [];
-                this.chart.data.scenario.y = [
-                    data['E2_ANN_' + this.variable] / division,
-                    data['E2_10RP_' + this.variable] / division,
-                    data['E2_25RP_' + this.variable] / division,
-                    data['E2_50RP_' + this.variable] / division,
-                    data['E2_100RP_' + this.variable] / division
-                ];
+                if(this.provider === 'mangroves' && this.regionJSON.hasNewMangroves) {
+                    this.chart.data.scenario.y = [
+                        data['E2_10RP_' + this.variable] / division,
+                        data['E2_25RP_' + this.variable] / division,
+                        data['E2_50RP_' + this.variable] / division,
+                        data['E2_100RP_' + this.variable] / division,
+                        data['E2_500RP_' + this.variable] / division
+                    ];
+                } else {
+                    this.chart.data.scenario.y = [
+                        data['E2_ANN_' + this.variable] / division,
+                        data['E2_10RP_' + this.variable] / division,
+                        data['E2_25RP_' + this.variable] / division,
+                        data['E2_50RP_' + this.variable] / division,
+                        data['E2_100RP_' + this.variable] / division
+                    ];
+                }
 
                 for (var j = 0; j < this.chart.data.scenario.x.length; j++) {
                     this.chart.data.scenario.xy.push(
@@ -1532,6 +1587,15 @@ define([
                                 }
                             });
                     }
+                    if (this.period === '500RP') {
+                        this.chart.svg.selectAll('.xaxis .tick')
+                            .classed('current', false).each(function(d, i) {
+                                if (d === 500) {
+                                    d3.select(this)
+                                        .classed('current', true);
+                                }
+                            });
+                    }
                 }
 
                 // Show and hide as appropriate all the different elements.
@@ -1584,6 +1648,8 @@ define([
                             period = 25;
                         } else if (self.period === '100RP') {
                             period = 100;
+                        } else if (self.period === '500RP') {
+                            period = 500;
                         }
                         if (d.x === period) {
                            return 5;
@@ -1619,6 +1685,8 @@ define([
                             period = 25;
                         } else if (self.period === '100RP') {
                             period = 100;
+                        } else if (self.period === '500RP') {
+                            period = 500;
                         }
                         if (d.x === period) {
                            return 5;

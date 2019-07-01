@@ -19,7 +19,8 @@ define([
                     adminOpacity: 100,
                     coralVisibility: false,
                     mangroveVisibility: false,
-                    adminVisibility: false
+                    adminVisibility: false,
+                    fromShare: false
                 });
             },
 
@@ -145,6 +146,16 @@ define([
 
             getAdminOpacity: function() {
                 return this.savedState.adminOpacity;
+            },
+
+            setFromShare: function(fromShare) {
+                return this.clone({
+                    fromShare: fromShare
+                });
+            },
+
+            getFromShare: function() {
+                return this.savedState.fromShare;
             },
 
             // Return new State combined with `data`.

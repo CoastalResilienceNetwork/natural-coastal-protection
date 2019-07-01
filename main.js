@@ -168,7 +168,7 @@ define([
                 this.$el.on('change', 'input[name=storm' +
                     this.app.paneNumber + ']', $.proxy(this.updateLayers, this));
 
-                this.$el.on('change', '#ncp-select-region', $.proxy(this.changeRegion, this));
+                this.$el.on('change', '#ncp-select-region', function(e) { self.changeRegion(e, true)});
                 this.$el.on('change', '#chosen-ref-layers', $.proxy(this.changeReferenceLayers, this));
                 this.$el.on('click', '.tab-item:not(.active) .tab-link', $.proxy(this.changeFocus, this));
                 this.$el.on('change', '#ncp-provider', $.proxy(this.changeProvider, this));
@@ -198,6 +198,7 @@ define([
                 this.adminVisibility = data.adminVisibility;
                 this.adminReferenceLayers = data.adminReferenceLayers;
                 this.adminOpacity = data.adminOpacity;
+                this.fromShare = data.fromShare;
             },
 
             getState: function() {
@@ -212,7 +213,8 @@ define([
                     mangroveVisibility: this.state.getMangroveVisibility(),
                     adminVisibility: this.state.getAdminVisibility(),
                     adminOpacity: this.state.getAdminOpacity(),
-                    adminReferenceLayers: this.state.getAdminReferenceLayers()
+                    adminReferenceLayers: this.state.getAdminReferenceLayers(),
+                    fromShare: this.state.getFromShare()
                 };
             },
 
@@ -344,14 +346,14 @@ define([
 
                     // Restore state of region select
                     this.$el.find('#ncp-select-region').val(this.region).trigger('chosen:updated');
-                    this.changeRegion();
+                    this.changeRegion(null, false);
                     this.updateLayers();
                 }
                 
                
 
                 if(this.regionJSON.hasAdmin) {
-                    this.changeRegion();
+                    this.changeRegion(null, false);
                     this.$el.find('.' + this.adminVariable + '.stat').addClass('active');
                     if(this.state.getAdminVisibility()) {
                         this.changeFocus();
@@ -365,7 +367,8 @@ define([
                     }
                 }
 
-                if(this.regionJSON.getStarted) {
+                if(this.regionJSON.getStarted && !this.state.getFromShare()) {
+                    this.state = this.state.setFromShare(true);
                     $('#show-single-plugin-mode-help').click();
                     $('body').removeClass('pushy-open-left').removeClass('pushy-open-right');
                 }
@@ -440,7 +443,7 @@ define([
                         this.coralReefLayer.setVisibility(this.state.getCoralVisibility());
                         this.mangroveLayer.setVisibility(this.state.getMangroveVisibility());
                         this.state = this.state.setAdminVisibility(false);
-                        this.changeRegion();
+                        this.changeRegion(null, false);
                         this.changePeriod();
                         this.updateLayers();
                     }
@@ -506,7 +509,7 @@ define([
                     }
                 }
                 this.$el.find('#ncp-select-region').trigger("chosen:updated");
-                this.changeRegion();
+                this.changeRegion(null, false);
                 this.changePeriod();
                 this.updateLayers();
             },
@@ -853,12 +856,11 @@ define([
             // data for all countries.  If regional, zoom to the country based on the
             // bookmark in the extent-bookmarks.json file and hide data for all other
             // countries
-            changeRegion: function(e) {
+            changeRegion: function(e, updateExtent) {
                 this.region = this.$el.find('#ncp-select-region').val();
                 if(!this.region) {
                     this.region = this.regionJSON.defaultRegion;
                 }
-                console.log(this.region);
 
                 // Show/hide the download country summary button
                 if (this.region === 'Global') {
@@ -874,34 +876,35 @@ define([
                     this.adminUnitsLayer.clearSelection();
                 }
 
-                var regionExtent;
-                var extent;
-                if (this.provider === 'mangroves' && this.countryConfig[this.region].EXTENT_MANGROVES) {
-                    regionExtent = this.countryConfig[this.region].EXTENT_MANGROVES;
-                } else {
-                    regionExtent = this.countryConfig[this.region].EXTENT;
+                if(updateExtent) {
+                    var regionExtent;
+                    var extent;
+                    if (this.provider === 'mangroves' && this.countryConfig[this.region].EXTENT_MANGROVES) {
+                        regionExtent = this.countryConfig[this.region].EXTENT_MANGROVES;
+                    } else {
+                        regionExtent = this.countryConfig[this.region].EXTENT;
+                    }
+                    // Set the zoom extent
+                    if (this.region === 'Global' && this.provider === 'coral') {
+                        var initialExtent = this.app.regionConfig.initialExtent;
+                        extent = new Extent(
+                            initialExtent[0],
+                            initialExtent[1],
+                            initialExtent[2],
+                            initialExtent[3]
+                        );
+                    } else {
+                        extent = new Extent(
+                            regionExtent[0],
+                            regionExtent[1],
+                            regionExtent[2],
+                            regionExtent[3]
+                        );
+                    }
+    
+                    this.map.setExtent(extent, true);
                 }
-                
-                // Set the zoom extent
-                if (this.region === 'Global' && this.provider === 'coral') {
-                    var initialExtent = this.app.regionConfig.initialExtent;
-                    extent = new Extent(
-                        initialExtent[0],
-                        initialExtent[1],
-                        initialExtent[2],
-                        initialExtent[3]
-                    );
-                } else {
-                    extent = new Extent(
-                        regionExtent[0],
-                        regionExtent[1],
-                        regionExtent[2],
-                        regionExtent[3]
-                    );
-                }
-
-                this.map.setExtent(extent, true);
-
+            
                 if(this.regionJSON.hasNCP) {
                     this.updateLayers();
                 }

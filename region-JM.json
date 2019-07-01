@@ -1,8 +1,9 @@
 {
   "defaultRegion": "Jamaica",
   "serviceURL": "https://dev-services.coastalresilience.org/arcgis/rest/services/Jamaica/Natural_Coastal_Protection/MapServer",
-  "adminTableIndex": 83,
+  "adminTableIndex": 98,
   "adminUnitsIndex": 1,
+  "getStarted": true,
   "regions": {
     "Global" : {
       "EXTENT" : [-180,-82,180,85],

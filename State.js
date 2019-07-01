@@ -19,6 +19,8 @@ define([
                     adminOpacity: 100,
                     coralVisibility: false,
                     mangroveVisibility: false,
+                    floodWithVisibility: false,
+                    floodWithoutVisibility: false,
                     adminVisibility: false
                 });
             },
@@ -125,6 +127,26 @@ define([
 
             getMangroveVisibility: function() {
                 return this.savedState.mangroveVisibility;
+            },
+
+            setFloodWithVisibility: function(floodWithVisibility) {
+                return this.clone({
+                    floodWithVisibility: floodWithVisibility
+                });
+            },
+
+            getFloodWithVisibility: function() {
+                return this.savedState.floodWithVisibility;
+            },
+
+            setFloodWithoutVisibility: function(floodWithoutVisibility) {
+                return this.clone({
+                    floodWithoutVisibility: floodWithoutVisibility
+                });
+            },
+
+            getFloodWithoutVisibility: function() {
+                return this.savedState.floodWithoutVisibility;
             },
 
             setAdminVisibility: function(adminVisibility) {

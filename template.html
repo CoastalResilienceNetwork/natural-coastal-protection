@@ -476,6 +476,8 @@
 	}
 
 	.ncp-plugin .coral-select-container input[type=checkbox],
+	.ncp-plugin .flood-with-select-container input[type=checkbox],
+	.ncp-plugin .flood-without-select-container input[type=checkbox],
 	.ncp-plugin .moral-select-container input[type=checkbox] {
 	  /* Double-sized Checkboxes */
 	    margin-top: 1px;
@@ -487,6 +489,8 @@
 	}
 
 	.ncp-plugin .coral-select-container span,
+	.ncp-plugin .flood-with-select-container span,
+	.ncp-plugin .flood-without-select-container span,
 	.ncp-plugin .mangrove-select-container span {
 		margin-left: 8px;
 	}
@@ -824,6 +828,12 @@
 										<div class="check"></div>
 										<span class="form-text">1 in 100-year storm</span>
 									</label>
+
+									<label id="rp500" style="display: none" class="form-component" for="RP500-option">
+										<input checked="checked" type="radio" id="RP500-option"  class="RP" value="500RP" name="storm<%=pane%>">
+										<div class="check"></div>
+										<span class="form-text">1 in 500-year storm</span>
+									</label>
 								</div>
 							</div>
 						</div>
@@ -845,6 +855,22 @@
 								<input type="checkbox" id="mangrove-option">
 								<div class="check"></div>
 								<span class="form-text">View Mangrove Habitats</span>
+							</label>
+						</div>
+
+						<div style="display: none;" class="flood-with-select-container">
+							<label class="form-component" for="flood-with-option">
+								<input type="checkbox" id="flood-with-option">
+								<div class="check"></div>
+								<span class="form-text">View Flood Risk With Mangroves</span>
+							</label>
+						</div>
+
+						<div style="display: none;" class="flood-without-select-container">
+							<label class="form-component" for="flood-without-option">
+								<input type="checkbox" id="flood-without-option">
+								<div class="check"></div>
+								<span class="form-text">View Flood Risk Without Mangroves</span>
 							</label>
 						</div>
 

@@ -3,6 +3,7 @@
   "serviceURL": "https://dev-services.coastalresilience.org/arcgis/rest/services/Dominican_Republic/Natural_Coastal_Protection/MapServer",
   "adminTableIndex": 59,
   "adminUnitsIndex": 1,
+  "getStarted": true,
   "regions": {
     "Global" : {
       "EXTENT" : [-180,-82,180,85],

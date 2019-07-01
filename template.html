@@ -678,6 +678,16 @@
 		float: right;
 	}
 
+	.ncp-plugin #admin-pane ol.census-stats-instructions {
+		padding-left: 2rem;
+		list-style-type: decimal;
+		font-size: 14px;
+	}
+
+	.ncp-plugin #admin-pane ol.census-stats-instructions li {
+		list-style-type: decimal;
+	}
+
 	.ncp-plugin #admin-pane .ref-layers {
 		padding: 10px;
 		overflow: auto;
@@ -855,8 +865,10 @@
 						<h2 class="admin-title"><span class="admin-name"><%= region %></span></h2>
 						
 						<h3>Census Statistics</h3>
-						Select an administrative unit on the map to view census-based demographics and other statistics about that unit.<br /><br />
-						Select an individual statistic to visualize it's spatial distribution on the map
+						<ol class="census-stats-instructions">
+							<li>Click an individual statistic to view it on the map. The statistic highlighted in blue is what is currently displayed.</li><br>
+							<li>Click an administrative unit on the map to view statistics about only that unit.</li>
+						</ol>
 
 					</section>
 					<img class="info-button" src="plugins/natural_coastal_protection/infoIcon.svg" alt="info icon" />

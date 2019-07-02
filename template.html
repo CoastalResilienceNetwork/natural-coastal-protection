@@ -1006,7 +1006,11 @@
 						<div class="chosen-wrap">
 							<select data-placeholder="Select up to three" id="chosen-ref-layers" multiple="true" class="chosen">
 									<% _.each(referenceLayers, function(val, key) { %>
-										<option class="ref-layer-option" value="<%= val %>"><%= key %></option>
+										<optgroup label="<%= key %>">
+											<% _.each(val, function(val2, key2) { %>
+												<option class="ref-layer-option" value="<%= val2 %>"><%= key2 %></option>
+											<% }); %>
+										</optgroup>
 									<% }); %>
 							</select>
 						</div>

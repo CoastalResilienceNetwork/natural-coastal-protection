@@ -1,7 +1,7 @@
 {
-  "defaultRegion": "Dominican Republic",
-  "serviceURL": "https://dev-services.coastalresilience.org/arcgis/rest/services/Dominican_Republic/Natural_Coastal_Protection/MapServer",
-  "adminTableIndex": 59,
+  "defaultRegion": "Grenada, St. Vincent and the Grenadines",
+  "serviceURL": "https://dev-services.coastalresilience.org/arcgis/rest/services/GSVG/Natural_Coastal_Protection/MapServer",
+  "adminTableIndex": 177,
   "adminUnitsIndex": 1,
   "getStarted": true,
   "regions": {
@@ -24,6 +24,10 @@
     "Jamaica" : {
       "EXTENT" : [-79.843140,16.843976,-75.275574,19.321511],
       "SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Jamaica.pdf"
+    },
+    "Grenada, St. Vincent and the Grenadines" : {
+      "EXTENT" : [-62.000, 11.750, -61.100, 12.500],
+      "SNAPSHOT": "#"
     },
     "Malaysia" : {
       "EXTENT" : [97.954102,0.351560,119.926758,9.665738],
@@ -51,7 +55,7 @@
     }
   },
   "coralData": {
-    "Dominican Republic": {
+    "Grenada, St. Vincent and the Grenadines": {
       "E2E1_DIF_ANN_PF": 6872.16,
       "E1_ANN_PF": 1655.86,
       "E2_ANN_PF": 8528.03,
@@ -116,7 +120,7 @@
     }
   },
   "mangroveData": {
-    "Dominican Republic": {
+    "Grenada, St. Vincent and the Grenadines": {
       "E2E1_DIF_ANN_PF": 613461,
       "E1_ANN_PF": 2521004,
       "E2_ANN_PF": 3134465,
@@ -150,21 +154,157 @@
     }
   },
   "hasAdmin": true,
-  "hasNCP": true,
+  "hasNCP": false,
+  "climateIsPercent": true,
   "referenceLayers": {
-    "Arrecifes de Coral": 20,
-    "Costa Rocosa": 21,
-    "Dunas": 22,
-    "Estuarios": 23,
-    "Lagunas Costeras": 24,
-    "Manglares": 25,
-    "Playas": 26,
-    "Rios": 27,
-    "Humedales": 28,
-    "Cuencas": 29,
-    "Subcuencas": 30,
-    "Uso y Covertura 2012": 31,
-    "Areas protegidas declaradas": 32
+    "Reference Layers": {
+      "Transportation Terminal": 20,
+      "Port": 21,
+      "Airport": 22,
+      "Road": 23,
+      "Building Footprint": 24,
+      "Electrict Plant": 25,
+      "Cell Tower": 26,
+      "Pumping Sation": 27,
+      "Water Treatment Plant": 28,
+      "Medical Facility": 29,
+      "Emergency Shelter": 30,
+      "Fire Station": 31,
+      "Police Station": 32,
+      "Religious Center": 33,
+      "School": 34,
+      "Dominant Mangrove Vegetation": 35,
+      "Mangrove Migration Area": 36,
+      "Coral Reef": 37,
+      "Rocky Shore": 38,
+      "Beach": 39,
+      "Seagrass": 40,
+      "Mangrove Vulerability Index (1m SLR)": 42,
+      "Mangrove Vulerability Index (2m SLR)": 43
+    },
+    "Socioeconomic Layers": {
+      "Financial Institution": 46,
+      "Cemetery": 47,
+      "Landfill": 48
+    },
+    "Inundation Scenarios": {
+      "1m Sea Level Rise Scenario": 50,
+      "2m Sea Level Rise Scenario": 51,
+      "Storm Surge_100 year Flood (1% annual chance)": 52,
+      "Storm Surge_Hurricane Ivan": 53,
+      "Storm Surge_Hurricane Lenny": 54,
+      "Storm Surge_Hurricane Lenny with 1 meter Sea Level Rise": 55,
+      "Storm Surge_Hurricane Lenny with 2 meter Sea Level Rise": 56
+    },
+    "2011 Sensitivity Indicators": {
+      "Access to Critical Infrastructure and Facilities": 58,
+      "Dependent Demographic Groups": 59,
+      "Livelihood Dependence on Marine Goods and Services": 60
+    },
+    "2011 Adaptive Capacity Indicators": {
+      "Human and Civic Resources": 62,
+      "Healthy Population": 63,
+      "Economic Resources": 64
+    },
+    "2011 Vulnerability": {
+      "Total Sensitivity": 66,
+      "Total Adaptive Capacity": 67,
+      "Exposure-100 year flood": 68,
+      "Exposure-Lenny no SLR": 69,
+      "Exposure-Lenny 1m SLR": 70,
+      "Exposure-Lenny 2m SLR": 71,
+      "Vulnerability-100 year flood": 72,
+      "Vulnerability-Lenny no SLR": 73,
+      "Vulnerability-Lenny 1m SLR": 74,
+      "Vulnerability-Lenny 2m SLR": 75
+    },
+    "Livelihoods": {
+      "Fish Market": 77,
+      "Fishing Gear Storage": 78,
+      "Emergency Fishing Gear Storage": 79,
+      "Ship Building": 80,
+      "Landing Site (fish)": 81,
+      "Employed in Fishing": 82,
+      "Dive Center": 83,
+      "Hotel": 84,
+      "Marina": 85,
+      "Employed in Hotels/Restaurants": 86
+    },
+    "Grenville": {
+      "1 meter Sea Level Rise": 89,
+      "2 meter Sea Level Rise": 90,
+      "Sea Channels": 92,
+      "Benthic Habitat": 93,
+      "Modeled Wave Direction and Height": 94,
+      "Seamoss Farming": 96,
+      "Boat Building": 97,
+      "Religious Center": 98,
+      "Recreational Areas": 99,
+      "Threat - Sand Mining": 100,
+      "Grenville Bathymetry (m)": 102
+    },
+    "Union Island": {
+      "Ponds": 105,
+      "Benthic Habitat": 106,
+      "Seamoss Farming": 108,
+      "Recreational Areas": 109,
+      "Water Collection": 110,
+      "Sea Defenses": 111,
+      "Wharf": 112,
+      "Dive Sites": 113,
+      "Union Island Bathymetry (m)": 115
+    },
+    "St Vincent and the Grenadines": {
+      "1m Sea Level Rise Scenario": 118,
+      "2m Sea Level Rise Scenario": 119,
+      "Storm Surge_100 year Flood (1% annual chance)": 120,
+      "Storm Surge_Hurricane Ivan": 121,
+      "Storm Surge_Hurricane Lenny": 122,
+      "Storm Surge_Hurricane Lenny with 1 meter Sea Level Rise": 123,
+      "Storm Surge_Hurricane Lenny with 2 meter Sea Level Rise": 124,
+      "Dominant Mangrove Vegetation": 126,
+      "Mangrove Migration Area": 127,
+      "Coral Reef": 128,
+      "Rocky Shore": 129,
+      "Beach": 130,
+      "Seagrass": 131,
+      "Vulnerability": 132,
+      "Mangrove Vulnerability Index (1m SLR)": 133,
+      "Mangrove Vulnerability Index (2m SLR)": 134,
+      "Road": 137,
+      "Building Footprint": 138,
+      "Electric Plant": 140,
+      "Cell Tower": 141,
+      "Medical Facility": 143,
+      "Emergency Shelter": 144,
+      "Fire Station": 145,
+      "Police Station": 146,
+      "Religious Center": 148,
+      "School": 149,
+      "Transportation Terminal": 151,
+      "Airport": 152,
+      "Port": 153,
+      "St. Vincent and the Grenadines census division": 155,
+      "Total population": 156,
+      "Population density (per square miles)": 157,
+      "Total number of housing units": 158,
+      "Housing units density (per square mile)": 159,
+      "Percentage of population under age 5": 160,
+      "Percentage of population over age 65": 161,
+      "Percentage of households without Internet": 162,
+      "Percentage of households without Radio": 163,
+      "Percentage of households without Vehicles": 164,
+      "Fish Market": 166,
+      "Fishing Gear Storage": 167,
+      "Ship Building": 168,
+      "Landing Site (fish)": 169,
+      "Dive Center": 170,
+      "Hotel": 171,
+      "Marina": 172,
+      "Financial Institution": 174,
+      "Cemetery": 175,
+      "Landfill": 176
+    }
   },
   "adminFields": [
       "ADMIN_NAME", 
@@ -172,8 +312,6 @@
       "POP_FLDRISK_NO", 
       "POP_FLDRISK", 
       "POP_PVTY1",
-      "POP_PVTY2",
-      "POP_ILLT", 
       "POP_AGE",
       "INFRA_RDS", 
       "INFRA_FACIL", 

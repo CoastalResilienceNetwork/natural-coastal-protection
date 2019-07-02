@@ -568,6 +568,7 @@ define([
                     this.adminReferenceLayers.setVisibleLayers([]);
                     this.state = this.state.setAdminReferenceLayers([]);
                 }
+
             },
 
             changeAdminOpacity: function(e, ui) {
@@ -981,11 +982,44 @@ define([
                     width: '100%'
                 });
 
-                this.$el.find('#chosen-ref-layers').chosen({
+                var $chosen = this.$el.find('#chosen-ref-layers').chosen({
                     max_selected_options: 3,
                     hide_results_on_select: false,
                     width: '100%'
                 });
+
+                /* newer chosen libraries don't work with our version of jquery. 
+                Below is a shim for keeping the dropdown open on multiselect */
+                var chosen = $chosen.data("chosen");
+                var autoClose = false;
+                var chosen_resultSelect_fn = chosen.result_select;
+                chosen.search_contains = true;
+                chosen.result_select = function(evt) 
+                {
+                    var resultHighlight = null;
+
+                    if(autoClose === false)
+                    {
+                        evt['metaKey'] = true;
+                        evt['ctrlKey'] = true;
+
+                        resultHighlight = chosen.result_highlight;
+                    }
+
+                    var stext = chosen.get_search_text();
+
+                    var result = chosen_resultSelect_fn.call(chosen, evt);
+
+                    if(autoClose === false && resultHighlight !== null)
+                        resultHighlight.addClass('result-selected');
+
+                    this.search_field.val(stext);               
+                    this.winnow_results();
+                    this.search_field_scale();
+
+                    return result;
+                };
+                /* END SHIM */
 
                 this.adminOpacitySlider = this.$el.find("#admin-pane #slider").slider({
                     min: 0, 

@@ -22,7 +22,8 @@ define([
                     adminVisibility: false,
                     fromShare: false,
                     floodWithVisibility: false,
-                    floodWithoutVisibility: false
+                    floodWithoutVisibility: false,
+                    floodOpacity: 100
                 });
             },
 
@@ -168,6 +169,16 @@ define([
 
             getAdminOpacity: function() {
                 return this.savedState.adminOpacity;
+            },
+
+            setFloodOpacity: function(floodOpacity) {
+                return this.clone({
+                    floodOpacity: floodOpacity
+                });
+            },
+
+            getFloodOpacity: function() {
+                return this.savedState.floodOpacity;
             },
 
             setFromShare: function(fromShare) {

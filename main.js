@@ -145,6 +145,7 @@ define([
                 this.$el.on('click', '#admin-pane .stat', function(e) {self.changeAdminScenarioClick(e);});
                 this.$el.on('click', '#cancel-admin-select', function(e) {self.clearAdminSelection()});
                 this.$el.on('slidechange', '#admin-pane #slider', function(e, ui) {self.changeAdminOpacity(e, ui)});
+                this.$el.on('slidechange', '#ncp-pane #slider', function(e, ui) { self.changeFloodOpacity(e, ui)});
                 this.$el.on('change', '.coral-select-container input',
                         $.proxy(this.toggleCoral, this));
                 this.$el.on('change', '.mangrove-select-container input',
@@ -162,6 +163,7 @@ define([
                 this.region = data.region;
                 this.period = data.period;
                 this.layer = data.layer;
+                this.provider = data.provider;
                 this.variable = data.variable;
                 this.adminUnit = data.adminUnit;
                 this.adminVariable = data.adminVariable;
@@ -173,6 +175,7 @@ define([
                 this.fromShare = data.fromShare;
                 this.floodWithVisibility = data.floodWithVisibility;
                 this.floodWithoutVisibility = data.floodWithoutVisibility;
+                this.floodOpacity = data.floodOpacity;
             },
 
             getState: function() {
@@ -181,6 +184,7 @@ define([
                     period: this.state.getPeriod(),
                     layer: this.state.getLayer(),
                     variable: this.state.getVariable(),
+                    provider: this.state.getProvider(),
                     adminUnit: this.state.getAdminUnit(),
                     adminVariable: this.state.getAdminVariable(),
                     coralVisibility: this.state.getCoralVisibility(),
@@ -190,7 +194,8 @@ define([
                     adminReferenceLayers: this.state.getAdminReferenceLayers(),
                     fromShare: this.state.getFromShare(),
                     floodWithVisibility: this.state.getFloodWithVisibility(),
-                    floodWithoutVisibility: this.state.getFloodWithoutVisibility()
+                    floodWithoutVisibility: this.state.getFloodWithoutVisibility(),
+                    floodOpacity: this.state.getFloodOpacity()
                 };
             },
 
@@ -217,11 +222,13 @@ define([
 
                     this.floodWithLayer = new ArcGISDynamicMapServiceLayer(this.regionJSON.serviceURL, {
                         visible: this.state.getFloodWithVisibility(),
+                        opacity: (this.state.getFloodOpacity() / 100)
                     });
                     this.floodWithLayer.setVisibleLayers([this.layerLookup.mangroves["25RP"]["with"]]);
 
                     this.floodWithoutLayer = new ArcGISDynamicMapServiceLayer(this.regionJSON.serviceURL, {
-                        visible: this.state.getFloodWithoutVisibility()
+                        visible: this.state.getFloodWithoutVisibility(),
+                        opacity: (this.state.getFloodOpacity() / 100)
                     });
                     this.floodWithoutLayer.setVisibleLayers([this.layerLookup.mangroves["25RP"]["without"]]);
     
@@ -309,6 +316,16 @@ define([
                 if(this.regionJSON.hasNCP) {
                     this.renderChart();
                     this.coastalProtectionLayer.show();
+
+                    if (this.provider === 'mangroves') {
+                        this.$el.find('#ncp-provider').prop('checked', true);
+                        this.$el.find('.stat.area').hide();
+                        this.$el.find('.coral-select-container').hide();
+                        this.$el.find('.mangrove-select-container').show();
+                        if(this.regionJSON.hasNewMangroves) {
+                            this.$el.find('#rp500').show();
+                        }
+                    }
     
                     // Restore storm period radios
                     this.$el.find('input[value=' + this.period + ']').prop('checked', true);
@@ -325,14 +342,25 @@ define([
                         this.$el.find('.coral-select-container input').prop('checked', true);
                     }
 
+                    // Restore state of mangrove checkbox
+                    if (this.mangroveLayer.visible) {
+                        this.$el.find('.mangrove-select-container input').prop('checked', true);
+                    }
+
+                    // Restore state of mangrove checkbox
+                    if (this.floodWithLayer.visible) {
+                        this.$el.find('.flood-with-select-container input').prop('checked', true);
+                    }
+
+                    // Restore state of mangrove checkbox
+                    if (this.floodWithoutLayer.visible) {
+                        this.$el.find('.flood-without-select-container input').prop('checked', true);
+                    }
+
                     this.$el.find('.info-tooltip').tooltip({
                         tooltipClass: 'ncp-tooltip',
                         track: true
                     });
-
-                    if (this.provider === 'mangroves') {
-                        this.$el.find('#ncp-provider').prop('checked', true);
-                    }
 
                     // Restore state of region select
                     this.$el.find('#ncp-select-region').val(this.region).trigger('chosen:updated');
@@ -484,6 +512,7 @@ define([
                     this.$el.find('.mangrove-select-container').hide();
                     this.$el.find('.flood-with-select-container').hide();
                     this.$el.find('.flood-without-select-container').hide();
+                    this.$el.find('.flood-slider-conatiner').hide();
                     this.$el.find('.stat.area').show();
                     this.$el.find('option.coral').show();
                     this.$el.find('option.mangrove').hide();
@@ -508,6 +537,7 @@ define([
                     if(this.regionJSON.hasNewMangroves) {
                         this.$el.find('.flood-with-select-container').show();
                         this.$el.find('.flood-without-select-container').show();
+                        this.$el.find('.flood-slider-conatiner').show();
                     }
                     this.$el.find('.stat.area').hide();
                     this.$el.find('option.coral').hide();
@@ -608,6 +638,12 @@ define([
             changeAdminOpacity: function(e, ui) {
                 this.adminVisualizationLayer.setOpacity(ui.value / 100);
                 this.state = this.state.setAdminOpacity(ui.value);
+            },
+
+            changeFloodOpacity: function(e, ui) {
+                this.floodWithLayer.setOpacity(ui.value / 100);
+                this.floodWithoutLayer.setOpacity(ui.value / 100);
+                this.state = this.state.setFloodOpacity(ui.value);
             },
 
             clearAdminSelection: function() {
@@ -867,6 +903,7 @@ define([
                     if(this.period == 'ANN') {
                         this.$el.find('.flood-with-select-container').hide();
                         this.$el.find('.flood-without-select-container').hide();
+                        this.$el.find('.flood-slider-conatiner').hide();
                         this.floodWithLayer.setVisibility(false);
                         this.floodWithoutLayer.setVisibility(false);
                     } else {
@@ -876,6 +913,7 @@ define([
                         this.floodWithoutLayer.setVisibility(this.state.getFloodWithoutVisibility());
                         this.$el.find('.flood-with-select-container').show();
                         this.$el.find('.flood-without-select-container').show();
+                        this.$el.find('.flood-slider-conatiner').show();
                     }
                 } else if (this.provider === 'coral') {
                     cap.people = this.data[this.region]['E2E1_DIF_' + this.period + '_PF'];
@@ -1030,6 +1068,11 @@ define([
                     width: '100%'
                 });
 
+
+                if(Object.keys(this.regionJSON.coralData).length <= 1) {
+                    this.$el.find('.chosen-wrap').hide();
+                }
+
                 var $chosen = this.$el.find('#chosen-ref-layers').chosen({
                     max_selected_options: 3,
                     hide_results_on_select: false,
@@ -1075,6 +1118,14 @@ define([
                     range: "min",
                     animate: true,
                     value: this.state.getAdminOpacity()
+                });
+
+                this.floodOpacitySlider = this.$el.find("#ncp-pane #slider").slider({
+                    min: 0, 
+                    max: 100, 
+                    range: "min",
+                    animate: true,
+                    value: this.state.getFloodOpacity()
                 });
 
                 $(this.container).find('.viewCrsInfoGraphicIcon').on('click', function(c) {

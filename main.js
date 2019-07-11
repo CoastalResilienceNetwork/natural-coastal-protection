@@ -105,7 +105,43 @@ define([
                 this.adminVisibility = this.state.getAdminVisibility();
                 this.layerID = 40; // TODO GET/SAVE STATE
 
-                this.layerLookup = this.regionJSON.layerLookup;
+                if(this.regionJSON.hasNewMangroves) {
+                    this.layerLookup = this.regionJSON.layerLookup;
+                } else {
+                    this.layerLookup = {
+                        mangroves: {
+                            ANN: {
+                                people: 33,
+                                capital: 34,
+                            },
+                            '25RP': {
+                                people: 35,
+                                capital: 36,
+                            },
+                            '50RP': {
+                                people: 37,
+                                capital: 38,
+                            }
+                        },
+                        coral: {
+                            ANN: {
+                                people: 40,
+                                capital: 41,
+                                area: 42,
+                            },
+                            '25RP': {
+                                people: 43,
+                                capital: 44,
+                                area: 45,
+                            },
+                            '100RP': {
+                                people: 46,
+                                capital: 47,
+                                area: 48,
+                            }
+                        }
+                    };
+                }
 
                 this.bindEvents();
 
@@ -220,32 +256,41 @@ define([
                     });
                     this.mangroveLayer.setVisibleLayers([this.regionJSON.referenceLayers["Mangrove"]]);
 
-                    this.floodWithLayer = new ArcGISDynamicMapServiceLayer(this.regionJSON.serviceURL, {
-                        visible: this.state.getFloodWithVisibility(),
-                        opacity: (this.state.getFloodOpacity() / 100)
-                    });
-                    this.floodWithLayer.setVisibleLayers([this.layerLookup.mangroves["25RP"]["with"]]);
+                    if(this.regionJSON.hasNewMangroves) {
+                        this.floodWithLayer = new ArcGISDynamicMapServiceLayer(this.regionJSON.serviceURL, {
+                            visible: this.state.getFloodWithVisibility(),
+                            opacity: (this.state.getFloodOpacity() / 100)
+                        });
+                        this.floodWithLayer.setVisibleLayers([this.layerLookup.mangroves["25RP"]["with"]]);
 
-                    this.floodWithoutLayer = new ArcGISDynamicMapServiceLayer(this.regionJSON.serviceURL, {
-                        visible: this.state.getFloodWithoutVisibility(),
-                        opacity: (this.state.getFloodOpacity() / 100)
-                    });
-                    this.floodWithoutLayer.setVisibleLayers([this.layerLookup.mangroves["25RP"]["without"]]);
-    
-                    this.coastalProtectionLayer = new ArcGISDynamicMapServiceLayer(this.regionJSON.serviceURL, {});
-                    this.coastalProtectionLayer.setVisibleLayers([84]);
+                        this.floodWithoutLayer = new ArcGISDynamicMapServiceLayer(this.regionJSON.serviceURL, {
+                            visible: this.state.getFloodWithoutVisibility(),
+                            opacity: (this.state.getFloodOpacity() / 100)
+                        });
+                        this.floodWithoutLayer.setVisibleLayers([this.layerLookup.mangroves["25RP"]["without"]]);
+
+                        this.coastalProtectionLayer = new ArcGISDynamicMapServiceLayer(this.regionJSON.serviceURL, {});
+                        this.coastalProtectionLayer.setVisibleLayers([84]);
+                    } else {
+                        this.coastalProtectionLayer = new ArcGISDynamicMapServiceLayer("https://services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer", {});
+                        this.coastalProtectionLayer.setVisibleLayers([40]);
+                    }
     
                     this.map.removeLayer(this.coastalProtectionLayer);
                     this.map.removeLayer(this.coralReefLayer);
                     this.map.removeLayer(this.mangroveLayer);
-                    this.map.removeLayer(this.floodWithoutLayer);
-                    this.map.removeLayer(this.floodWithLayer);
+                    if(this.regionJSON.hasNewMangroves) {
+                        this.map.removeLayer(this.floodWithoutLayer);
+                        this.map.removeLayer(this.floodWithLayer);
+                    }
 
                     this.map.addLayer(this.coastalProtectionLayer);
                     this.map.addLayer(this.coralReefLayer);
                     this.map.addLayer(this.mangroveLayer);
-                    this.map.addLayer(this.floodWithoutLayer);
-                    this.map.addLayer(this.floodWithLayer);
+                    if(this.regionJSON.hasNewMangroves) {
+                        this.map.addLayer(this.floodWithoutLayer);
+                        this.map.addLayer(this.floodWithLayer);
+                    }
                 }
 
                 if(this.regionJSON.hasAdmin) {
@@ -347,16 +392,17 @@ define([
                         this.$el.find('.mangrove-select-container input').prop('checked', true);
                     }
 
-                    // Restore state of mangrove checkbox
-                    if (this.floodWithLayer.visible) {
-                        this.$el.find('.flood-with-select-container input').prop('checked', true);
-                    }
+                    if(this.regionJSON.hasNewMangroves) {
+                        // Restore state of mangrove checkbox
+                        if (this.floodWithLayer.visible) {
+                            this.$el.find('.flood-with-select-container input').prop('checked', true);
+                        }
 
-                    // Restore state of mangrove checkbox
-                    if (this.floodWithoutLayer.visible) {
-                        this.$el.find('.flood-without-select-container input').prop('checked', true);
+                        // Restore state of mangrove checkbox
+                        if (this.floodWithoutLayer.visible) {
+                            this.$el.find('.flood-without-select-container input').prop('checked', true);
+                        }
                     }
-
                     this.$el.find('.info-tooltip').tooltip({
                         tooltipClass: 'ncp-tooltip',
                         track: true
@@ -398,8 +444,10 @@ define([
                         this.coralReefLayer.hide();
                         this.coastalProtectionLayer.hide();
                         this.mangroveLayer.hide();
-                        this.floodWithLayer.hide();
-                        this.floodWithoutLayer.hide();
+                        if(this.regionJSON.hasNewMangroves) {
+                            this.floodWithLayer.hide();
+                            this.floodWithoutLayer.hide();
+                        }
                     }
                     if(this.regionJSON.hasAdmin) {
                         this.adminUnitsLayer.hide();
@@ -418,8 +466,10 @@ define([
                         this.coralReefLayer.hide();
                         this.coastalProtectionLayer.hide();
                         this.mangroveLayer.hide();
-                        this.floodWithLayer.hide();
-                        this.floodWithoutLayer.hide();
+                        if(this.regionJSON.hasNewMangroves) {
+                            this.floodWithLayer.hide();
+                            this.floodWithoutLayer.hide();
+                        }
                     }
                     if(this.regionJSON.hasAdmin) {
                         this.adminUnitsLayer.hide();
@@ -447,8 +497,10 @@ define([
                         this.coastalProtectionLayer.setVisibility(false);
                         this.coralReefLayer.setVisibility(false);
                         this.mangroveLayer.setVisibility(false);
-                        this.floodWithLayer.setVisibility(false);
-                        this.floodWithoutLayer.setVisibility(false);
+                        if(this.regionJSON.hasNewMangroves) {
+                            this.floodWithLayer.setVisibility(false);
+                            this.floodWithoutLayer.setVisibility(false);
+                        }
                         this.state = this.state.setAdminVisibility(true);
                         if(this.state.getAdminUnit()) {
                             this.changeAdminClick(this.state.getAdminUnit(), null);
@@ -466,8 +518,10 @@ define([
                         this.coastalProtectionLayer.setVisibility(true);
                         this.coralReefLayer.setVisibility(this.state.getCoralVisibility());
                         this.mangroveLayer.setVisibility(this.state.getMangroveVisibility());
-                        this.floodWithLayer.setVisibility(this.state.getFloodWithVisibility());
-                        this.floodWithoutLayer.setVisibility(this.state.getFloodWithoutVisibility());
+                        if(this.regionJSON.hasNewMangroves) {
+                            this.floodWithLayer.setVisibility(this.state.getFloodWithVisibility());
+                            this.floodWithoutLayer.setVisibility(this.state.getFloodWithoutVisibility());
+                        }
                         this.state = this.state.setAdminVisibility(false);
                         this.changeRegion(null, false);
                         this.changePeriod();
@@ -510,15 +564,19 @@ define([
                     this.$el.find('#rp500').hide();
                     this.$el.find('.coral-select-container').show();
                     this.$el.find('.mangrove-select-container').hide();
-                    this.$el.find('.flood-with-select-container').hide();
-                    this.$el.find('.flood-without-select-container').hide();
-                    this.$el.find('.flood-slider-conatiner').hide();
+                    if(this.regionJSON.hasNewMangroves) {
+                        this.$el.find('.flood-with-select-container').hide();
+                        this.$el.find('.flood-without-select-container').hide();
+                        this.$el.find('.flood-slider-conatiner').hide();
+                    }
                     this.$el.find('.stat.area').show();
                     this.$el.find('option.coral').show();
                     this.$el.find('option.mangrove').hide();
                     this.$el.find('.mangrove-select-container input').prop('checked', false).trigger('change');
-                    this.$el.find('.flood-with-select-container input').prop('checked', false).trigger('change');
-                    this.$el.find('.flood-without-select-container input').prop('checked', false).trigger('change');
+                    if(this.regionJSON.hasNewMangroves) {
+                        this.$el.find('.flood-with-select-container input').prop('checked', false).trigger('change');
+                        this.$el.find('.flood-without-select-container input').prop('checked', false).trigger('change');
+                    }
                     this.$el.find('.coral-only').show();
                     this.$el.find('.mangrove-only').hide();
                     this.$el.find('#ncp-select-region').trigger('chosen:updated');
@@ -900,20 +958,22 @@ define([
                     cap.capital = this.dataMangrove[this.region]['E2E1_DIF_' + this.period + '_BCF'];
                     cap.area = 0;
 
-                    if(this.period == 'ANN') {
-                        this.$el.find('.flood-with-select-container').hide();
-                        this.$el.find('.flood-without-select-container').hide();
-                        this.$el.find('.flood-slider-conatiner').hide();
-                        this.floodWithLayer.setVisibility(false);
-                        this.floodWithoutLayer.setVisibility(false);
-                    } else {
-                        this.floodWithLayer.setVisibleLayers([this.layerLookup.mangroves[this.period].with]);
-                        this.floodWithoutLayer.setVisibleLayers([this.layerLookup.mangroves[this.period].without]);
-                        this.floodWithLayer.setVisibility(this.state.getFloodWithVisibility());
-                        this.floodWithoutLayer.setVisibility(this.state.getFloodWithoutVisibility());
-                        this.$el.find('.flood-with-select-container').show();
-                        this.$el.find('.flood-without-select-container').show();
-                        this.$el.find('.flood-slider-conatiner').show();
+                    if(this.regionJSON.hasNewMangroves) {
+                        if(this.period == 'ANN') {
+                            this.$el.find('.flood-with-select-container').hide();
+                            this.$el.find('.flood-without-select-container').hide();
+                            this.$el.find('.flood-slider-conatiner').hide();
+                            this.floodWithLayer.setVisibility(false);
+                            this.floodWithoutLayer.setVisibility(false);
+                        } else {
+                            this.floodWithLayer.setVisibleLayers([this.layerLookup.mangroves[this.period].with]);
+                            this.floodWithoutLayer.setVisibleLayers([this.layerLookup.mangroves[this.period].without]);
+                            this.floodWithLayer.setVisibility(this.state.getFloodWithVisibility());
+                            this.floodWithoutLayer.setVisibility(this.state.getFloodWithoutVisibility());
+                            this.$el.find('.flood-with-select-container').show();
+                            this.$el.find('.flood-without-select-container').show();
+                            this.$el.find('.flood-slider-conatiner').show();
+                        }
                     }
                 } else if (this.provider === 'coral') {
                     cap.people = this.data[this.region]['E2E1_DIF_' + this.period + '_PF'];
@@ -1017,6 +1077,7 @@ define([
                 }
 
                 this.layerID = this.layerLookup[this.provider][this.period][this.layer];
+
                 // Set the data extent
                 if (this.region === 'Global') {
                     layerDefs[this.layerID] = ''; //this.activeCountries;
@@ -1070,7 +1131,7 @@ define([
 
 
                 if(Object.keys(this.regionJSON.coralData).length <= 1) {
-                    this.$el.find('.chosen-wrap').hide();
+                    this.$el.find('.country-docs-wrap .chosen-wrap').hide();
                 }
 
                 var $chosen = this.$el.find('#chosen-ref-layers').chosen({

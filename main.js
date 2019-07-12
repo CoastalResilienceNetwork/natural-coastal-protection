@@ -1218,6 +1218,11 @@ define([
                         height: 500
                     });
                 });
+
+                // Localize
+                if ($.i18n) {
+                    $(this.container).localize();
+                }
             },
 
             // Update radio displays for dummy "benefits from catastrophic storm" radio
@@ -1271,7 +1276,7 @@ define([
 
                 // The x-axis for the bar chart is also ordinal with two values
                 this.chart.barx = d3.scale.ordinal()
-                    .domain(['Present', 'Reef Loss'])
+                    .domain([i18next.t('Present'), i18next.t('Reef Loss')])
                     .rangeRoundBands([0, this.chart.position.width], 0.15);
 
                 this.chart.y = d3.scale.linear()
@@ -1355,7 +1360,7 @@ define([
                             (this.chart.position.width / 2) + ',' +
                             (this.chart.position.height + 20) + ')'
                     )
-                    .text('Storm Return Period');
+                    .text(i18next.t('Storm Return Period'));
 
                 // Add the y-axis label
                 this.chart.svg.append('text')
@@ -1364,7 +1369,7 @@ define([
                     .attr('y', 0 - this.chart.position.margin.left + 12)
                     .attr('x', 0 - (this.chart.position.height / 2))
                     .attr('text-anchor', 'middle')
-                    .text('People at Risk (No.)');
+                    .text(i18next.t('People At Risk (No.)'));
 
                 this.chart.svg.append('g')
                     .attr('class', 'yaxis')
@@ -1384,7 +1389,7 @@ define([
 
                 this.chart.col1 = this.chart.legend.append('text')
                     .attr('class', 'col-1')
-                    .text('Present')
+                    .text(i18next.t('Present'))
                     .attr('x', '32')
                     .attr('y', '11');
 
@@ -1397,7 +1402,7 @@ define([
 
                 this.chart.col2 = this.chart.legend.append('text')
                     .attr('class', 'col-2')
-                    .text('Reef Loss')
+                    .text(i18next.t('Reef Loss'))
                     .attr('x', '32')
                     .attr('y', '29');
 
@@ -1562,49 +1567,49 @@ define([
                     .call(this.chart.xAxis);
 
                 if (this.provider === 'mangroves') {
-                    this.chart.barx.domain(['2010 Mangroves', 'No Mangroves']);
+                    this.chart.barx.domain([i18next.t('2010 Mangroves'), i18next.t('No Mangroves')]);
 
                     this.chart.svg.select('.col-1')
                         .transition().duration(this.transitionsEnabled ? 600 : 0)
                         .style('opacity', 0)
                         .transition().duration(this.transitionsEnabled ? 600 : 0)
                         .style('opacity', 1)
-                        .text("2010 Mangroves")
+                        .text(i18next.t("2010 Mangroves"))
 
                     this.chart.svg.select('.col-2')
                         .transition().duration(this.transitionsEnabled ? 600 : 0)
                         .style('opacity', 0)
                         .transition().duration(this.transitionsEnabled ? 600 : 0)
                         .style('opacity', 1)
-                        .text('No Mangroves');
+                        .text(i18next.t('No Mangroves'));
 
                 } else {
-                    this.chart.barx.domain(['Present', 'Reef Loss']);
+                    this.chart.barx.domain([i18next.t('Present'), i18next.t('Reef Loss')]);
 
                     this.chart.svg.select('.col-1')
                         .transition().duration(this.transitionsEnabled ? 600 : 0)
                         .style('opacity', 0)
                         .transition().duration(this.transitionsEnabled ? 600 : 0)
                         .style('opacity', 1)
-                        .text('Present');
+                        .text(i18next.t('Present'));
 
                     this.chart.svg.select('.col-2')
                         .transition().duration(this.transitionsEnabled ? 600 : 0)
                         .style('opacity', 0)
                         .transition().duration(this.transitionsEnabled ? 600 : 0)
                         .style('opacity', 1)
-                        .text('Reef Loss');
+                        .text(i18next.t('Reef Loss'));
                 }
                 
 
                 // Update the  y-axis label to match the current variable selected
                 var text = '';
                 if (this.variable === 'BCF') {
-                    text = 'Built Capital at Risk ($Millions)';
+                    text = i18next.t('Built Capital at Risk (Millions)');
                 } else if (this.variable === 'PF') {
-                    text = 'People at Risk (No.)';
+                    text = i18next.t('People At Risk (No)');
                 } else if (this.variable === 'AF') {
-                    text = 'Area at Risk (sq km)';
+                    text = i18next.t('Area at Risk (sq km)');
                 }
 
                 this.chart.svg.select('.yaxis-label')
@@ -1691,11 +1696,11 @@ define([
 
                 var bardata = [];
                 if (this.provider === 'coral') {
-                    bardata.push({x: 'Present', y: bary});
-                    bardata.push({x: 'Reef Loss', y: bary1m});
+                    bardata.push({x: i18next.t('Present'), y: bary});
+                    bardata.push({x: i18next.t('Reef Loss'), y: bary1m});
                 } else {
-                    bardata.push({x: '2010 Mangroves', y: bary});
-                    bardata.push({x: 'No Mangroves', y: bary1m});
+                    bardata.push({x: i18next.t('2010 Mangroves'), y: bary});
+                    bardata.push({x: i18next.t('No Mangroves'), y: bary1m});
                 }
 
 

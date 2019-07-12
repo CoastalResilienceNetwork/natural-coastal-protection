@@ -1220,8 +1220,10 @@ define([
                 });
 
                 // Localize
+                console.log("$", $);
+                console.log("i18n", $.i18n);
                 if ($.i18n) {
-                    $(this.container).localize();
+                    this.$el.localize();
                 }
             },
 

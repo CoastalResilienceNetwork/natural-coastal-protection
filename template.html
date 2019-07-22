@@ -733,7 +733,7 @@
       </section>
       <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" id="ncp-tab" class="original tab-item active" <% if (!hasNCP) { %> style="display: none;" <% } %> ><a href="#ncp-pane" class="tab-link i18n" data-i18n="Coastal Protection" aria-controls="ncp-pane" role="tab" data-toggle="tab" aria-expanded="true">Coastal Protection</a></li>
-        <li role="presentation" id="admin-tab" class="original tab-item" <% if (!hasAdmin) { %> style="display: none;" <% } %> ><a href="#admin-pane" class="tab-link i18n" data-i18n="Admin Units" aria-controls="admin-pane" role="tab" data-toggle="tab" aria-expanded="false">Admin Units</a></li>
+        <li role="presentation" id="admin-tab" class="original tab-item" <% if (!hasAdmin) { %> style="display: none;" <% } %> ><a href="#admin-pane" class="tab-link i18n" data-i18n="Admin Units" aria-controls="admin-pane" role="tab" data-toggle="tab" aria-expanded="false">Flood Exposure</a></li>
       </ul>
       <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="ncp-pane" <% if (!hasNCP) { %> style="display: none;" <% } %> >
@@ -875,12 +875,20 @@
                   <span class="form-text i18n" data-i18n="View Mangrove Habitats">View Mangrove Habitats</span>
                 </label>
               </div>
+
+              <div style="display: none" class="flood-select-container">
+                <label class="form-component" for="flood-option">
+                  <input type="checkbox" id="flood-option">
+                  <div class="check"></div>
+                  <span class="form-text i18n" data-i18n="View Benefits Polygons">View Benefits Polygons</span>
+                </label>
+              </div>
   
               <div style="display: none;" class="flood-with-select-container">
                 <label class="form-component" for="flood-with-option">
                   <input type="checkbox" id="flood-with-option">
                   <div class="check"></div>
-                  <span class="form-text i18n" data-i18n="View Flood Risk With Mangroves">View Flood Risk With Mangroves</span>
+                  <span class="form-text i18n" data-i18n="View Flood Risk With Mangroves">View Flooding With Mangroves</span>
                 </label>
               </div>
   
@@ -888,7 +896,7 @@
                 <label class="form-component" for="flood-without-option">
                   <input type="checkbox" id="flood-without-option">
                   <div class="check"></div>
-                  <span class="form-text i18n" data-i18n="View Flood Risk Without Mangroves">View Flood Risk Without Mangroves</span>
+                  <span class="form-text i18n" data-i18n="View Flood Risk Without Mangroves">View Flooding Without Mangroves</span>
                 </label>
               </div>
   
@@ -896,7 +904,7 @@
   
             <div style="display: none;" class="flood-slider-conatiner">
               <div class="form-text i18n" data-i18n="Flood Risk Opacity">
-                Flood Risk Opacity
+                Flooding Opacity
               </div>
               <div class="slider-container">
                 <div id="slider">

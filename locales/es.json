@@ -1,7 +1,7 @@
 {
   "Flood Protection Analysis": "Analyse de protection contre les inondations",
   "Coastal Protection": "Protección costera",
-  "Admin Units": "Unidades Administrativas",
+  "Admin Units": "Exposición a Inundaciones",
   "Coral Reefs": "Arrecifes de Coral",
   "Mangroves": "Manglares",
   "Coral Instructions": "Las personas y propiedades protegidas por arrecifes de coral (valores representan pérdidas predichas evitadas al mantener los arrecifes de coral intactos).",
@@ -26,7 +26,7 @@
   "Present": "Presente",
   "Reef Loss": "Pérdida de Arrecife",
   "Storm Return Period": "Periodo de retorno de la tormenta",
-  "2010 Mangroves": "Manglares 2010",
+  "2010 Mangroves": "Manglares 2005",
   "No Mangroves": "No hay manglares",
   "People At Risk (No)": "Personas en riesgo",
   "Built Capital at Risk (Millions)": "Capital construido en riesgo",
@@ -35,7 +35,7 @@
   "Census Statistics": "Estadísticas del censo",
   "Click Statistic": "Hacer clic en una estadística individual para visualizarla en el mapa. La estadística resaltada en azul es lo que se presenta.",
   "Click Unit": "Hacer clic en la unidad administrativa en el mapa para visualizar estadísticas solamente de esa unidad. ",
-  "Demographics": "Demografía",
+  "Demographics": "Personas",
   "Population Within Flood Extent": "Población dentro de áreas de inundación",
   "% Population Within Flood Extent": "% Población dentro de áreas de inundación",
   "Population in Poverty (ICV1)": "Pobreza (ICV1)",
@@ -62,5 +62,9 @@
   "Download": "Descargar",
   "Published Paper": "papel publicado",
   "Global Data": "Punto de datos",
-  "Mangroves Report": "informe de manglares"
+  "Mangroves Report": "informe de manglares",
+  "Net Gain": "Ganancia Neta",
+  "Net Loss": "Pérdida Neta",
+  "No Change": "Ningún Cambio",
+  "View Benefits Polygons": "Ver Beneficios de los polígonos"
 }

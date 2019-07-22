@@ -21,6 +21,7 @@ define([
                     mangroveVisibility: false,
                     adminVisibility: false,
                     fromShare: false,
+                    floodPolyVisibility: true,
                     floodWithVisibility: false,
                     floodWithoutVisibility: false,
                     floodOpacity: 100
@@ -179,6 +180,16 @@ define([
 
             getFloodOpacity: function() {
                 return this.savedState.floodOpacity;
+            },
+
+            setFloodPolyVisibility: function(floodPolyVisibility) {
+                return this.clone({
+                    floodPolyVisibility: floodPolyVisibility
+                });
+            },
+
+            getFloodPolyVisibility: function() {
+                return this.savedState.floodPolyVisibility;
             },
 
             setFromShare: function(fromShare) {

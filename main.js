@@ -186,6 +186,8 @@ define([
                         $.proxy(this.toggleCoral, this));
                 this.$el.on('change', '.mangrove-select-container input',
                         $.proxy(this.toggleMangrove, this));
+                this.$el.on('change', '.flood-select-container input',
+                        $.proxy(this.toggleFloodPolys, this));
                 this.$el.on('change', '.flood-with-select-container input',
                         $.proxy(this.toggleFloodWith, this));
                 this.$el.on('change', '.flood-without-select-container input',
@@ -212,6 +214,7 @@ define([
                 this.floodWithVisibility = data.floodWithVisibility;
                 this.floodWithoutVisibility = data.floodWithoutVisibility;
                 this.floodOpacity = data.floodOpacity;
+                this.floodPolyVisibility = data.floodPolyVisibility;
             },
 
             getState: function() {
@@ -231,7 +234,8 @@ define([
                     fromShare: this.state.getFromShare(),
                     floodWithVisibility: this.state.getFloodWithVisibility(),
                     floodWithoutVisibility: this.state.getFloodWithoutVisibility(),
-                    floodOpacity: this.state.getFloodOpacity()
+                    floodOpacity: this.state.getFloodOpacity(),
+                    floodPolyVisibility: this.state.getFloodPolyVisibility()
                 };
             },
 
@@ -271,6 +275,11 @@ define([
 
                         this.coastalProtectionLayer = new ArcGISDynamicMapServiceLayer(this.regionJSON.serviceURL, {});
                         this.coastalProtectionLayer.setVisibleLayers([84]);
+
+                        this.floodPolyLayer = new ArcGISDynamicMapServiceLayer(this.regionJSON.serviceURL, {
+                            visible: false
+                        });
+                        this.floodPolyLayer.setVisibleLayers([84]);
                     } else {
                         this.coastalProtectionLayer = new ArcGISDynamicMapServiceLayer("https://services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer", {});
                         this.coastalProtectionLayer.setVisibleLayers([40]);
@@ -288,6 +297,7 @@ define([
                     this.map.addLayer(this.coralReefLayer);
                     this.map.addLayer(this.mangroveLayer);
                     if(this.regionJSON.hasNewMangroves) {
+                        this.map.addLayer(this.floodPolyLayer);
                         this.map.addLayer(this.floodWithoutLayer);
                         this.map.addLayer(this.floodWithLayer);
                     }
@@ -402,6 +412,11 @@ define([
                         if (this.floodWithoutLayer.visible) {
                             this.$el.find('.flood-without-select-container input').prop('checked', true);
                         }
+
+                        // Restore state of mangrove checkbox
+                        if (this.state.getFloodPolyVisibility()) {
+                            this.$el.find('.flood-select-container input').prop('checked', true);
+                        }
                     }
                     this.$el.find('.info-tooltip').tooltip({
                         tooltipClass: 'ncp-tooltip',
@@ -447,6 +462,7 @@ define([
                         if(this.regionJSON.hasNewMangroves) {
                             this.floodWithLayer.hide();
                             this.floodWithoutLayer.hide();
+                            this.floodPolyLayer.hide();
                         }
                     }
                     if(this.regionJSON.hasAdmin) {
@@ -467,6 +483,7 @@ define([
                         this.coastalProtectionLayer.hide();
                         this.mangroveLayer.hide();
                         if(this.regionJSON.hasNewMangroves) {
+                            this.floodPolyLayer.hide();
                             this.floodWithLayer.hide();
                             this.floodWithoutLayer.hide();
                         }
@@ -568,6 +585,11 @@ define([
                         this.$el.find('.flood-with-select-container').hide();
                         this.$el.find('.flood-without-select-container').hide();
                         this.$el.find('.flood-slider-conatiner').hide();
+                        if(this.period != 'ANN') {
+                            this.$el.find('flood-select-conatiner').show();
+                        } else {
+                            this.$el.find('flood-select-conatiner').hide();
+                        }
                     }
                     this.$el.find('.stat.area').show();
                     this.$el.find('option.coral').show();
@@ -634,6 +656,16 @@ define([
                 } else {
                     this.mangroveLayer.setVisibility();
                     this.state = this.state.setMangroveVisibility(false);
+                }
+            },
+
+            toggleFloodPolys: function() {
+                if (this.$el.find('.flood-select-container input').is(':checked')) {
+                    this.floodPolyLayer.setVisibility(true);
+                    this.state = this.state.setFloodPolyVisibility(true);
+                } else {
+                    this.floodPolyLayer.setVisibility();
+                    this.state = this.state.setFloodPolyVisibility(false);
                 }
             },
 
@@ -913,11 +945,11 @@ define([
                     this.$el.find('.stat.mangrove-change').show();
                     var changeText;
                     if(stats.MANG_CHNG < 0) {
-                        changeText = "Net Loss";
+                        changeText = i18next.t("Net Loss");
                     } else if(stats.MANG_CHNG > 0) {
-                        changeText = "Net Gain"
+                        changeText = i18next.t("Net Gain");
                     } else {
-                        changeText = "No Change"
+                        changeText = i18next.t("No Change")
                     }
                     this.$el.find('.stat.mangrove-change .number .variable').html(
                         changeText
@@ -960,16 +992,21 @@ define([
 
                     if(this.regionJSON.hasNewMangroves) {
                         if(this.period == 'ANN') {
+                            this.$el.find('.flood-select-container').hide();
                             this.$el.find('.flood-with-select-container').hide();
                             this.$el.find('.flood-without-select-container').hide();
                             this.$el.find('.flood-slider-conatiner').hide();
                             this.floodWithLayer.setVisibility(false);
                             this.floodWithoutLayer.setVisibility(false);
+                            this.coastalProtectionLayer.setVisibility(true);
                         } else {
                             this.floodWithLayer.setVisibleLayers([this.layerLookup.mangroves[this.period].with]);
                             this.floodWithoutLayer.setVisibleLayers([this.layerLookup.mangroves[this.period].without]);
+                            this.floodPolyLayer.setVisibility(this.state.getFloodPolyVisibility());
+                            this.coastalProtectionLayer.setVisibility(true);
                             this.floodWithLayer.setVisibility(this.state.getFloodWithVisibility());
                             this.floodWithoutLayer.setVisibility(this.state.getFloodWithoutVisibility());
+                            this.$el.find('.flood-select-container').show();
                             this.$el.find('.flood-with-select-container').show();
                             this.$el.find('.flood-without-select-container').show();
                             this.$el.find('.flood-slider-conatiner').show();
@@ -1096,6 +1133,16 @@ define([
                 this.state = this.state.setPeriod(this.period);
                 this.state = this.state.setLayer(this.layer);
                 this.state = this.state.setVariable(this.variable);
+
+                if(this.provider == 'mangroves' && this.period != 'ANN') {
+                    this.floodPolyLayer.setVisibleLayers([this.layerID]);
+                    this.floodPolyLayer.setVisibility(this.state.getFloodPolyVisibility());
+                    this.floodPolyLayer.refresh();
+                    this.coastalProtectionLayer.setVisibility(false);
+                } else {
+                    this.coastalProtectionLayer.setVisibility(true);
+                    this.floodPolyLayer.setVisibility(false);
+                }
 
                 this.coastalProtectionLayer.refresh();
 

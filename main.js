@@ -312,6 +312,18 @@ define([
                             "ADMIN_ID"
                         ]
                     });
+                    
+                    this.adminUnitsLayer.setRenderer(new SimpleRenderer(new SimpleFillSymbol(
+                            SimpleFillSymbol.STYLE_SOLID,
+                                new SimpleLineSymbol(
+                                    SimpleLineSymbol.STYLE_SOLID, 
+                                    new Color([0, 0, 0, 0]), 
+                                    3
+                                ),
+                                new Color([0, 0, 0, 0])
+                            )
+                        )
+                    );
     
                     // Set selection style of the layer
                     this.adminUnitsLayer.setSelectionSymbol(new SimpleFillSymbol(
